@@ -1,4 +1,5 @@
-# rcssserver dropped configs when invoked from unusual cwd
-/~/
-/*.rcg
-/*.rcl
+# rcssserver からのスクラッチ出力（cwd 問題で repo root に落ちる事がある）
+*.rcg
+*.rcl
+*.log
+~/
