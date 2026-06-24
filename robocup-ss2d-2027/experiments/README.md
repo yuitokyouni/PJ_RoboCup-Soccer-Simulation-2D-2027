@@ -30,9 +30,15 @@ batches (N ≥ 30 intended). Examples:
   (synthetic).
 - `baseline_vs_baseline.yaml` — Phase 2 batch sanity check
   (intentionally `UNVERIFIED:` on start commands).
-- `cyrus_vs_cyrus_smoke.yaml` — Phase 2.5/2.6 real-integration
-  spike (1–3 matches against the real `rcssserver` +
-  `cyrus2dbase` built by `make build-externals`).
+- `helios_vs_helios_smoke.yaml` — Phase 2.7 real-integration
+  spike, **default for `make real-smoke`**. Runs helios-base vs
+  helios-base via the wrappers under
+  `scripts/team_launchers/`. Verified to reach
+  `observed_reality_status == real_rcssserver` on rcssserver-19.0.0.
+- `cyrus_vs_cyrus_smoke.yaml` — kept for the future cyrus2dbase
+  smoke. Currently `dependency_missing` because Cyrus2DBase master
+  no longer compiles against librcsc master (see
+  `notes/2026-06-24_real_integration_milestone.md`).
 
 ## Result location
 

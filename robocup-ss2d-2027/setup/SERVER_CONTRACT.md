@@ -38,22 +38,29 @@ been verified for the version of `rcssserver` on the developer's machine.
 ## 3. Launch options the harness passes
 
 These flags are sent on the `rcssserver` command line by
-`scripts/run_smoke_match.sh`. Verification status applies to behavior on
-the latest `rcssserver` we plan to support (currently `master`, target
-`rcssserver-18`):
+`scripts/run_smoke_match.sh`. Verification was performed against
+`rcssserver-19.0.0` (commit `ce870013f2c6b31b9e93774abb2822c2f346c287`)
+in the 2026-06-24 real-integration milestone (see
+`notes/2026-06-24_real_integration_milestone.md`):
 
-| Flag                                    | Purpose                                      | Verified? |
-|-----------------------------------------|----------------------------------------------|-----------|
-| `server::game_log_dir=<run_dir>`        | Where to write the `.rcg` binary log         | UNVERIFIED |
-| `server::text_log_dir=<run_dir>`        | Where to write the `.rcl` text log           | UNVERIFIED |
-| `server::game_log_compression=0`        | Disable gzip so `.rcg` is openable as-is     | UNVERIFIED |
-| `server::auto_mode=true`                | Run unattended; server kicks off the match   | UNVERIFIED |
-| `server::port=<RCSS_PORT>`              | UDP port for player connections              | Stable across versions |
-| `server::team_l_start=<home_start>`     | Command to spawn the home team               | UNVERIFIED |
-| `server::team_r_start=<away_start>`     | Command to spawn the away team               | UNVERIFIED |
+| Flag                                    | Purpose                                      | Verified?      |
+|-----------------------------------------|----------------------------------------------|----------------|
+| `server::game_log_dir=<run_dir>`        | Where to write the `.rcg` binary log         | Verified on rcssserver-19 |
+| `server::text_log_dir=<run_dir>`        | Where to write the `.rcl` text log           | Verified on rcssserver-19 |
+| `server::game_log_compression=0`        | Disable gzip so `.rcg` is openable as-is     | Verified on rcssserver-19 |
+| `server::auto_mode=true`                | Run unattended; server kicks off the match   | Verified on rcssserver-19 |
+| `server::port=<RCSS_PORT>`              | UDP port for player connections              | Stable across versions    |
+| `server::team_l_start=<home_start>`     | Command to spawn the home team               | Verified on rcssserver-19 |
+| `server::team_r_start=<away_start>`     | Command to spawn the away team               | Verified on rcssserver-19 |
+| `server::synch_mode=true`               | Run at maximum simulation speed (per-experiment) | Verified on rcssserver-19 (see helios_vs_helios_smoke.yaml) |
 
-If any UNVERIFIED flag changes meaning or disappears upstream, the smoke
-runner should **fail loudly** with the server's own message rather than
+Required, but not strictly verified by this run: behavior under
+`rcssserver` versions other than 19.0.0. The flags were stable across
+rcssserver-16/17/18 per upstream; we have only observed 19.0.0 in
+this repo.
+
+If any flag changes meaning or disappears upstream, the smoke runner
+should **fail loudly** with the server's own message rather than
 silently produce an empty log.
 
 ## 4. Expected outputs
@@ -69,12 +76,14 @@ logs/runs/<UTC-timestamp>/
   metrics.json        parser output, populated even if some fields are unknown
 ```
 
-The default `.rcg` filename written by `rcssserver` is approximately
-`YYYYMMDDhhmm-<left_team>_<score>-<right_team>_<score>.rcg`. The parser
-extracts team names and scores from this filename when `server.out` does
-not contain a "Result:" line. The exact filename format is **UNVERIFIED**
-against `rcssserver-18`; the parser tolerates a mismatch by emitting
-`null` scores and recording the reason in `metrics.json::parser_notes`.
+The default `.rcg` filename written by `rcssserver-19` is
+`YYYYMMDDHHMMSS-<left_team>_<score>-vs-<right_team>_<score>.rcg`
+(observed: `20260624093837-HELIOS_L_2-vs-HELIOS_R_4.rcg`). The parser
+accepts both the rcssserver-18 pattern (`-` separator) and the
+rcssserver-19 pattern (`-vs-` separator); it also handles the
+`-vs-null.rcg` form rcssserver-19 emits when one side never
+connected. The parser tolerates an unknown filename by emitting `null`
+scores and recording the reason in `metrics.json::parser_notes`.
 
 ## 5. Match termination
 

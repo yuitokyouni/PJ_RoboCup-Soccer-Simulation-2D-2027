@@ -97,22 +97,25 @@ from this doc and from `MIN_COMPLETED_FOR_CLAIMS` so it cannot drift.
 ## Recommended workflow
 
 ```sh
-# One-time, on a developer machine
+# One-time, on a developer machine (Ubuntu 24.04 verified)
 sudo apt install -y autoconf automake libtool pkg-config flex bison \
-                    build-essential libboost-all-dev qtbase5-dev qt5-qmake
+                    build-essential libboost-all-dev qtbase5-dev qt5-qmake \
+                    libfl-dev iputils-ping
 
-make fetch-externals          # clones rcssserver, librcsc, helios-base, cyrus2dbase
-make build-externals          # builds them into externals/install/
+make fetch-externals          # fetches rcssserver, librcsc, helios-base, cyrus2dbase tarballs + SHA-pins
+make build-externals          # builds librcsc, rcssserver, helios-base into externals/install/
+                              # (Cyrus2DBase is excluded by default; see milestone notes)
 export PATH="$PWD/externals/install/bin:$PATH"
+export LD_LIBRARY_PATH="$PWD/externals/install/lib"
 
 make doctor                   # should now report all green
 make probe                    # should now print a real rcssserver version
+make test                     # attestation self-tests
 
-# Phase 2.5: 1-3 real matches
-make real-smoke               # writes 1 real match into a real-smoke run dir
-
-# Phase 3+ (only after Phase 2.5 passes)
-make batch EXPERIMENT=experiments/cyrus_vs_cyrus_smoke.yaml NUM_MATCHES=3
+# Phase 2.7 verified path: helios-base vs helios-base
+make real-smoke                          # 1 real match (~30 s wall clock with synch_mode)
+make real-smoke NUM_MATCHES=3            # small batch (~80 s)
+make real-smoke NUM_MATCHES=30           # research-grade batch (~15 min)
 ```
 
 ## What "verified" looks like
