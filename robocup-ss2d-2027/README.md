@@ -46,7 +46,22 @@ prerequisites and `setup/DEPENDENCIES.md` for the dependency table.
   `evaluation/aggregate_results.py`. Re-emits `summary.csv` and
   `summary.json` from the per-match outputs. `make batch` calls this
   automatically; `make aggregate` is for re-running after edits.
-- `make build-baseline` — not automated; points at `setup/SETUP.md`.
+- `make fetch-externals` — `scripts/fetch_externals.sh`. Clones the
+  pinned set from `externals/EXTERNALS.md`
+  (rcssserver / librcsc / helios-base / cyrus2dbase) into
+  `externals/src/` and writes the resolved commits to
+  `externals/EXTERNALS.lock`.
+- `make build-externals` — `scripts/build_externals.sh`. Pre-flights
+  required system packages, then builds the fetched externals into
+  `externals/install/`. Order: librcsc → rcssserver → helios-base →
+  cyrus2dbase. Add `externals/install/bin` to `PATH` afterwards.
+- `make real-smoke` — runs `scripts/run_batch_matches.sh` with
+  `experiments/cyrus_vs_cyrus_smoke.yaml` (default `NUM_MATCHES=1`).
+  Requires the externals to be on `PATH` and the UNVERIFIED prefixes on
+  the YAML start commands to have been removed. See
+  `docs/REAL_INTEGRATION.md` for the declared-vs-applied contract.
+- `make build-baseline` — not automated; points at `setup/SETUP.md`
+  and the Phase 2.5 fetch+build path.
 - `make clean` — wipes `logs/runs/*` but keeps the `.gitkeep`.
 
 All scripts support `--help`. The rcssserver invocation flags inside

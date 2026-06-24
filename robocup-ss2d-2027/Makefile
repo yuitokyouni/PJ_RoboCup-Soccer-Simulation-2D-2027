@@ -5,7 +5,7 @@ EVAL := $(ROOT)/evaluation
 
 .DEFAULT_GOAL := help
 
-.PHONY: help doctor probe smoke batch aggregate fetch-externals build-externals build-baseline clean
+.PHONY: help doctor probe smoke batch aggregate fetch-externals build-externals real-smoke build-baseline clean
 
 help:
 	@echo "Phase 1 harness targets:"
@@ -23,6 +23,8 @@ help:
 	@echo "                       (optional: FORCE=1, FULL=1, ONLY=name)"
 	@echo "  make build-externals Build the fetched externals into externals/install/"
 	@echo "                       (optional: ONLY=name, JOBS=N)"
+	@echo "  make real-smoke      Run 1 real Cyrus2DBase-vs-Cyrus2DBase match"
+	@echo "                       (optional: NUM_MATCHES, TIMEOUT, FORCE=1, DRY_RUN=1)"
 
 doctor:
 	@bash $(SCRIPTS)/doctor.sh
@@ -62,6 +64,14 @@ build-externals:
 	@bash $(SCRIPTS)/build_externals.sh \
 	  $(if $(ONLY),--only $(ONLY)) \
 	  $(if $(JOBS),--jobs $(JOBS))
+
+real-smoke:
+	@bash $(SCRIPTS)/run_batch_matches.sh \
+	  --experiment $(ROOT)/experiments/cyrus_vs_cyrus_smoke.yaml \
+	  --num-matches $(if $(NUM_MATCHES),$(NUM_MATCHES),1) \
+	  $(if $(TIMEOUT),--timeout $(TIMEOUT)) \
+	  $(if $(FORCE),--force) \
+	  $(if $(DRY_RUN),--dry-run)
 
 build-baseline:
 	@echo "build-baseline is not automated yet."
