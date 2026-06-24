@@ -1,0 +1,29 @@
+schema_version: "0.1.0"
+
+experiment_id: "helios_vs_wrighteagle_smoke"
+description: >
+  Cross-baseline real-integration smoke. HELIOS_L (helios-base) vs
+  WE_R (WrightEagleBASE 2016 release), both built from
+  externals/install/ and externals/src/. This is the first
+  cross-team contrast against the harness — the previous batches
+  were paired-identical (HELIOS vs HELIOS).
+  WrightEagle was the historical possession-style heavyweight
+  (6 world championships 2005-2015 with MAXQ-OP online planning).
+
+home_team: "HELIOS_L"
+away_team: "WE_R"
+
+home_start_command: "scripts/team_launchers/helios_left.sh"
+away_start_command: "scripts/team_launchers/wrighteagle_right.sh"
+
+num_matches: 1
+timeout_secs: 600
+
+declared_reality_assertion: "real_rcssserver"
+
+server_options:
+  - "server::synch_mode=true"
+
+notes:
+  - "WrightEagle's start.sh sleeps 5 s for goalie + 0.1 s per outfield player; first match has ~10 s setup delay before kick-off."
+  - "WrightEagleBASE 2016 release uses MAXQ-OP for action selection; comparison vs the more direct HELIOS Base default is the point of this experiment."

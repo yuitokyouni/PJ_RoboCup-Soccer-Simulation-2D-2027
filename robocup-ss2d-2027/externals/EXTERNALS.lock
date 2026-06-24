@@ -3,3 +3,4 @@ helios-base https://github.com/helios-base/helios-base master 66fd63d6f9d022423b
 librcsc https://github.com/helios-base/librcsc master 078d59ff85c336f94c021adac060ef6f2e63c575
 rcssmonitor https://github.com/rcsoccersim/rcssmonitor master 42848cdee2cb230cd215ec9875dc06aa31f99aa9
 rcssserver https://github.com/rcsoccersim/rcssserver rcssserver-19.0.0 ce870013f2c6b31b9e93774abb2822c2f346c287
+wrighteaglebase https://github.com/wrighteagle2d/wrighteaglebase master 758b7fc3ef2166e33b4e1a91a9bd799e26aefa6b
