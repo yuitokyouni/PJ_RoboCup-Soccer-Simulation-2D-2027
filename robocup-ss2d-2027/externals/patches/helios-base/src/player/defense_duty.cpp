@@ -56,20 +56,27 @@ DefenseDutyAssigner::assign( const WorldModel & wm )
     // Goalie has its own RoleGoalie::doMove; we don't override that.
     if ( self_unum == 1 ) return duty;
 
-    // Only activate when an opponent is on the ball AND ball is roughly
-    // in our half of the pitch. In opponent territory the formation
-    // file (offense/normal) drives positioning.
+    // Only activate when an opponent has the ball.
     const AbstractPlayerObject * carrier = wm.kickableOpponent();
     if ( ! carrier ) return duty;
-    if ( ball_pos.x > 5.0 ) return duty;
 
     const Vector2D our_goal( -ServerParam::i().pitchHalfLength(), 0.0 );
 
     //-------------------------------------------------------------
     // Step 1: am I the presser?
     // The presser is the closest field-player teammate (including
-    // self, excluding goalie) to the ball carrier.
+    // self, excluding goalie) to the ball carrier, regardless of
+    // pitch position. High-press / counter-press is on by default;
+    // the only safety valve is a max-distance bound so we don't
+    // sprint 50m cross-pitch.
+    //
+    // NOTE: do NOT gate PRESS on ball position. Just-after-kickoff
+    // the carrier sits at ball.x ~= +10 (their own half from our
+    // POV) and a half-pitch gate would let them dribble unopposed
+    // up to the midline. Bug fix 2026-06-24: previously
+    // `if ( ball_pos.x > 5.0 ) return duty;` killed kickoff defense.
     //-------------------------------------------------------------
+    const double PRESS_MAX_DIST = 25.0;
     {
         const double my_dist = ( self_pos - carrier->pos() ).r();
 
@@ -88,7 +95,7 @@ DefenseDutyAssigner::assign( const WorldModel & wm )
             }
         }
 
-        if ( i_press )
+        if ( i_press && my_dist <= PRESS_MAX_DIST )
         {
             duty.type = DefenseDuty::PRESS;
             duty.target = carrier;

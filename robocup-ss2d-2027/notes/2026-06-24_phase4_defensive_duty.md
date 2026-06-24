@@ -101,6 +101,32 @@ n=3 is too few for any real claim. Directionally:
 - **High variance** (10-0, 6-5, 8-5) – match 1 looks like a tactical
   collapse, matches 2/3 are competitive.
 
+## Bug fix 2026-06-24: kickoff-time concession
+
+All 3 smoke matches showed HELIOS_L scoring at cycle 128-138 — i.e.
+straight from kickoff, before the duty layer could react. Root cause:
+the original `if ( ball_pos.x > 5.0 ) return duty;` gated PRESS on
+the ball being in our half. librcsc presents all coords as if our
+team is on the left, so `ball.x > 0` = opp half. Just after kickoff,
+the HELIOS_L back-pass receiver sits at `ball.x ~= +10` — opp half
+from our POV — so PRESS was suppressed. The duty layer didn't engage
+until the carrier crossed `x = 5.0`, by which point the carrier was
+already accelerated and the DH/CB lines were too deep to catch up.
+
+Fix: remove the cutoff from PRESS entirely (closest field teammate
+presses the carrier anywhere on the pitch), keep the cutoff for
+COVER. Add a `PRESS_MAX_DIST = 25.0` safety so a left-side defender
+won't sprint 50m cross-pitch to press.
+
+Re-smoke (n=3, same experiment): first goals now at cycles 420, 664
+(by 3-2-5, not opp), 515 — no more cycle-130 concessions. Mean
+conceded 7.67 (was 8.0 last batch, v9 baseline 8.33). Mean scored
+3.33. n=3 means variance dominates; needs n>=30 for a real claim.
+
+Side effect: PRESS now fires in the opp half too, which is the
+counter-press / high-press behavior the user originally wanted
+("Man City / PSG / Bayern style").
+
 ## Untested assumptions / known limitations
 
 - `wm.kickableOpponent()` returns the ball carrier only when the
