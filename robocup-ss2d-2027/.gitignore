@@ -1,5 +1,6 @@
 logs/runs/*
 !logs/runs/.gitkeep
+logs/experiments/
 
 *.rcg
 *.rcl

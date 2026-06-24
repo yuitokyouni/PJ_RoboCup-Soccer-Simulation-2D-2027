@@ -28,6 +28,18 @@ probe:
 smoke:
 	@bash $(SCRIPTS)/run_smoke_match.sh
 
+batch:
+	@if [[ -z "$(EXPERIMENT)" ]]; then \
+	  echo "EXPERIMENT is required, e.g. make batch EXPERIMENT=experiments/baseline_vs_baseline.yaml" >&2; \
+	  exit 2; \
+	fi
+	@bash $(SCRIPTS)/run_batch_matches.sh \
+	  --experiment "$(EXPERIMENT)" \
+	  $(if $(NUM_MATCHES),--num-matches $(NUM_MATCHES)) \
+	  $(if $(TIMEOUT),--timeout $(TIMEOUT)) \
+	  $(if $(FORCE),--force) \
+	  $(if $(DRY_RUN),--dry-run)
+
 aggregate:
 	@if [[ -z "$(EXPERIMENT_DIR)" ]]; then \
 	  echo "EXPERIMENT_DIR is required, e.g. make aggregate EXPERIMENT_DIR=logs/experiments/<id>" >&2; \
