@@ -34,10 +34,13 @@ ROLES = [
     {"number": 2,  "name": "CenterBack",       "type": "DF", "side": "L", "pair": 4},
     {"number": 3,  "name": "CenterBack",       "type": "DF", "side": "C", "pair": 0},
     {"number": 4,  "name": "CenterBack",       "type": "DF", "side": "R", "pair": 2},
-    {"number": 5,  "name": "SideHalf",         "type": "MF", "side": "L", "pair": 8},
+    # v10: WBs typed as SideBack (fullback) -- more defensive role
+    # logic than SideHalf, less likely to charge upfield and leave
+    # the back line vulnerable.
+    {"number": 5,  "name": "SideBack",         "type": "DF", "side": "L", "pair": 8},
     {"number": 6,  "name": "DefensiveHalf",    "type": "MF", "side": "L", "pair": 7},
     {"number": 7,  "name": "DefensiveHalf",    "type": "MF", "side": "R", "pair": 6},
-    {"number": 8,  "name": "SideHalf",         "type": "MF", "side": "R", "pair": 5},
+    {"number": 8,  "name": "SideBack",         "type": "DF", "side": "R", "pair": 5},
     {"number": 9,  "name": "SideForward",      "type": "FW", "side": "L", "pair": 10},
     {"number": 10, "name": "SideForward",      "type": "FW", "side": "R", "pair": 9},
     {"number": 11, "name": "CenterForward",    "type": "FW", "side": "C", "pair": 0},
@@ -49,28 +52,34 @@ def clamp(v, lo, hi):
 
 
 def normal_positions(bx, by):
-    """Mid-block 3-2-5 that scales with ball x."""
-    f = clamp(bx / 30.0, -1.0, 1.0)
-    y_lean = clamp(by * 0.15, -6.0, 6.0)
-
-    cb_x = -32.0 + 18.0 * (f + 1) / 2
-    wb_x = -28.0 + 42.0 * (f + 1) / 2          # [-28, +14] -- low in own half
-    cm_x = -10.0 + 24.0 * (f + 1) / 2
-    cm_x -= max(0.0, -f - 0.2) * 8.0           # build-up drop
-    fw_x = 12.0 + 30.0 * (f + 1) / 2           # [12, +42] -- crash the box
+    """v5: defensive-by-default normal. Helios switches Defense
+    only when opp_min <= our_min - 2; the contested 50/50 case is
+    Normal, and our team needs to be in a safe shape there. Back
+    line tracks the ball deep into our half; forwards stay as
+    counter outlets.
+    """
+    # v7: revert to v5-ish back depth (deeper than v3, less extreme
+    # than v6). The 12-1 in v6 showed that over-compressing the
+    # back line just gives helios a free zone in our 3rd to crash
+    # into. v7 holds the v5 anchor that gave 9-1.
+    back_x = clamp(bx - 12, -45.0, -20.0)
+    y_lean = clamp(by * 0.35, -12.0, 12.0)
+    wb_x = back_x + 4.0
+    cm_x = back_x + 14.0
+    fw_x = clamp(back_x + 38.0, 0.0, 38.0)
 
     return {
         1:  (-50.0, clamp(by * 0.05, -3, 3)),
-        2:  (cb_x, -10 + y_lean),
-        3:  (cb_x - 2.5, 0 + y_lean * 0.6),
-        4:  (cb_x, +10 + y_lean),
-        5:  (wb_x, -28 + y_lean * 0.4),
-        6:  (cm_x - 2, -6 + y_lean),
-        7:  (cm_x - 2, +6 + y_lean),
-        8:  (wb_x, +28 + y_lean * 0.4),
+        2:  (back_x, -10 + y_lean),
+        3:  (back_x - 2.5, 0 + y_lean * 0.6),
+        4:  (back_x, +10 + y_lean),
+        5:  (wb_x, -27 + y_lean * 0.4),
+        6:  (cm_x, -7 + y_lean),
+        7:  (cm_x, +7 + y_lean),
+        8:  (wb_x, +27 + y_lean * 0.4),
         9:  (fw_x, -16 + y_lean * 0.5),
         10: (fw_x, +16 + y_lean * 0.5),
-        11: (fw_x + 6, 0 + y_lean * 0.5),
+        11: (fw_x + 4, 0 + y_lean * 0.5),
     }
 
 
@@ -81,15 +90,15 @@ def offense_positions(bx, by):
     shape because the engine only picks this file when our team has
     the initiative.
     """
-    # v3 lesson: CB line at -8 in v2 cost an 18-4 (first goal at
-    # cycle 114, ~11 s of game time). Cap CB depth so a single
-    # turnover doesn't become a free run on goal.
-    f = clamp(bx / 30.0, -0.4, 1.0)        # never drop below f=-0.4
+    # v7: pull offense back hard. Even when we have the ball, the
+    # CB line never goes higher than -25. Forwards still push to
+    # the penalty arc but the back is safe against turnover.
+    f = clamp(bx / 30.0, -0.4, 1.0)
     y_lean = clamp(by * 0.2, -8.0, 8.0)
-    cb_x = -28.0 + 8.0 * (f + 1) / 2        # [-28, -20]
-    wb_x = -10.0 + 25.0 * (f + 1) / 2       # [-10, +15]
-    cm_x =  -5.0 + 20.0 * (f + 1) / 2       # [-5, +15]
-    fw_x = +20.0 + 18.0 * (f + 1) / 2       # [+20, +38] -- penalty arc, not the goal line
+    cb_x = -32.0 + 7.0 * (f + 1) / 2        # [-32, -25]
+    wb_x = -16.0 + 18.0 * (f + 1) / 2       # [-16, +2]
+    cm_x = -10.0 + 18.0 * (f + 1) / 2       # [-10, +8]
+    fw_x = +14.0 + 18.0 * (f + 1) / 2       # [+14, +32]
 
     return {
         1:  (-50.0, 0.0),
@@ -107,36 +116,36 @@ def offense_positions(bx, by):
 
 
 def defense_positions(bx, by):
-    """5-3-2 compact. Five across the back, three in midfield,
-    two forwards holding the half-spaces for the counter outlet.
-
-    All positions track ball x more conservatively -- back line never
-    pushes past -10 even when ball is at midfield; only the two
-    forwards stay high.
+    """v9: ULTRA park-the-bus. When ball is in our half, every
+    outfielder except one "outlet" forward camps inside or on the
+    edge of the 18 yd box. Goalie at the line. Nine bodies between
+    the ball and the goal.
     """
-    f = clamp(bx / 40.0, -1.0, 0.3)
-    y_lean = clamp(by * 0.25, -10.0, 10.0)
-
-    back_x = -34.0 + 14.0 * (f + 1) / 2      # [-34, -27] -- low block
-    mid_x  = -18.0 + 14.0 * (f + 1) / 2      # [-18, -11]
-    fw_x   =  -2.0 + 14.0 * (f + 1) / 2      # [-2, +5]   -- only outlets stay high
+    # When ball in our half, lock everyone deep. Otherwise hold a
+    # very compact mid-block.
+    if bx <= 0:
+        back_x = clamp(bx - 4, -46.0, -32.0)
+    else:
+        back_x = -28.0
+    y_lean = clamp(by * 0.6, -18.0, 18.0)
+    box_x = back_x + 6.0       # second line right behind back, in the box
 
     return {
-        1:  (-50.0, 0.0),
-        # FIVE-back across: WBs join the back line
-        2:  (back_x, -10 + y_lean),       # CB L
-        3:  (back_x - 2, 0 + y_lean * 0.6),  # CB C (sweeper)
-        4:  (back_x, +10 + y_lean),        # CB R
-        5:  (back_x + 2, -26 + y_lean * 0.3),   # WB L
-        8:  (back_x + 2, +26 + y_lean * 0.3),   # WB R
-        # THREE midfielders flat
-        6:  (mid_x, -10 + y_lean),
-        7:  (mid_x, +10 + y_lean),
-        # The CenterForward drops to support
-        11: (mid_x + 6, 0 + y_lean),
-        # TWO forwards as counter outlets -- stay high
-        9:  (fw_x, -16 + y_lean * 0.4),
-        10: (fw_x, +16 + y_lean * 0.4),
+        1:  (-50.0, clamp(by * 0.05, -3, 3)),
+        # First line (back 5) -- across the goal mouth + posts
+        2:  (back_x, -8 + y_lean * 0.5),
+        3:  (back_x - 2, 0 + y_lean * 0.3),
+        4:  (back_x, +8 + y_lean * 0.5),
+        5:  (back_x, -20 + y_lean * 0.3),
+        8:  (back_x, +20 + y_lean * 0.3),
+        # Second line, 4 across, tucked just in front -- creates
+        # a wall of 9 bodies in/around the box
+        6:  (box_x, -12 + y_lean),
+        7:  (box_x, +12 + y_lean),
+        11: (box_x, 0 + y_lean),
+        9:  (box_x, -22 + y_lean * 0.5),
+        # 10 stays as the single counter outlet
+        10: (clamp(back_x + 35, 0, 30), 0 + y_lean * 0.5),
     }
 
 

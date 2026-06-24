@@ -16,7 +16,7 @@ away_team: "HELIOS_3_2_5"
 home_start_command: "scripts/team_launchers/helios_left.sh"
 away_start_command: "scripts/team_launchers/helios_3_2_5_right.sh"
 
-num_matches: 1
+num_matches: 3
 timeout_secs: 600
 
 declared_reality_assertion: "real_rcssserver"
