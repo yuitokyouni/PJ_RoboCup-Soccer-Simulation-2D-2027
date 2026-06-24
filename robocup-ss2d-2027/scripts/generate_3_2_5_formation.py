@@ -34,13 +34,13 @@ ROLES = [
     {"number": 2,  "name": "CenterBack",       "type": "DF", "side": "L", "pair": 4},
     {"number": 3,  "name": "CenterBack",       "type": "DF", "side": "C", "pair": 0},
     {"number": 4,  "name": "CenterBack",       "type": "DF", "side": "R", "pair": 2},
-    # v10: WBs typed as SideBack (fullback) -- more defensive role
-    # logic than SideHalf, less likely to charge upfield and leave
-    # the back line vulnerable.
-    {"number": 5,  "name": "SideBack",         "type": "DF", "side": "L", "pair": 8},
+    # v9: WBs typed SideHalf (the v3-v9 setting before v10 swapped
+    # them to SideBack). Restored here to re-generate the park-the-bus
+    # configuration that landed at mean 8.33 conceded.
+    {"number": 5,  "name": "SideHalf",         "type": "MF", "side": "L", "pair": 8},
     {"number": 6,  "name": "DefensiveHalf",    "type": "MF", "side": "L", "pair": 7},
     {"number": 7,  "name": "DefensiveHalf",    "type": "MF", "side": "R", "pair": 6},
-    {"number": 8,  "name": "SideBack",         "type": "DF", "side": "R", "pair": 5},
+    {"number": 8,  "name": "SideHalf",         "type": "MF", "side": "R", "pair": 5},
     {"number": 9,  "name": "SideForward",      "type": "FW", "side": "L", "pair": 10},
     {"number": 10, "name": "SideForward",      "type": "FW", "side": "R", "pair": 9},
     {"number": 11, "name": "CenterForward",    "type": "FW", "side": "C", "pair": 0},
