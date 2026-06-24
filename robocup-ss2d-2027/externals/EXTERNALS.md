@@ -36,8 +36,22 @@ same way you would a `package-lock.json` or `Cargo.lock`: regenerate
 deliberately, review the diff, commit it.
 
 Pin upgrades go in one PR per external: bump `requested_ref` here,
-re-run `make fetch-externals --only <name> --force`, commit the new
+re-run `make fetch-externals ONLY=<name> FORCE=1`, commit the new
 lock line plus this table, attach the diff to a Phase notes file.
+
+## How the fetch works
+
+`scripts/fetch_externals.sh` resolves `requested_ref` to a 40-character
+commit SHA via the GitHub REST API
+(`https://api.github.com/repos/<owner>/<repo>/commits/<ref>`), then
+downloads `https://github.com/<owner>/<repo>/archive/<SHA>.tar.gz`
+and extracts it into `externals/src/<name>/` with
+`tar --strip-components=1`. This path works in environments that
+restrict outbound git protocol but allow GitHub's REST API + archive
+endpoints. Once `EXTERNALS.lock` is committed, a re-fetch skips the
+API call and uses the recorded SHA directly (unless `FORCE=1` is set),
+so reproducibility does not depend on the upstream branch tip
+staying still.
 
 ## License tracking
 

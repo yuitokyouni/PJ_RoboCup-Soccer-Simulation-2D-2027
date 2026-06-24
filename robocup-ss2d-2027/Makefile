@@ -19,8 +19,8 @@ help:
 	@echo "                       (optional: NUM_MATCHES, TIMEOUT, FORCE=1, DRY_RUN=1)"
 	@echo "  make aggregate       Re-aggregate summary.csv/summary.json for EXPERIMENT_DIR"
 	@echo "Phase 2.5 real integration:"
-	@echo "  make fetch-externals Clone rcssserver/librcsc/helios-base/cyrus2dbase into externals/src/"
-	@echo "                       (optional: FORCE=1, FULL=1, ONLY=name)"
+	@echo "  make fetch-externals Fetch rcssserver/librcsc/helios-base/cyrus2dbase tarballs into externals/src/"
+	@echo "                       (optional: FORCE=1, ONLY=name)"
 	@echo "  make build-externals Build the fetched externals into externals/install/"
 	@echo "                       (optional: ONLY=name, JOBS=N)"
 	@echo "  make real-smoke      Run 1 real Cyrus2DBase-vs-Cyrus2DBase match"
@@ -58,7 +58,6 @@ aggregate:
 fetch-externals:
 	@bash $(SCRIPTS)/fetch_externals.sh \
 	  $(if $(FORCE),--force) \
-	  $(if $(FULL),--full) \
 	  $(if $(ONLY),--only $(ONLY))
 
 build-externals:
