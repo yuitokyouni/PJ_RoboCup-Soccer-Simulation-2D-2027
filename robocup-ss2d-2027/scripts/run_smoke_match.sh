@@ -13,13 +13,19 @@ usage() {
 run_smoke_match.sh - run a single baseline-vs-baseline smoke match
 
 Usage:
-  run_smoke_match.sh [--help] [--timeout SECONDS]
+  run_smoke_match.sh [--help] [--timeout SECONDS] [--run-dir PATH]
 
 Options:
   --timeout SECONDS  Hard wall-clock cap for the match. Default: 120
                      (overridable by env TIMEOUT_SECS). The server is run
                      under `timeout --kill-after=5`; on timeout the
                      metadata.json is marked match_status="timeout".
+  --run-dir PATH     Use PATH as the run directory instead of generating
+                     one under logs/runs/<UTC-timestamp>/. The directory
+                     is created if missing. Intended for callers (e.g.
+                     scripts/run_batch_matches.sh) that own their own
+                     output layout. The basename of PATH becomes
+                     metadata.json::run_id.
 
 Environment:
   HELIOS_BASE_DIR  Directory of a built helios-base checkout.
@@ -53,11 +59,14 @@ EOF
 }
 
 TIMEOUT_SECS="${TIMEOUT_SECS:-120}"
+RUN_DIR_OVERRIDE=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -h|--help) usage; exit 0 ;;
     --timeout) shift; [[ $# -gt 0 ]] || { echo "--timeout needs a value" >&2; exit 2; }; TIMEOUT_SECS="$1"; shift ;;
     --timeout=*) TIMEOUT_SECS="${1#*=}"; shift ;;
+    --run-dir) shift; [[ $# -gt 0 ]] || { echo "--run-dir needs a value" >&2; exit 2; }; RUN_DIR_OVERRIDE="$1"; shift ;;
+    --run-dir=*) RUN_DIR_OVERRIDE="${1#*=}"; shift ;;
     *) echo "run_smoke_match.sh: unknown argument: $1" >&2; usage >&2; exit 2 ;;
   esac
 done
@@ -96,9 +105,18 @@ fi
 HOME_TEAM_START="${HOME_TEAM_START:-${HELIOS_BASE_DIR:+$HELIOS_BASE_DIR/src/start.sh}}"
 AWAY_TEAM_START="${AWAY_TEAM_START:-$HOME_TEAM_START}"
 RCSS_PORT="${RCSS_PORT:-6000}"
-TS="$(date -u +%Y-%m-%dT%H%M%SZ)"
 CREATED_AT_UTC="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-RUN_DIR="$ROOT/logs/runs/$TS"
+if [[ -n "$RUN_DIR_OVERRIDE" ]]; then
+  # Caller (e.g. the batch runner) supplied a dir. Use it verbatim; the
+  # basename becomes the run_id so a match dir like
+  # logs/experiments/<exp>/matches/match_000001/ surfaces as run_id
+  # "match_000001" in metadata.json.
+  RUN_DIR="$RUN_DIR_OVERRIDE"
+  TS="$(basename "$RUN_DIR")"
+else
+  TS="$(date -u +%Y-%m-%dT%H%M%SZ)"
+  RUN_DIR="$ROOT/logs/runs/$TS"
+fi
 mkdir -p "$RUN_DIR"
 
 SERVER_OPTIONS=(

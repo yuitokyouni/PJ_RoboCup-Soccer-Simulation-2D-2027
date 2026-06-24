@@ -16,6 +16,7 @@ Checks (required unless noted):
   - librcsc              (via rcsc-config or pkg-config librcsc)
   - helios-base players  (helios_player, helios_coach, helios_trainer)
   - python3
+  - python3 yaml module  (PyYAML; needed by the batch runner)
   - timeout              (GNU coreutils; bounds smoke match wall clock)
   - setsid               (util-linux; lets the harness kill the process tree)
   - jq                   (optional, used for metrics inspection)
@@ -77,6 +78,12 @@ elif pkg-config --exists librcsc 2>/dev/null; then
   note "librcsc detected via pkg-config"
 else
   miss_req "librcsc (build: https://github.com/helios-base/librcsc)"
+fi
+
+if python3 -c "import yaml" >/dev/null 2>&1; then
+  note "python3 yaml module present"
+else
+  miss_req "python3 yaml module (install: pip install pyyaml)"
 fi
 
 if (( missing > 0 )); then
