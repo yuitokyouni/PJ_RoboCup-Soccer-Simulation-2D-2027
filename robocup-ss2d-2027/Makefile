@@ -5,7 +5,7 @@ EVAL := $(ROOT)/evaluation
 
 .DEFAULT_GOAL := help
 
-.PHONY: help doctor probe smoke batch aggregate build-baseline clean
+.PHONY: help doctor probe smoke batch aggregate fetch-externals build-externals build-baseline clean
 
 help:
 	@echo "Phase 1 harness targets:"
@@ -18,6 +18,11 @@ help:
 	@echo "  make batch           Run an N-match experiment; requires EXPERIMENT=path/to.yaml"
 	@echo "                       (optional: NUM_MATCHES, TIMEOUT, FORCE=1, DRY_RUN=1)"
 	@echo "  make aggregate       Re-aggregate summary.csv/summary.json for EXPERIMENT_DIR"
+	@echo "Phase 2.5 real integration:"
+	@echo "  make fetch-externals Clone rcssserver/librcsc/helios-base/cyrus2dbase into externals/src/"
+	@echo "                       (optional: FORCE=1, FULL=1, ONLY=name)"
+	@echo "  make build-externals Build the fetched externals into externals/install/"
+	@echo "                       (optional: ONLY=name, JOBS=N)"
 
 doctor:
 	@bash $(SCRIPTS)/doctor.sh
@@ -47,9 +52,21 @@ aggregate:
 	fi
 	@python3 $(EVAL)/aggregate_results.py --experiment-dir "$(EXPERIMENT_DIR)"
 
+fetch-externals:
+	@bash $(SCRIPTS)/fetch_externals.sh \
+	  $(if $(FORCE),--force) \
+	  $(if $(FULL),--full) \
+	  $(if $(ONLY),--only $(ONLY))
+
+build-externals:
+	@bash $(SCRIPTS)/build_externals.sh \
+	  $(if $(ONLY),--only $(ONLY)) \
+	  $(if $(JOBS),--jobs $(JOBS))
+
 build-baseline:
 	@echo "build-baseline is not automated yet."
-	@echo "See setup/SETUP.md sections 4-5 for librcsc + helios-base build steps."
+	@echo "See setup/SETUP.md sections 4-5 for librcsc + helios-base build steps,"
+	@echo "or run: make fetch-externals && make build-externals (Phase 2.5)."
 	@exit 1
 
 clean:
