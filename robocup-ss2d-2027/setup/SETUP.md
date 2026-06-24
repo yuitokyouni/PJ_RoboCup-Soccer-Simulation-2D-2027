@@ -119,15 +119,31 @@ make smoke
 A successful smoke match leaves `metrics.json` under
 `logs/runs/<UTC-timestamp>/`.
 
-## 7. What remains manual
+## 7. Phase 2.5 automated path (Cyrus2DBase + friends)
 
-These steps are *not* automated by this repo and are unlikely to be in
-Phase 1:
+Sections 2-5 build everything by hand. Once the system packages from
+section 1 are installed, the Phase 2.5 scripts wrap the same steps and
+land binaries under `externals/install/bin/`:
 
-- Installing system packages.
-- Building rcssserver / rcssmonitor / librcsc / helios-base.
-- Choosing a long-term base code (HELIOS vs Cyrus2D vs Gliders2D vs Pyrus)
-  — decided in Phase 2.
+```sh
+make fetch-externals          # clones rcssserver, librcsc, helios-base, cyrus2dbase
+make build-externals          # autotools build into externals/install/
+export PATH="$PWD/externals/install/bin:$PATH"
+make doctor                   # should now go green
+```
+
+See `externals/EXTERNALS.md` for the pin policy and
+`docs/REAL_INTEGRATION.md` for the declared-vs-applied options contract
+and the tightened `RESEARCH_GRADE` rule.
+
+## 8. What remains manual
+
+These steps are *not* automated by this repo:
+
+- Installing system packages (section 1).
+- Choosing a long-term base code (HELIOS vs Cyrus2D vs Gliders2D vs
+  Pyrus). Phase 2.5 picks Cyrus2DBase as the first practical baseline
+  but keeps HELIOS Base around as a minimal reference.
 - Network / firewall configuration if running matches across hosts.
 
 Everything else above is in scope for the harness to call.

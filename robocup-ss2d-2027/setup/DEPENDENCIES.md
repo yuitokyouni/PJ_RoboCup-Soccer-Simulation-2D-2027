@@ -14,6 +14,22 @@ Required for `make doctor` to pass.
 `scripts/doctor.sh` checks every binary listed as required above and prints a
 clear actionable error if any are missing. It does not attempt installation.
 
+## Build-time tools (Phase 2.5)
+
+Required by `scripts/build_externals.sh` to compile `rcssserver`,
+`librcsc`, `helios-base`, and `cyrus2dbase` under `externals/install/`.
+Not needed if you only intend to use binaries already on `PATH`.
+
+| Group              | Packages (Debian/Ubuntu)                                                     |
+|--------------------|------------------------------------------------------------------------------|
+| Autotools toolchain| `autoconf automake libtool pkg-config flex bison build-essential`            |
+| Boost              | `libboost-all-dev`                                                           |
+| Qt5 (helios/cyrus) | `qtbase5-dev qt5-qmake`                                                      |
+
+`build_externals.sh` pre-flights every required tool above and refuses
+to proceed with a one-line `sudo apt install ...` hint if anything is
+missing. It does **not** install system packages on its own.
+
 ## Environment variables
 
 | Variable           | Used by                  | Meaning                                                |
