@@ -6,26 +6,38 @@ Source trees are **not** committed to this repository. The fetch script
 clones them into `externals/src/<name>/` and the build script installs
 artefacts under `externals/install/` (also not committed).
 
-## Pinned set
+## Pin set
 
-| Name          | Role                                             | Repo                                                   | Pinned ref           | License | Notes |
-|---------------|--------------------------------------------------|--------------------------------------------------------|----------------------|---------|-------|
-| `rcssserver`  | Soccer Simulation 2D server                      | https://github.com/rcsoccersim/rcssserver              | `rcssserver-19.0.0`  | LGPL-3.0 (UNVERIFIED) | Latest release as of 2026-06-24. Compat with Cyrus2DBase (documented for rcssserver-18) is UNVERIFIED on `-19`. |
-| `librcsc`     | Client-side base library                         | https://github.com/helios-base/librcsc                 | `master`             | LGPL-3.0 (UNVERIFIED) | Pinned commit hash recorded into `externals/EXTERNALS.lock` by the fetch script. |
-| `helios-base` | Historical / minimal reference team              | https://github.com/helios-base/helios-base             | `master`             | LGPL-3.0 (UNVERIFIED) | Optional. README documents `rcssserver-16` support; treat as historical and use Cyrus2DBase as the first practical baseline. |
-| `cyrus2dbase` | First practical baseline (HELIOS + Gliders + Cyrus2021) | https://github.com/Cyrus2D/Cyrus2DBase            | `master`             | UNVERIFIED            | README documents `rcssserver-18` support; `rcssserver-19` compat is UNVERIFIED. |
+`requested_ref` is the human-edited target — a tag, a branch, or a
+specific commit. `resolved_commit` is the SHA the fetch script
+actually checked out and recorded into `externals/EXTERNALS.lock`.
+Only `resolved_commit` is a pin in the reproducibility sense; a
+branch name like `master` is a *moving* target until the lock fixes
+it.
+
+| Name          | Role                                             | Repo                                                   | Requested ref         | License | Notes |
+|---------------|--------------------------------------------------|--------------------------------------------------------|-----------------------|---------|-------|
+| `rcssserver`  | Soccer Simulation 2D server                      | https://github.com/rcsoccersim/rcssserver              | `rcssserver-19.0.0`   | LGPL-3.0 (UNVERIFIED) | A tag; `resolved_commit` should always equal this tag's commit. |
+| `librcsc`     | Client-side base library                         | https://github.com/helios-base/librcsc                 | `master`              | LGPL-3.0 (UNVERIFIED) | Branch tip; reproducibility depends on the committed `EXTERNALS.lock`. |
+| `helios-base` | Historical / minimal reference team              | https://github.com/helios-base/helios-base             | `master`              | LGPL-3.0 (UNVERIFIED) | Optional. README documents `rcssserver-16` support; treat as historical. |
+| `cyrus2dbase` | First practical baseline (HELIOS + Gliders + Cyrus2021) | https://github.com/Cyrus2D/Cyrus2DBase            | `master`              | UNVERIFIED            | README documents `rcssserver-18` support; `rcssserver-19` compat is UNVERIFIED. |
 
 ## Pin policy
 
-This file is the **intent**. The fetch script captures the **reality**
-into `externals/EXTERNALS.lock` — a one-line-per-external manifest of
-`<name> <repo> <ref> <commit>` after each clone / checkout. That lock
-file is what downstream scripts (and `metadata.json::server_version`)
-report; this file is what humans edit.
+This file is the **intent** (which ref we want); `EXTERNALS.lock` is the
+**reality** (which commit we got). One-line-per-external manifest:
 
-Pin upgrades go in one PR per external. Bump the ref here, re-run
-`make fetch-externals`, commit the new lock line, attach the diff to a
-Phase notes file.
+    <name> <repo> <requested_ref> <resolved_commit>
+
+**`EXTERNALS.lock` is checked in.** Once a fetch resolves a branch tip
+to a real commit, that line is what guarantees a future
+`make fetch-externals` reproduces the same tree. Treat the lock the
+same way you would a `package-lock.json` or `Cargo.lock`: regenerate
+deliberately, review the diff, commit it.
+
+Pin upgrades go in one PR per external: bump `requested_ref` here,
+re-run `make fetch-externals --only <name> --force`, commit the new
+lock line plus this table, attach the diff to a Phase notes file.
 
 ## License tracking
 
@@ -38,8 +50,8 @@ Real audit happens before any release / submission.
 
 ```
 externals/
-  EXTERNALS.md            this file
-  EXTERNALS.lock          written by fetch_externals.sh (UNVERIFIED in repo until first fetch)
+  EXTERNALS.md            this file (intent)
+  EXTERNALS.lock          fetch_externals.sh output (reality); checked in
   src/                    cloned source trees (gitignored)
   install/                build artefacts (gitignored)
 ```
