@@ -19,6 +19,7 @@ Checks (required unless noted):
   - python3 yaml module  (PyYAML; needed by the batch runner)
   - timeout              (GNU coreutils; bounds smoke match wall clock)
   - setsid               (util-linux; lets the harness kill the process tree)
+  - curl, tar            (optional; needed by scripts/fetch_externals.sh)
   - jq                   (optional, used for metrics inspection)
 
 Exit status:

@@ -71,7 +71,10 @@ die() { echo "[build] ERROR: $*" >&2; exit 1; }
 # missing batch, never invoke a package manager ourselves.
 preflight() {
   local missing=()
-  for bin in autoconf automake libtool pkg-config flex bison g++ make; do
+  # libtoolize (libtool's autotools front-end) is the binary present on
+  # modern Debian/Ubuntu; the `libtool` shell driver is no longer
+  # installed on PATH but autotools rebuilds use libtoolize directly.
+  for bin in autoconf automake libtoolize pkg-config flex bison g++ make; do
     command -v "$bin" >/dev/null 2>&1 || missing+=("$bin")
   done
   if (( ${#missing[@]} > 0 )); then

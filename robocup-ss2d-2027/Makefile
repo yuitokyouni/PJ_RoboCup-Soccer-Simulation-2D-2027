@@ -18,6 +18,8 @@ help:
 	@echo "  make batch           Run an N-match experiment; requires EXPERIMENT=path/to.yaml"
 	@echo "                       (optional: NUM_MATCHES, TIMEOUT, FORCE=1, DRY_RUN=1)"
 	@echo "  make aggregate       Re-aggregate summary.csv/summary.json for EXPERIMENT_DIR"
+	@echo "  make compare         Compare two summary.json files; refuses strong claims under SMOKE_ONLY"
+	@echo "                       (BASELINE=path/sum.json VARIANT=path/sum.json required)"
 	@echo "Phase 2.5 real integration:"
 	@echo "  make fetch-externals Fetch rcssserver/librcsc/helios-base/cyrus2dbase tarballs into externals/src/"
 	@echo "                       (optional: FORCE=1, ONLY=name)"
@@ -85,3 +87,11 @@ clean:
 
 test:
 	@bash $(ROOT)/tests/test_attestation.sh
+
+compare:
+	@if [[ -z "$(BASELINE)" || -z "$(VARIANT)" ]]; then \
+	  echo "BASELINE and VARIANT are required, e.g." >&2; \
+	  echo "  make compare BASELINE=path/baseline/summary.json VARIANT=path/variant/summary.json" >&2; \
+	  exit 2; \
+	fi
+	@python3 $(EVAL)/../scripts/compare_summaries.py "$(BASELINE)" "$(VARIANT)"
