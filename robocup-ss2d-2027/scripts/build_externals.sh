@@ -147,6 +147,23 @@ build_helios_base() {
   # helios-base needs librcsc installed first. Pass --with-librcsc.
   [[ -d "$INSTALL/lib" ]] \
     || die "helios-base: librcsc not installed under $INSTALL. Build librcsc first."
+
+  # Apply Phase 4 defensive-duty patch (PRESS / COVER / DefenseDuty
+  # assigner) before bootstrap so the regenerated Makefile.in picks up
+  # the new .cpp files. The patch script is idempotent.
+  local patch="$ROOT/externals/patches/helios-base/apply.sh"
+  if [[ -x "$patch" ]]; then
+    echo "[build] applying helios-base defensive-duty patch"
+    bash "$patch" "$SRC/helios-base/src"
+    # Force re-bootstrap by removing the generated Makefile.in so
+    # build_autotools' ./bootstrap step regenerates it from the patched
+    # Makefile.am. Otherwise a previous build's Makefile.in would be
+    # reused and the new sources would never compile.
+    rm -f "$SRC/helios-base/src/player/Makefile.in"
+  else
+    echo "[build] WARN: $patch not found or not executable; building unpatched helios-base"
+  fi
+
   build_autotools helios-base --with-librcsc="$INSTALL"
 }
 
