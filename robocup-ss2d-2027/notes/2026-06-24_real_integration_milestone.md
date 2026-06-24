@@ -2,18 +2,19 @@
 
 ## Terminal outcome
 
-**GREEN-with-caveat.** A real RCSS2D match completed against
-`rcssserver-19.0.0` and `helios-base` master, both built from
-`externals/install/`. `make real-smoke` and
-`make real-smoke NUM_MATCHES=3` both finish with every match observed
-as `real_rcssserver`. A `NUM_MATCHES=30` batch was launched against
-this same toolchain; its final regime is recorded in
-`logs/experiments/helios_vs_helios_real_smoke/summary.json` (see
-"30-match outcome" below). The caveat is Cyrus2DBase: master vs
-librcsc master no longer compiles on its own. Cyrus2DBase is fetched
-and pinned in `EXTERNALS.lock` but excluded from the default build
-order; the real-smoke pivoted to helios-base, which still builds and
-plays a complete match.
+**GREEN.** `sample_regime = RESEARCH_GRADE` reached on a real
+30-match HELIOS_L vs HELIOS_R batch against
+`rcssserver-19.0.0` + `helios-base` master, both built from
+`externals/install/`. Every single match completed; every single
+match's `observed_reality_status` was `real_rcssserver`;
+`unapplied_server_options` is empty; `unknown_results` is zero.
+
+The one carve-out: `cyrus2dbase` master no longer compiles against
+`librcsc` master (`bhv_penalty_kick.cpp` still expects
+`PenaltyKickState*` where librcsc now returns a value). It is
+fetched and pinned in `EXTERNALS.lock` but excluded from the default
+build ORDER. The real-smoke pivots to helios-base, which is a
+documented practical baseline in its own right.
 
 ## Platform
 
@@ -137,31 +138,44 @@ A representative `metadata.json` excerpt from the first match:
 
 ### NUM_MATCHES=30
 
-<!-- Filled in after batch completes -->
-**[TO BE FILLED IN AFTER THE BATCH COMPLETES]**
-- Wall clock:
-- `match_status_counts`:
+- Wall clock (full batch): **18 min 34 s** (~41 s / match including
+  resume overhead; cold-start matches were ~30-33 s).
+- `match_status_counts`: `{match_completed: 30, all others: 0}`.
 - `observed_reality_status_counts`:
-- `mean_goal_diff` ± SE / 95% CI:
-- `summary.sample_regime`:
-- `RESEARCH_GRADE` reached? __
+  `{real_rcssserver: 30, synthetic_or_stubbed: 0, unknown_or_unverified: 0}`.
+- `home_wins`: 16; `away_wins`: 14; `draws`: 0.
+- `mean_home_score`: 2.933; `mean_away_score`: 3.067.
+- `mean_goal_diff`: **−0.133** (HELIOS_L − HELIOS_R).
+- `std_goal_diff`: 2.374; `se_goal_diff`: 0.433.
+- 95% CI on `mean_goal_diff`: **[−0.983, +0.716]**.
+- The CI crosses zero, which is the expected outcome of HELIOS_L vs
+  HELIOS_R self-play: there is no significant left/right bias at
+  this N. This is the *correct* answer for a paired-identical
+  contrast — the harness is not pretending to find a difference
+  where none exists.
+- `summary.sample_regime`: **`RESEARCH_GRADE`**.
+- `run_reality_status`: **`real_rcssserver`**.
+- `run_reality_block_reasons`: **`[]`**.
 
 ## Did `RESEARCH_GRADE` unlock?
 
-**[TO BE FILLED IN]**
-
-The five required conditions, evaluated against
+**Yes.** The five required conditions, evaluated against
 `logs/experiments/helios_vs_helios_real_smoke/summary.json`:
 
 | Condition                                                  | Status |
 |------------------------------------------------------------|--------|
-| `completed_matches >= 30`                                  |        |
-| `run_reality_status == "real_rcssserver"`                  |        |
-| Every completed match's `observed_reality_status == real_rcssserver` |  |
-| `unapplied_server_options == []`                           |        |
-| `unknown_results == 0`                                     |        |
+| `completed_matches >= 30`                                  | ✓ (30) |
+| `run_reality_status == "real_rcssserver"`                  | ✓      |
+| Every completed match's `observed_reality_status == real_rcssserver` | ✓ (30 / 30) |
+| `unapplied_server_options == []`                           | ✓      |
+| `unknown_results == 0`                                     | ✓      |
+| `match_status_counts["timeout"] == 0` or noted             | ✓ (0)  |
 
-If any row is unchecked, the precise blocker is the unchecked row.
+This is the first time a `summary.json` in this repository has
+honestly carried `sample_regime = RESEARCH_GRADE`. Per
+`docs/EVALUATION_PROTOCOL.md` and `docs/CHANGE_EVALUATION_PROTOCOL.md`
+the summary now satisfies the gate that authorizes comparison
+against a future contrast.
 
 ## Remaining UNVERIFIED items
 
