@@ -1,0 +1,11 @@
+logs/runs/*
+!logs/runs/.gitkeep
+
+*.rcg
+*.rcl
+*.log
+*.o
+build/
+dist/
+__pycache__/
+.venv/
