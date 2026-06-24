@@ -25,7 +25,7 @@ help:
 	@echo "                       (optional: FORCE=1, ONLY=name)"
 	@echo "  make build-externals Build the fetched externals into externals/install/"
 	@echo "                       (optional: ONLY=name, JOBS=N)"
-	@echo "  make real-smoke      Run 1 real Cyrus2DBase-vs-Cyrus2DBase match"
+	@echo "  make real-smoke      Run 1 real helios-base-vs-helios-base match (REAL_SMOKE_EXPERIMENT overridable)"
 	@echo "                       (optional: NUM_MATCHES, TIMEOUT, FORCE=1, DRY_RUN=1)"
 	@echo "  make test            Run the attestation self-tests"
 
@@ -67,9 +67,11 @@ build-externals:
 	  $(if $(ONLY),--only $(ONLY)) \
 	  $(if $(JOBS),--jobs $(JOBS))
 
+REAL_SMOKE_EXPERIMENT ?= $(ROOT)/experiments/helios_vs_helios_smoke.yaml
+
 real-smoke:
 	@bash $(SCRIPTS)/run_batch_matches.sh \
-	  --experiment $(ROOT)/experiments/cyrus_vs_cyrus_smoke.yaml \
+	  --experiment "$(REAL_SMOKE_EXPERIMENT)" \
 	  --num-matches $(if $(NUM_MATCHES),$(NUM_MATCHES),1) \
 	  $(if $(TIMEOUT),--timeout $(TIMEOUT)) \
 	  $(if $(FORCE),--force) \

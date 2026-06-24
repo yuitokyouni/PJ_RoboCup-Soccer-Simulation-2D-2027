@@ -56,10 +56,16 @@ SCORE_LINE = re.compile(
 )
 
 # Default rcg filename emitted by rcssserver, e.g.
-#   202606241530-helios_2-helios_1.rcg
-#   202606241530-helios_0-helios_0.rcg.gz
+#   202606241530-helios_2-helios_1.rcg          (rcssserver-18 and earlier)
+#   20260624153012-HELIOS_L_2-vs-HELIOS_R_1.rcg (rcssserver-19)
+#   20260624153012-HELIOS_L_32-vs-null.rcg      (rcssserver-19 when one side fails to connect)
+# The optional "-vs-" + optional "null" right side cover both releases.
 RCG_FILENAME = re.compile(
-    r"^[0-9]{8,14}-([A-Za-z0-9_]+?)_([0-9]+)-([A-Za-z0-9_]+?)_([0-9]+)\.rcg(?:\.gz)?$"
+    r"^[0-9]{8,14}-"
+    r"([A-Za-z0-9_]+?)_([0-9]+)"
+    r"-(?:vs-)?"
+    r"(?:([A-Za-z0-9_]+?)_([0-9]+)|null)"
+    r"\.rcg(?:\.gz)?$"
 )
 
 METADATA_KEYS = (
@@ -93,6 +99,12 @@ def parse_score_from_rcg_name(path: Path) -> dict | None:
     if not m:
         return None
     home, hs, away, as_ = m.groups()
+    if away is None:
+        # rcssserver-19 marks an unconnected side as "null". We retain
+        # the home name and score and record the other side as
+        # explicitly absent rather than guessing.
+        return {"home_team": home, "away_team": "null",
+                "home_score": int(hs), "away_score": None}
     return {"home_team": home, "away_team": away,
             "home_score": int(hs), "away_score": int(as_)}
 

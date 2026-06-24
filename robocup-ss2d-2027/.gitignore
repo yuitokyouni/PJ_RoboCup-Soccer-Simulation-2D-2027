@@ -10,3 +10,6 @@ build/
 dist/
 __pycache__/
 .venv/
+
+# rcssserver-19 creates default configs at literal '~/.rcssserver/' when run from a dir without a real HOME context
+~/

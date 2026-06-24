@@ -13,8 +13,8 @@ Usage:
 Checks (required unless noted):
   - rcssserver
   - rcssmonitor          (optional, GUI)
-  - librcsc              (via rcsc-config or pkg-config librcsc)
-  - helios-base players  (helios_player, helios_coach, helios_trainer)
+  - librcsc              (via librcsc-config or rcsc-config or pkg-config librcsc)
+  - helios-base build    (start.sh + sample_player + sample_coach under externals/src/helios-base/src/)
   - python3
   - python3 yaml module  (PyYAML; needed by the batch runner)
   - timeout              (GNU coreutils; bounds smoke match wall clock)
@@ -69,16 +69,27 @@ check_required timeout       "system package manager (GNU coreutils)"
 check_required setsid        "system package manager (util-linux)"
 check_optional jq            "system package manager"
 
-for b in helios_player helios_coach helios_trainer; do
-  check_required "$b" "build helios-base: https://github.com/helios-base/helios-base"
-done
+# helios-base does not `make install` its binaries; they live under
+# externals/src/helios-base/src/ as start.sh and the sample_*
+# executables. The start script is what scripts/run_smoke_match.sh
+# launches; the binaries are what start.sh calls in turn.
+HELIOS_SRC="$(dirname "$(realpath "${BASH_SOURCE[0]}")")/../externals/src/helios-base/src"
+if [[ -x "$HELIOS_SRC/start.sh" \
+   && -x "$HELIOS_SRC/sample_player" \
+   && -x "$HELIOS_SRC/sample_coach" ]]; then
+  note "helios-base build present under $HELIOS_SRC"
+else
+  miss_req "helios-base (build with: make fetch-externals && make build-externals; expects start.sh + sample_player + sample_coach under $HELIOS_SRC)"
+fi
 
-if command -v rcsc-config >/dev/null 2>&1; then
+if command -v librcsc-config >/dev/null 2>&1; then
+  note "librcsc detected via librcsc-config ($(command -v librcsc-config))"
+elif command -v rcsc-config >/dev/null 2>&1; then
   note "librcsc detected via rcsc-config ($(command -v rcsc-config))"
 elif pkg-config --exists librcsc 2>/dev/null; then
   note "librcsc detected via pkg-config"
 else
-  miss_req "librcsc (build: https://github.com/helios-base/librcsc)"
+  miss_req "librcsc (build with: make fetch-externals && make build-externals)"
 fi
 
 if python3 -c "import yaml" >/dev/null 2>&1; then

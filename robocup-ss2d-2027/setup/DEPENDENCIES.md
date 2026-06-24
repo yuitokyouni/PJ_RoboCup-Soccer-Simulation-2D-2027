@@ -20,11 +20,17 @@ Required by `scripts/build_externals.sh` to compile `rcssserver`,
 `librcsc`, `helios-base`, and `cyrus2dbase` under `externals/install/`.
 Not needed if you only intend to use binaries already on `PATH`.
 
-| Group              | Packages (Debian/Ubuntu)                                                     |
-|--------------------|------------------------------------------------------------------------------|
-| Autotools toolchain| `autoconf automake libtool pkg-config flex bison build-essential`            |
-| Boost              | `libboost-all-dev`                                                           |
-| Qt5 (helios/cyrus) | `qtbase5-dev qt5-qmake`                                                      |
+| Group              | Packages (Debian/Ubuntu)                                                                |
+|--------------------|-----------------------------------------------------------------------------------------|
+| Autotools toolchain| `autoconf automake libtool pkg-config flex bison build-essential libfl-dev`             |
+| Boost              | `libboost-all-dev`                                                                      |
+| Qt5 (helios/cyrus) | `qtbase5-dev qt5-qmake`                                                                 |
+
+`libfl-dev` ships `/usr/include/FlexLexer.h`, which `rcssserver`'s
+clang parser includes; `flex` alone is not enough. On Ubuntu 24.04
+the `libtool` package installs `libtoolize` (the autotools front-end)
+rather than a `libtool` shell driver on `PATH`; the build pre-flight
+looks for `libtoolize` accordingly.
 
 `build_externals.sh` pre-flights every required tool above and refuses
 to proceed with a one-line `sudo apt install ...` hint if anything is

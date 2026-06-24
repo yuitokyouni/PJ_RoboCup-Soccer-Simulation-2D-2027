@@ -80,8 +80,16 @@ preflight() {
   if (( ${#missing[@]} > 0 )); then
     echo "[build] missing system tool(s): ${missing[*]}"
     echo "[build] on Debian/Ubuntu: sudo apt install -y \\"
-    echo "         autoconf automake libtool pkg-config flex bison build-essential"
+    echo "         autoconf automake libtool pkg-config flex bison build-essential libfl-dev"
     die "install the system tools above and re-run"
+  fi
+  # libfl-dev ships FlexLexer.h, which rcssserver's clang/parser tree
+  # includes. The flex binary alone is not enough; libfl-dev is a
+  # separate Debian package.
+  if [[ ! -f /usr/include/FlexLexer.h && ! -f /usr/local/include/FlexLexer.h ]]; then
+    echo "[build] FlexLexer.h not found in standard locations."
+    echo "[build] on Debian/Ubuntu: sudo apt install -y libfl-dev"
+    die "install libfl-dev and re-run"
   fi
   # Boost: probe with pkg-config + a header existence check.
   if ! pkg-config --exists boost 2>/dev/null \
@@ -144,7 +152,15 @@ build_cyrus2dbase() {
   build_autotools cyrus2dbase --with-librcsc="$INSTALL"
 }
 
-ORDER=(librcsc rcssserver helios-base cyrus2dbase)
+# Cyrus2DBase master fails to build against librcsc master as of
+# 2026-06-24 -- librcsc changed PenaltyKickState's return type from
+# pointer to value, and Cyrus2DBase's bhv_penalty_kick.cpp still
+# expects the pointer form. Until that is reconciled (either pin
+# librcsc to a pre-change commit on the Cyrus side, or wait for
+# Cyrus2DBase to update), it is excluded from the default ORDER.
+# Pass `--only cyrus2dbase` to attempt the build anyway; the same
+# compile error will reappear.
+ORDER=(librcsc rcssserver helios-base)
 
 run_one() {
   case "$1" in
