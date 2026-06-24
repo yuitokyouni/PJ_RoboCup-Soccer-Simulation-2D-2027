@@ -3,8 +3,9 @@
 #
 # Phase 1 goal: produce a reproducible run directory under logs/runs/<TS>/
 # containing the server output, the .rcg / .rcl logs, metadata.json (what
-# the harness ran), and metrics.json (what the parser extracted). This
-# script is *not* a tournament runner; for batch evaluation see Phase 2.
+# the harness ran and how it ended), and metrics.json (what the parser
+# extracted). This script is *not* a tournament runner; for batch
+# evaluation see Phase 2.
 set -euo pipefail
 
 usage() {
@@ -12,7 +13,13 @@ usage() {
 run_smoke_match.sh - run a single baseline-vs-baseline smoke match
 
 Usage:
-  run_smoke_match.sh [--help]
+  run_smoke_match.sh [--help] [--timeout SECONDS]
+
+Options:
+  --timeout SECONDS  Hard wall-clock cap for the match. Default: 120
+                     (overridable by env TIMEOUT_SECS). The server is run
+                     under `timeout --kill-after=5`; on timeout the
+                     metadata.json is marked match_status="timeout".
 
 Environment:
   HELIOS_BASE_DIR  Directory of a built helios-base checkout.
@@ -22,41 +29,58 @@ Environment:
   AWAY_TEAM_START  Executable that launches the away team.
                    Default: same as HOME_TEAM_START
   RCSS_PORT        rcssserver port. Default: 6000
+  TIMEOUT_SECS     Match wall-clock cap in seconds. Default: 120
 
 Output (under logs/runs/<UTC-timestamp>/):
   server.out      rcssserver stdout/stderr
   *.rcg           game log (binary, only if the match progressed)
   *.rcl           text log (only if the match progressed)
-  metadata.json   runtime metadata: which binary, which version, which
-                  server::* options, which team-start commands
-  metrics.json    machine-readable match result (via parse_match_result.py)
+  metadata.json   runtime metadata, always written; includes match_status
+  metrics.json    machine-readable match result (only when a .rcg exists)
+
+match_status (in metadata.json):
+  dependency_missing       a required tool / start script was not found
+  server_failed_to_start   rcssserver exited non-zero before a match ran
+  teams_failed_to_start    server ran cleanly but produced no .rcg
+  match_completed          server exited cleanly and a .rcg was produced
+  timeout                  hard wall-clock cap hit; processes killed
+  unknown_failure          script died for a reason not covered above
 
 Exit status:
-  0  match completed and metrics.json written
-  1  required dependency missing or rcssserver produced no game log
+  0  match_completed
+  1  any other match_status, or rcssserver / python3 not in PATH
 EOF
 }
 
-case "${1:-}" in
-  -h|--help) usage; exit 0 ;;
-  "") ;;
-  *) echo "run_smoke_match.sh: unknown argument: $1" >&2; usage >&2; exit 2 ;;
-esac
+TIMEOUT_SECS="${TIMEOUT_SECS:-120}"
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h|--help) usage; exit 0 ;;
+    --timeout) shift; [[ $# -gt 0 ]] || { echo "--timeout needs a value" >&2; exit 2; }; TIMEOUT_SECS="$1"; shift ;;
+    --timeout=*) TIMEOUT_SECS="${1#*=}"; shift ;;
+    *) echo "run_smoke_match.sh: unknown argument: $1" >&2; usage >&2; exit 2 ;;
+  esac
+done
+[[ "$TIMEOUT_SECS" =~ ^[1-9][0-9]*$ ]] \
+  || { echo "run_smoke_match.sh: --timeout must be a positive integer, got '$TIMEOUT_SECS'" >&2; exit 2; }
 
 die() { echo "[smoke] ERROR: $*" >&2; exit 1; }
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
+# Critical deps must be present even to set up a run dir.
 command -v rcssserver >/dev/null 2>&1 \
   || die "rcssserver not in PATH. Run 'make doctor' and see setup/SETUP.md."
 command -v python3 >/dev/null 2>&1 \
   || die "python3 not in PATH (needed for the result parser)."
+command -v timeout >/dev/null 2>&1 \
+  || die "GNU 'timeout' not in PATH (needed to bound the match wall clock)."
+command -v setsid >/dev/null 2>&1 \
+  || die "'setsid' not in PATH (needed to clean up the rcssserver process tree)."
 
 BIN="$(command -v rcssserver)"
 
-# Capture the server version once, tolerantly. The probe script does the
-# same dance, but we deliberately repeat it here so metadata.json stands
-# on its own without relying on probe having been run.
+# Capture server version once, tolerantly.
 SERVER_VERSION="$(
   { "$BIN" --version 2>&1 || true; } | head -n1
 )"
@@ -69,23 +93,14 @@ if [[ -z "$SERVER_VERSION" || "$SERVER_VERSION" =~ [Uu]nrecognized|[Ii]nvalid ]]
   SERVER_VERSION="unknown"
 fi
 
-HOME_TEAM_START="${HOME_TEAM_START:-${HELIOS_BASE_DIR:-}/src/start.sh}"
+HOME_TEAM_START="${HOME_TEAM_START:-${HELIOS_BASE_DIR:+$HELIOS_BASE_DIR/src/start.sh}}"
 AWAY_TEAM_START="${AWAY_TEAM_START:-$HOME_TEAM_START}"
-
-[[ -n "$HOME_TEAM_START" && -x "$HOME_TEAM_START" ]] \
-  || die "HOME_TEAM_START not executable: '$HOME_TEAM_START'. Set HELIOS_BASE_DIR or HOME_TEAM_START."
-[[ -n "$AWAY_TEAM_START" && -x "$AWAY_TEAM_START" ]] \
-  || die "AWAY_TEAM_START not executable: '$AWAY_TEAM_START'. Set AWAY_TEAM_START."
-
 RCSS_PORT="${RCSS_PORT:-6000}"
 TS="$(date -u +%Y-%m-%dT%H%M%SZ)"
 CREATED_AT_UTC="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 RUN_DIR="$ROOT/logs/runs/$TS"
 mkdir -p "$RUN_DIR"
 
-# Exact server::* options the harness passes. Kept in a bash array so we
-# can both pass them on the command line and record them verbatim in
-# metadata.json. Keep in sync with setup/SERVER_CONTRACT.md.
 SERVER_OPTIONS=(
   "server::game_log_dir=$RUN_DIR"
   "server::text_log_dir=$RUN_DIR"
@@ -96,6 +111,9 @@ SERVER_OPTIONS=(
   "server::team_r_start=$AWAY_TEAM_START"
 )
 
+MATCH_STATUS="unknown_failure"
+SERVER_PID=""
+
 write_metadata() {
   python3 - \
     "$RUN_DIR/metadata.json" \
@@ -105,18 +123,23 @@ write_metadata() {
     "$SERVER_VERSION" \
     "$HOME_TEAM_START" \
     "$AWAY_TEAM_START" \
+    "$TIMEOUT_SECS" \
+    "$MATCH_STATUS" \
     "${SERVER_OPTIONS[@]}" <<'PYEOF'
 import json, sys
-path, run_id, created_at, binary, version, home_cmd, away_cmd, *opts = sys.argv[1:]
+(path, run_id, created_at, binary, version,
+ home_cmd, away_cmd, timeout_secs, match_status, *opts) = sys.argv[1:]
 data = {
-    "schema_version": "1.1",
-    "run_id": run_id,
-    "created_at_utc": created_at,
-    "server_binary": binary,
-    "server_version": version,
-    "server_options": opts,
+    "schema_version":     "1.1",
+    "run_id":             run_id,
+    "created_at_utc":     created_at,
+    "server_binary":      binary,
+    "server_version":     version,
+    "server_options":     opts,
     "home_start_command": home_cmd,
     "away_start_command": away_cmd,
+    "timeout_secs":       int(timeout_secs),
+    "match_status":       match_status,
 }
 with open(path, "w") as f:
     json.dump(data, f, indent=2)
@@ -124,34 +147,90 @@ with open(path, "w") as f:
 PYEOF
 }
 
+cleanup_processes() {
+  # SERVER_PID is the session leader (setsid), so PGID == PID. Kill the
+  # whole process group so player/coach/trainer children die with it.
+  if [[ -n "$SERVER_PID" ]] && kill -0 "$SERVER_PID" 2>/dev/null; then
+    kill -TERM -"$SERVER_PID" 2>/dev/null || true
+    sleep 0.5
+    kill -KILL -"$SERVER_PID" 2>/dev/null || true
+    wait "$SERVER_PID" 2>/dev/null || true
+  fi
+}
+
+on_exit() {
+  local rc=$?
+  cleanup_processes
+  if [[ -d "$RUN_DIR" ]]; then
+    write_metadata 2>>"$RUN_DIR/server.out" || true
+  fi
+  trap - EXIT INT TERM
+  exit "$rc"
+}
+
+trap on_exit EXIT
+trap 'echo "[smoke] caught signal; cleaning up" >&2; exit 130' INT TERM
+
+# Write metadata once up front so a very-early crash still leaves a record.
+write_metadata
+
+# dependency_missing: start scripts not usable.
+if [[ -z "$HOME_TEAM_START" || ! -x "$HOME_TEAM_START" ]]; then
+  MATCH_STATUS="dependency_missing"
+  die "HOME_TEAM_START not executable: '$HOME_TEAM_START'. Set HELIOS_BASE_DIR or HOME_TEAM_START."
+fi
+if [[ ! -x "$AWAY_TEAM_START" ]]; then
+  MATCH_STATUS="dependency_missing"
+  die "AWAY_TEAM_START not executable: '$AWAY_TEAM_START'. Set AWAY_TEAM_START."
+fi
+
 echo "[smoke] run dir:         $RUN_DIR"
 echo "[smoke] rcssserver:      $BIN ($SERVER_VERSION)"
+echo "[smoke] timeout:         ${TIMEOUT_SECS}s"
 echo "[smoke] home team start: $HOME_TEAM_START"
 echo "[smoke] away team start: $AWAY_TEAM_START"
 echo "[smoke] starting rcssserver on port $RCSS_PORT"
 
 # NOTE: the auto_mode + team_l_start / team_r_start triple has been the
 # canonical way to drive an unattended match for many rcssserver versions,
-# but this exact invocation has not been verified against rcssserver-18 in
-# this repo. See setup/SERVER_CONTRACT.md for the running tally.
-"$BIN" "${SERVER_OPTIONS[@]}" > "$RUN_DIR/server.out" 2>&1 &
+# but this exact invocation has not been verified against rcssserver-18.
+# See setup/SERVER_CONTRACT.md for the running tally.
+setsid timeout --kill-after=5 "$TIMEOUT_SECS" \
+  "$BIN" "${SERVER_OPTIONS[@]}" \
+  > "$RUN_DIR/server.out" 2>&1 &
 SERVER_PID=$!
 
-cleanup() { kill "$SERVER_PID" 2>/dev/null || true; }
-trap cleanup EXIT INT TERM
-
-wait "$SERVER_PID" || true
-trap - EXIT INT TERM
-
-write_metadata
+if wait "$SERVER_PID"; then
+  SERVER_RC=0
+else
+  SERVER_RC=$?
+fi
 
 RCG="$(find "$RUN_DIR" -maxdepth 1 \( -name '*.rcg' -o -name '*.rcg.gz' \) | head -n1 || true)"
 RCL="$(find "$RUN_DIR" -maxdepth 1 -name '*.rcl' | head -n1 || true)"
 
-if [[ -z "$RCG" ]]; then
-  echo "[smoke] tail of server.out:"
+# Determine match_status from (server exit code, log presence).
+# timeout(1) returns 124 on time-out, 137 on KILL after --kill-after.
+if (( SERVER_RC == 124 || SERVER_RC == 137 )); then
+  MATCH_STATUS="timeout"
+elif (( SERVER_RC != 0 )); then
+  MATCH_STATUS="server_failed_to_start"
+elif [[ -z "$RCG" ]]; then
+  MATCH_STATUS="teams_failed_to_start"
+else
+  MATCH_STATUS="match_completed"
+fi
+
+# Refresh metadata so it reflects the determined status before the parser
+# runs (the parser does not consume match_status, but a forensic reader
+# expecting an up-to-date file will see the right value).
+write_metadata
+
+if [[ "$MATCH_STATUS" != "match_completed" ]]; then
+  echo "[smoke] match_status: $MATCH_STATUS" >&2
+  echo "[smoke] tail of server.out:" >&2
   tail -n 40 "$RUN_DIR/server.out" >&2 || true
-  die "rcssserver did not produce a .rcg log. See $RUN_DIR/server.out and $RUN_DIR/metadata.json."
+  exit 1
 fi
 
 python3 "$ROOT/evaluation/parse_match_result.py" \
@@ -161,5 +240,6 @@ python3 "$ROOT/evaluation/parse_match_result.py" \
   --output "$RUN_DIR/metrics.json" \
   --notes "smoke test"
 
+echo "[smoke] match_status: $MATCH_STATUS"
 echo "[smoke] done: $RUN_DIR/metrics.json"
 echo "[smoke]       $RUN_DIR/metadata.json"
