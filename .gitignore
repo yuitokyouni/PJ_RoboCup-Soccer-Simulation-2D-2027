@@ -1,0 +1,4 @@
+# rcssserver dropped configs when invoked from unusual cwd
+/~/
+/*.rcg
+/*.rcl
