@@ -135,6 +135,14 @@ build_rcssserver() {
   build_autotools rcssserver
 }
 
+build_rcssmonitor() {
+  # rcssmonitor is Qt5 GUI -- needs qmake (qtbase5-dev qt5-qmake).
+  if ! command -v qmake >/dev/null 2>&1 && ! command -v qmake-qt5 >/dev/null 2>&1; then
+    die "rcssmonitor: qmake (Qt5) not found. Install with: sudo apt install -y qtbase5-dev qt5-qmake"
+  fi
+  build_autotools rcssmonitor
+}
+
 build_helios_base() {
   # helios-base needs librcsc installed first. Pass --with-librcsc.
   [[ -d "$INSTALL/lib" ]] \
@@ -166,9 +174,10 @@ run_one() {
   case "$1" in
     librcsc)     build_librcsc ;;
     rcssserver)  build_rcssserver ;;
+    rcssmonitor) build_rcssmonitor ;;
     helios-base) build_helios_base ;;
     cyrus2dbase) build_cyrus2dbase ;;
-    *) die "unknown external: $1 (one of: ${ORDER[*]})" ;;
+    *) die "unknown external: $1 (one of: librcsc, rcssserver, rcssmonitor, helios-base, cyrus2dbase)" ;;
   esac
 }
 

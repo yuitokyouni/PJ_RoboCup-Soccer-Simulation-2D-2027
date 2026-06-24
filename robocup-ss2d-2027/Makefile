@@ -28,6 +28,8 @@ help:
 	@echo "  make real-smoke      Run 1 real helios-base-vs-helios-base match (REAL_SMOKE_EXPERIMENT overridable)"
 	@echo "                       (optional: NUM_MATCHES, TIMEOUT, FORCE=1, DRY_RUN=1)"
 	@echo "  make test            Run the attestation self-tests"
+	@echo "  make highlights      Render a goals-only highlights mp4 from a match"
+	@echo "                       (RUN_DIR=logs/.../match_NNNNNN OUTPUT=video.mp4 required)"
 
 doctor:
 	@bash $(SCRIPTS)/doctor.sh
@@ -89,6 +91,18 @@ clean:
 
 test:
 	@bash $(ROOT)/tests/test_attestation.sh
+
+highlights:
+	@if [[ -z "$(RUN_DIR)" || -z "$(OUTPUT)" ]]; then \
+	  echo "RUN_DIR and OUTPUT are required, e.g." >&2; \
+	  echo "  make highlights RUN_DIR=logs/experiments/<id>/matches/match_NNNNNN OUTPUT=highlights.mp4" >&2; \
+	  exit 2; \
+	fi
+	@bash $(SCRIPTS)/make_highlights.sh \
+	  --run-dir "$(RUN_DIR)" --output "$(OUTPUT)" \
+	  $(if $(PRE),--pre $(PRE)) \
+	  $(if $(POST),--post $(POST)) \
+	  $(if $(TIMER_MS),--timer-ms $(TIMER_MS))
 
 compare:
 	@if [[ -z "$(BASELINE)" || -z "$(VARIANT)" ]]; then \

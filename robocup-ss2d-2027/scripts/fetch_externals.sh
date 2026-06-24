@@ -68,6 +68,7 @@ mkdir -p "$SRC"
 # (name repo requested_ref) tuples. Keep in sync with externals/EXTERNALS.md.
 EXTERNALS=(
   "rcssserver    https://github.com/rcsoccersim/rcssserver         rcssserver-19.0.0"
+  "rcssmonitor   https://github.com/rcsoccersim/rcssmonitor        master"
   "librcsc       https://github.com/helios-base/librcsc            master"
   "helios-base   https://github.com/helios-base/helios-base        master"
   "cyrus2dbase   https://github.com/Cyrus2D/Cyrus2DBase            master"
