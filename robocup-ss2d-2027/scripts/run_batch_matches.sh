@@ -115,6 +115,44 @@ AWAY_CMD="$(yaml_get away_start_command)"
 [[ "$TIMEOUT_SECS" =~ ^[1-9][0-9]*$ ]] \
   || die "timeout_secs must be a positive integer, got '$TIMEOUT_SECS'"
 
+# yaml.reality_assertion (default synthetic_or_stubbed). Validated here
+# so a malformed value is caught before any match runs.
+REALITY_ASSERTION="$(python3 -c 'import json,sys; d=json.loads(sys.argv[1]) or {}; v=d.get("reality_assertion") or "synthetic_or_stubbed"; sys.stdout.write(v)' "$YAML_JSON")"
+case "$REALITY_ASSERTION" in
+  synthetic_or_stubbed|real_rcssserver) ;;
+  *) die "yaml reality_assertion must be 'synthetic_or_stubbed' or 'real_rcssserver', got '$REALITY_ASSERTION'" ;;
+esac
+
+# Filter yaml.server_options: strip entries that begin with "UNVERIFIED:"
+# or fail the server::namespace[::sub]=value shape. The stripped entries
+# are recorded in experiment.json::declared_server_options_filter_notes
+# and the union of unapplied options surfaces in summary.json. See
+# docs/REAL_INTEGRATION.md for why this split exists.
+FILTER_JSON="$(python3 - "$YAML_JSON" <<'PYEOF'
+import json, re, sys
+d = json.loads(sys.argv[1]) or {}
+declared = d.get("server_options") or []
+SHAPE = re.compile(r'^server::[A-Za-z_][A-Za-z_0-9]*(::[A-Za-z_][A-Za-z_0-9]*)?=.+$')
+kept, notes = [], []
+for o in declared:
+    if not isinstance(o, str):
+        notes.append(f"stripped non-string server_options entry: {o!r}")
+        continue
+    if o.startswith("UNVERIFIED:"):
+        notes.append(f"stripped UNVERIFIED-prefixed server_options entry: {o}")
+        continue
+    if not SHAPE.match(o):
+        notes.append(f"stripped malformed server_options entry: {o!r}")
+        continue
+    kept.append(o)
+print(json.dumps({"declared": declared, "kept": kept, "filter_notes": notes}))
+PYEOF
+)"
+KEPT_SERVER_OPTIONS=()
+while IFS= read -r line; do
+  [[ -n "$line" ]] && KEPT_SERVER_OPTIONS+=("$line")
+done < <(python3 -c 'import json,sys; [print(o) for o in json.loads(sys.argv[1])["kept"]]' "$FILTER_JSON")
+
 EXP_DIR="$ROOT/logs/experiments/$EXP_ID"
 mkdir -p "$EXP_DIR/matches"
 
@@ -131,21 +169,29 @@ write_experiment_json() {
     "$STARTED_AT" "$ended_at" \
     "$NUM_MATCHES" "$TIMEOUT_SECS" \
     "$FORCE" "$DRY_RUN" \
-    "$run" "$skipped" "$total_seen" <<'PYEOF'
+    "$run" "$skipped" "$total_seen" \
+    "$REALITY_ASSERTION" \
+    "$FILTER_JSON" <<'PYEOF'
 import json, sys
 (path, exp_id, yaml_source, yaml_json,
  started_at, ended_at,
  num_matches, timeout_secs,
  force, dry_run,
- num_run, num_skipped, num_seen) = sys.argv[1:]
+ num_run, num_skipped, num_seen,
+ reality_assertion, filter_json) = sys.argv[1:]
 def _maybe_int(s):
     try: return int(s)
     except ValueError: return None
+filt = json.loads(filter_json)
 data = {
-    "schema_version": "0.1.0",
+    "schema_version": "0.2.0",
     "experiment_id": exp_id,
     "yaml_source": yaml_source,
     "yaml_content": json.loads(yaml_json),
+    "reality_assertion": reality_assertion,
+    "declared_server_options": filt["declared"],
+    "applied_server_options_subset": filt["kept"],
+    "declared_server_options_filter_notes": filt["filter_notes"],
     "runtime": {
         "started_at_utc": started_at,
         "ended_at_utc": ended_at or None,
@@ -167,12 +213,14 @@ PYEOF
 # Initial write so a crash mid-loop still leaves the config record.
 write_experiment_json "" "" "" ""
 
-echo "[batch] experiment_id: $EXP_ID"
-echo "[batch] num_matches:   $NUM_MATCHES"
-echo "[batch] timeout_secs:  $TIMEOUT_SECS"
-echo "[batch] home_command:  $HOME_CMD"
-echo "[batch] away_command:  $AWAY_CMD"
-echo "[batch] experiment_dir:$EXP_DIR"
+echo "[batch] experiment_id:    $EXP_ID"
+echo "[batch] num_matches:      $NUM_MATCHES"
+echo "[batch] timeout_secs:     $TIMEOUT_SECS"
+echo "[batch] home_command:     $HOME_CMD"
+echo "[batch] away_command:     $AWAY_CMD"
+echo "[batch] reality_assertion:$REALITY_ASSERTION"
+echo "[batch] kept server_options: ${#KEPT_SERVER_OPTIONS[@]} (filter_notes recorded in experiment.json)"
+echo "[batch] experiment_dir:   $EXP_DIR"
 [[ "$FORCE"   == true ]] && echo "[batch] --force: re-running completed matches"
 [[ "$DRY_RUN" == true ]] && echo "[batch] --dry-run: no matches will be executed"
 
@@ -199,12 +247,23 @@ for i in $(seq 1 "$NUM_MATCHES"); do
     continue
   fi
 
+  # Build the --server-option flag list. Empty arrays expand to nothing
+  # under set -u, so an experiment with no kept options is fine.
+  SMOKE_EXTRA_FLAGS=()
+  for opt in ${KEPT_SERVER_OPTIONS[@]+"${KEPT_SERVER_OPTIONS[@]}"}; do
+    SMOKE_EXTRA_FLAGS+=(--server-option "$opt")
+  done
+
   echo "[batch] run   $MATCH_ID"
   # The smoke runner returns non-zero on any non-match_completed outcome.
   # We intentionally ignore that: the batch must continue and the truth
   # lives in MATCH_DIR/metadata.json::match_status.
   HOME_TEAM_START="$HOME_CMD" AWAY_TEAM_START="$AWAY_CMD" \
-    bash "$SMOKE" --timeout "$TIMEOUT_SECS" --run-dir "$MATCH_DIR" \
+    bash "$SMOKE" \
+      --timeout "$TIMEOUT_SECS" \
+      --run-dir "$MATCH_DIR" \
+      --reality-assertion "$REALITY_ASSERTION" \
+      ${SMOKE_EXTRA_FLAGS[@]+"${SMOKE_EXTRA_FLAGS[@]}"} \
     || true
   NUM_RUN=$((NUM_RUN + 1))
 done

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """parse_match_result.py - extract a match result and merge runtime metadata.
 
-The output schema (`schema_version: "1.1"`) augments the parsed score with
+The output schema (`schema_version: "1.2"`) augments the parsed score with
 the runtime metadata recorded by `scripts/run_smoke_match.sh`. The merge
 order is:
 
@@ -12,22 +12,23 @@ completed. Unknown values are emitted as null (numbers) or "unknown"
 (strings); the reason is appended to `parser_notes`.
 
     {
-      "schema_version":      "1.1",
-      "run_id":              "...",
-      "created_at_utc":      "...",
-      "server_binary":       "...",
-      "server_version":      "...",
-      "server_options":      [...],
-      "home_start_command":  "...",
-      "away_start_command":  "...",
-      "home_team":           "...",
-      "away_team":           "...",
-      "home_score":          0,
-      "away_score":          0,
-      "result":              "home_win" | "away_win" | "draw" | "unknown",
-      "rcg_files":           [...],
-      "rcl_files":           [...],
-      "parser_notes":        [...]
+      "schema_version":          "1.2",
+      "run_id":                  "...",
+      "created_at_utc":          "...",
+      "server_binary":           "...",
+      "server_version":          "...",
+      "applied_server_options":  [...],
+      "reality_assertion":       "synthetic_or_stubbed" | "real_rcssserver",
+      "home_start_command":      "...",
+      "away_start_command":      "...",
+      "home_team":               "...",
+      "away_team":               "...",
+      "home_score":              0,
+      "away_score":              0,
+      "result":                  "home_win" | "away_win" | "draw" | "unknown",
+      "rcg_files":               [...],
+      "rcl_files":               [...],
+      "parser_notes":            [...]
     }
 """
 from __future__ import annotations
@@ -38,7 +39,7 @@ import re
 import sys
 from pathlib import Path
 
-SCHEMA_VERSION = "1.1"
+SCHEMA_VERSION = "1.2"
 
 # Matches end-of-game lines from rcssserver-ish servers, e.g.
 #   "Result: helios 2 - 1 helios"
@@ -61,10 +62,12 @@ METADATA_KEYS = (
     "created_at_utc",
     "server_binary",
     "server_version",
-    "server_options",
+    "applied_server_options",
+    "reality_assertion",
     "home_start_command",
     "away_start_command",
 )
+LIST_KEYS = ("applied_server_options",)
 
 
 def parse_score_from_text(text: str) -> dict | None:
@@ -96,7 +99,7 @@ def classify(home: int, away: int) -> str:
 def load_metadata(run_dir: Path, notes: list[str]) -> dict:
     """Load metadata.json if present; otherwise fill with placeholders."""
     metadata_path = run_dir / "metadata.json"
-    defaults = {k: ("unknown" if k != "server_options" else []) for k in METADATA_KEYS}
+    defaults = {k: ([] if k in LIST_KEYS else "unknown") for k in METADATA_KEYS}
     if not metadata_path.is_file():
         notes.append("metadata.json not found; runtime fields default to 'unknown'")
         return defaults

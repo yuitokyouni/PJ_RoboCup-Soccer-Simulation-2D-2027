@@ -24,8 +24,10 @@ import math
 import sys
 from pathlib import Path
 
-SCHEMA_VERSION = "0.1.0"
+SCHEMA_VERSION = "0.2.0"
 MIN_COMPLETED_FOR_CLAIMS = 30
+REALITY_REAL = "real_rcssserver"
+REALITY_STUB = "synthetic_or_stubbed"
 
 KNOWN_STATUSES = (
     "match_completed",
@@ -60,6 +62,17 @@ def _sample_std(xs: list[float]) -> float | None:
 def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
     """Return (summary_dict, per_match_rows)."""
     notes: list[str] = []
+
+    # Experiment-level intent (Phase 2.5): what the YAML *declared*, and
+    # whether the operator asserted this is a real run.
+    experiment_json = _read_json(experiment_dir / "experiment.json") or {}
+    declared_server_options: list[str] = list(
+        experiment_json.get("declared_server_options") or []
+    )
+    declared_reality = experiment_json.get("reality_assertion") or REALITY_STUB
+    for filter_note in experiment_json.get("declared_server_options_filter_notes") or []:
+        notes.append(f"experiment: {filter_note}")
+
     matches_dir = experiment_dir / "matches"
     if not matches_dir.is_dir():
         notes.append(f"no matches/ subdir under {experiment_dir}")
@@ -73,6 +86,8 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
     away_scores: list[int] = []
     goal_diffs: list[int] = []
     rows: list[dict] = []
+    applied_union: set[str] = set()
+    match_realities: list[str] = []
 
     for md in match_dirs:
         match_id = md.name
@@ -86,13 +101,17 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
         else:
             status_counts[status] += 1
 
+        applied = metadata.get("applied_server_options") or []
+        applied_union.update(a for a in applied if isinstance(a, str))
+        match_realities.append(metadata.get("reality_assertion") or "unknown")
+
         if metrics is None:
             unknown_results += 1
             notes.append(f"{match_id}: no metrics.json")
             rows.append({
                 "match_id": match_id,
                 "match_status": status,
-                "home_team": metadata.get("home_team", "unknown") if False else "unknown",
+                "home_team": "unknown",
                 "away_team": "unknown",
                 "home_score": "",
                 "away_score": "",
@@ -137,6 +156,29 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
     completed_matches = status_counts["match_completed"]
     failed_matches = total_matches - completed_matches
 
+    # Phase 2.5: declared but not applied. Includes anything the YAML
+    # said (including UNVERIFIED-prefixed strings) that never made it to
+    # any rcssserver command line. A non-empty list blocks RESEARCH_GRADE.
+    unapplied_server_options = sorted(
+        o for o in declared_server_options if o not in applied_union
+    )
+
+    # run_reality_status: real only if (a) the experiment asserts real,
+    # (b) every match asserts real, (c) at least one match completed,
+    # (d) no declared option went unapplied.
+    all_matches_real = (
+        len(match_realities) > 0
+        and all(r == REALITY_REAL for r in match_realities)
+    )
+    run_reality_status = (
+        REALITY_REAL
+        if (declared_reality == REALITY_REAL
+            and all_matches_real
+            and completed_matches > 0
+            and not unapplied_server_options)
+        else REALITY_STUB
+    )
+
     mean_gd = _mean(goal_diffs)
     std_gd = _sample_std(goal_diffs)
     n = len(goal_diffs)
@@ -147,31 +189,45 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
     else:
         se_gd = ci_low = ci_high = None
 
-    sample_regime = (
-        "SMOKE_ONLY" if completed_matches < MIN_COMPLETED_FOR_CLAIMS else "RESEARCH_GRADE"
+    # Tightened RESEARCH_GRADE rule (see docs/REAL_INTEGRATION.md).
+    timeout_count = status_counts["timeout"]
+    if timeout_count > 0:
+        notes.append(
+            f"{timeout_count} match(es) timed out; investigate before treating CI as binding"
+        )
+    research_grade = (
+        completed_matches >= MIN_COMPLETED_FOR_CLAIMS
+        and run_reality_status == REALITY_REAL
+        and not unapplied_server_options
+        and unknown_results == 0
     )
+    sample_regime = "RESEARCH_GRADE" if research_grade else "SMOKE_ONLY"
 
     summary = {
-        "schema_version":          SCHEMA_VERSION,
-        "experiment_dir":          str(experiment_dir),
-        "total_matches":           total_matches,
-        "completed_matches":       completed_matches,
-        "failed_matches":          failed_matches,
-        "sample_regime":           sample_regime,
-        "min_completed_for_claims": MIN_COMPLETED_FOR_CLAIMS,
-        "match_status_counts":     status_counts,
-        "home_wins":               home_wins,
-        "away_wins":               away_wins,
-        "draws":                   draws,
-        "unknown_results":         unknown_results,
-        "mean_home_score":         _mean(home_scores),
-        "mean_away_score":         _mean(away_scores),
-        "mean_goal_diff":          mean_gd,
-        "std_goal_diff":           std_gd,
-        "se_goal_diff":            se_gd,
-        "ci95_goal_diff_low":      ci_low,
-        "ci95_goal_diff_high":     ci_high,
-        "notes":                   notes,
+        "schema_version":            SCHEMA_VERSION,
+        "experiment_dir":            str(experiment_dir),
+        "total_matches":             total_matches,
+        "completed_matches":         completed_matches,
+        "failed_matches":            failed_matches,
+        "sample_regime":             sample_regime,
+        "min_completed_for_claims":  MIN_COMPLETED_FOR_CLAIMS,
+        "run_reality_status":        run_reality_status,
+        "declared_reality_assertion": declared_reality,
+        "declared_server_options":   declared_server_options,
+        "unapplied_server_options":  unapplied_server_options,
+        "match_status_counts":       status_counts,
+        "home_wins":                 home_wins,
+        "away_wins":                 away_wins,
+        "draws":                     draws,
+        "unknown_results":           unknown_results,
+        "mean_home_score":           _mean(home_scores),
+        "mean_away_score":           _mean(away_scores),
+        "mean_goal_diff":            mean_gd,
+        "std_goal_diff":             std_gd,
+        "se_goal_diff":              se_gd,
+        "ci95_goal_diff_low":        ci_low,
+        "ci95_goal_diff_high":       ci_high,
+        "notes":                     notes,
     }
     return summary, rows
 

@@ -14,6 +14,7 @@ run_smoke_match.sh - run a single baseline-vs-baseline smoke match
 
 Usage:
   run_smoke_match.sh [--help] [--timeout SECONDS] [--run-dir PATH]
+                     [--server-option KEY=VALUE]... [--reality-assertion REALITY]
 
 Options:
   --timeout SECONDS  Hard wall-clock cap for the match. Default: 120
@@ -26,6 +27,20 @@ Options:
                      scripts/run_batch_matches.sh) that own their own
                      output layout. The basename of PATH becomes
                      metadata.json::run_id.
+  --server-option KEY=VALUE
+                     Appended verbatim to the rcssserver command line
+                     after the harness's required runtime options.
+                     May be passed multiple times. Recorded in
+                     metadata.json::applied_server_options alongside
+                     those required options.
+  --reality-assertion REALITY
+                     One of 'synthetic_or_stubbed' (default) or
+                     'real_rcssserver'. Recorded in
+                     metadata.json::reality_assertion verbatim. The
+                     smoke runner does NOT verify the assertion; the
+                     aggregator combines it with other conditions before
+                     promoting summary.json::run_reality_status. See
+                     docs/REAL_INTEGRATION.md.
 
 Environment:
   HELIOS_BASE_DIR  Directory of a built helios-base checkout.
@@ -60,6 +75,8 @@ EOF
 
 TIMEOUT_SECS="${TIMEOUT_SECS:-120}"
 RUN_DIR_OVERRIDE=""
+EXTRA_SERVER_OPTIONS=()
+REALITY_ASSERTION="synthetic_or_stubbed"
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -h|--help) usage; exit 0 ;;
@@ -67,11 +84,19 @@ while [[ $# -gt 0 ]]; do
     --timeout=*) TIMEOUT_SECS="${1#*=}"; shift ;;
     --run-dir) shift; [[ $# -gt 0 ]] || { echo "--run-dir needs a value" >&2; exit 2; }; RUN_DIR_OVERRIDE="$1"; shift ;;
     --run-dir=*) RUN_DIR_OVERRIDE="${1#*=}"; shift ;;
+    --server-option) shift; [[ $# -gt 0 ]] || { echo "--server-option needs a value" >&2; exit 2; }; EXTRA_SERVER_OPTIONS+=("$1"); shift ;;
+    --server-option=*) EXTRA_SERVER_OPTIONS+=("${1#*=}"); shift ;;
+    --reality-assertion) shift; [[ $# -gt 0 ]] || { echo "--reality-assertion needs a value" >&2; exit 2; }; REALITY_ASSERTION="$1"; shift ;;
+    --reality-assertion=*) REALITY_ASSERTION="${1#*=}"; shift ;;
     *) echo "run_smoke_match.sh: unknown argument: $1" >&2; usage >&2; exit 2 ;;
   esac
 done
 [[ "$TIMEOUT_SECS" =~ ^[1-9][0-9]*$ ]] \
   || { echo "run_smoke_match.sh: --timeout must be a positive integer, got '$TIMEOUT_SECS'" >&2; exit 2; }
+case "$REALITY_ASSERTION" in
+  synthetic_or_stubbed|real_rcssserver) ;;
+  *) echo "run_smoke_match.sh: --reality-assertion must be 'synthetic_or_stubbed' or 'real_rcssserver', got '$REALITY_ASSERTION'" >&2; exit 2 ;;
+esac
 
 die() { echo "[smoke] ERROR: $*" >&2; exit 1; }
 
@@ -119,6 +144,10 @@ else
 fi
 mkdir -p "$RUN_DIR"
 
+# The harness's required runtime options (paths, port, team-launch
+# wiring). Caller-supplied --server-option flags are appended after, so
+# they can in principle override anything except what rcssserver itself
+# de-duplicates.
 SERVER_OPTIONS=(
   "server::game_log_dir=$RUN_DIR"
   "server::text_log_dir=$RUN_DIR"
@@ -128,6 +157,9 @@ SERVER_OPTIONS=(
   "server::team_l_start=$HOME_TEAM_START"
   "server::team_r_start=$AWAY_TEAM_START"
 )
+if (( ${#EXTRA_SERVER_OPTIONS[@]} > 0 )); then
+  SERVER_OPTIONS+=("${EXTRA_SERVER_OPTIONS[@]}")
+fi
 
 MATCH_STATUS="unknown_failure"
 SERVER_PID=""
@@ -143,21 +175,24 @@ write_metadata() {
     "$AWAY_TEAM_START" \
     "$TIMEOUT_SECS" \
     "$MATCH_STATUS" \
+    "$REALITY_ASSERTION" \
     "${SERVER_OPTIONS[@]}" <<'PYEOF'
 import json, sys
 (path, run_id, created_at, binary, version,
- home_cmd, away_cmd, timeout_secs, match_status, *opts) = sys.argv[1:]
+ home_cmd, away_cmd, timeout_secs, match_status,
+ reality_assertion, *opts) = sys.argv[1:]
 data = {
-    "schema_version":     "1.1",
-    "run_id":             run_id,
-    "created_at_utc":     created_at,
-    "server_binary":      binary,
-    "server_version":     version,
-    "server_options":     opts,
-    "home_start_command": home_cmd,
-    "away_start_command": away_cmd,
-    "timeout_secs":       int(timeout_secs),
-    "match_status":       match_status,
+    "schema_version":          "1.2",
+    "run_id":                  run_id,
+    "created_at_utc":          created_at,
+    "server_binary":           binary,
+    "server_version":          version,
+    "applied_server_options":  opts,
+    "reality_assertion":       reality_assertion,
+    "home_start_command":      home_cmd,
+    "away_start_command":      away_cmd,
+    "timeout_secs":            int(timeout_secs),
+    "match_status":            match_status,
 }
 with open(path, "w") as f:
     json.dump(data, f, indent=2)
