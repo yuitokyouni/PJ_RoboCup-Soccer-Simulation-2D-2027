@@ -4,17 +4,21 @@ SCRIPTS := $(ROOT)/scripts
 
 .DEFAULT_GOAL := help
 
-.PHONY: help doctor smoke build-baseline clean
+.PHONY: help doctor probe smoke build-baseline clean
 
 help:
 	@echo "Phase 1 harness targets:"
 	@echo "  make doctor          Check required binaries are installed"
+	@echo "  make probe           Inspect installed rcssserver + harness assumptions"
 	@echo "  make smoke           Run a single baseline-vs-baseline smoke match"
 	@echo "  make build-baseline  (not automated) build librcsc + helios-base; see setup/SETUP.md"
 	@echo "  make clean           Remove generated logs (keeps logs/runs/.gitkeep)"
 
 doctor:
 	@bash $(SCRIPTS)/doctor.sh
+
+probe:
+	@bash $(SCRIPTS)/probe_rcssserver.sh
 
 smoke:
 	@bash $(SCRIPTS)/run_smoke_match.sh

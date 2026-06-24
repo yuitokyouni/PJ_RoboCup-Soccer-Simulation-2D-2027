@@ -21,8 +21,14 @@ Entry points are exposed through `make`. See `setup/SETUP.md` for install
 prerequisites and `setup/DEPENDENCIES.md` for the dependency table.
 
 - `make doctor` — `scripts/doctor.sh`. Checks that rcssserver, helios-base
-  binaries, librcsc, python3 and jq are installed. Prints actionable
-  install URLs for anything missing. Non-zero exit on any required miss.
+  binaries, librcsc, python3, GNU `timeout`, `setsid`, and jq are installed.
+  Prints actionable install URLs for anything missing. Non-zero exit on
+  any required miss.
+- `make probe` — `scripts/probe_rcssserver.sh`. Read-only inspection of
+  the installed rcssserver: path, version, `--help` behavior, which
+  documented config files exist under `$HOME`, and the exact command-line
+  options the smoke runner will pass (with UNVERIFIED markers). See
+  `setup/SERVER_CONTRACT.md` for the rationale behind each option.
 - `make smoke` — `scripts/run_smoke_match.sh`. Runs a single
   helios-base vs helios-base match and writes
   `logs/runs/<UTC-timestamp>/{server.out,*.rcg,*.rcl,metrics.json}`.

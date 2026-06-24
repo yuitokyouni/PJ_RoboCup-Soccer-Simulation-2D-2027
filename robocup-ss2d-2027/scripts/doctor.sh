@@ -16,6 +16,8 @@ Checks (required unless noted):
   - librcsc              (via rcsc-config or pkg-config librcsc)
   - helios-base players  (helios_player, helios_coach, helios_trainer)
   - python3
+  - timeout              (GNU coreutils; bounds smoke match wall clock)
+  - setsid               (util-linux; lets the harness kill the process tree)
   - jq                   (optional, used for metrics inspection)
 
 Exit status:
@@ -61,6 +63,8 @@ check_optional() {
 check_required rcssserver    "https://github.com/rcsoccersim/rcssserver"
 check_optional rcssmonitor   "https://github.com/rcsoccersim/rcssmonitor"
 check_required python3       "system package manager"
+check_required timeout       "system package manager (GNU coreutils)"
+check_required setsid        "system package manager (util-linux)"
 check_optional jq            "system package manager"
 
 for b in helios_player helios_coach helios_trainer; do
