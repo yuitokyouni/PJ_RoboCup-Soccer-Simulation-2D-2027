@@ -42,8 +42,10 @@ Required for `observed_reality_status = real_rcssserver`:
 
 1. **Server binary identity.** `metadata.server_binary` resolves to a
    real file. The resolved path lives under
-   `externals/install/bin/`. The file's first four bytes are the ELF
-   magic `\x7fELF`. The file is larger than 10 KiB.
+   `externals/install/bin/`. The file's first four bytes match a
+   recognized native-executable magic — ELF (`\x7fELF`) on Linux or
+   any Mach-O magic on macOS, including the FAT/universal variants.
+   The file is larger than 10 KiB.
 2. **Server version is not a known stub.** The `server_version`
    string contains none of `fake`, `stub`, `mock`, `dummy`
    (case-insensitive).
@@ -56,6 +58,11 @@ Required for `observed_reality_status = real_rcssserver`:
    `away_start_command` point at existing files. Anything starting
    with `UNVERIFIED:` fails this check by construction.
 
+`reality_evidence` also records `host_platform`
+(`platform.system()` — typically `Linux` or `Darwin`) and
+`server_binary_format` (`elf`, `mach-o`, or `unknown`) so a
+post-hoc reader knows which family of magic bytes matched.
+
 All of these together (plus declared = real, unapplied = [], any
 completed match) flip `run_reality_status` to `real_rcssserver`.
 
@@ -66,7 +73,7 @@ the binary is a stub. When any of these triggers,
 `observed_reality_status` is `synthetic_or_stubbed`, **not**
 `unknown_or_unverified`:
 
-- Binary is not an ELF executable.
+- Binary's first four bytes are neither ELF nor any Mach-O magic.
 - Binary is smaller than 10 KiB.
 - `server_version` contains a stub keyword.
 
@@ -74,6 +81,13 @@ The first batch of synthetic harness tests in this repository — fake
 rcssserver bash scripts in `/tmp/` reporting version
 `fake-rcssserver 18` — hit all three checks. They cannot accidentally
 promote.
+
+`tests/test_attestation.sh` (run via `make test`) covers all three
+stub indicators against synthetic fixtures and asserts that the
+result is `synthetic_or_stubbed`, never `real_rcssserver`. The same
+script also exercises the "ELF binary outside `externals/install`"
+case and asserts `unknown_or_unverified` — proving evidence-missing
+is distinct from stub.
 
 ## Evidence schema (metadata.json, 1.3)
 

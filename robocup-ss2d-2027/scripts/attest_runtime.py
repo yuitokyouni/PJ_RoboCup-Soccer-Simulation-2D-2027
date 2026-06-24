@@ -37,12 +37,35 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import platform
 import sys
 from pathlib import Path
 
 STUB_KEYWORDS = ("fake", "stub", "mock", "dummy")
 MIN_BINARY_SIZE = 10 * 1024  # bytes
-ELF_MAGIC = b"\x7fELF"
+
+# Native executable magic bytes. ELF on Linux; Mach-O on macOS in any
+# of its byte-order / bitness / FAT variants. We accept either format
+# regardless of host platform -- the binary is what it is, and a real
+# server build will produce one or the other.
+ELF_MAGIC = (b"\x7fELF",)
+MACH_O_MAGICS = (
+    b"\xfe\xed\xfa\xce",  # 32-bit big-endian
+    b"\xfe\xed\xfa\xcf",  # 64-bit big-endian
+    b"\xce\xfa\xed\xfe",  # 32-bit little-endian
+    b"\xcf\xfa\xed\xfe",  # 64-bit little-endian
+    b"\xca\xfe\xba\xbe",  # FAT (big-endian)
+    b"\xbe\xba\xfe\xca",  # FAT (little-endian)
+)
+
+
+def native_format(magic: bytes) -> str:
+    """Return 'elf', 'mach-o', or 'unknown' for the first 4 magic bytes."""
+    if magic[:4] in ELF_MAGIC:
+        return "elf"
+    if magic[:4] in MACH_O_MAGICS:
+        return "mach-o"
+    return "unknown"
 
 
 def sha256_file(path: Path) -> str:
@@ -72,7 +95,7 @@ def gather(
     run_dir: Path, externals_root: Path, install_prefix: Path
 ) -> tuple[dict, list[str], str]:
     metadata = json.loads((run_dir / "metadata.json").read_text())
-    evidence: dict = {}
+    evidence: dict = {"host_platform": platform.system()}
     missing: list[str] = []
     stub_reasons: list[str] = []
 
@@ -85,10 +108,15 @@ def gather(
         evidence["server_binary_size"] = binary_realpath.stat().st_size
         evidence["server_binary_sha256"] = sha256_file(binary_realpath)
         with binary_realpath.open("rb") as f:
-            evidence["server_binary_is_elf"] = f.read(4) == ELF_MAGIC
+            magic = f.read(4)
+        fmt = native_format(magic)
+        evidence["server_binary_format"] = fmt
+        evidence["server_binary_is_native_executable"] = fmt != "unknown"
 
-        if not evidence["server_binary_is_elf"]:
-            stub_reasons.append("server binary is not an ELF executable")
+        if fmt == "unknown":
+            stub_reasons.append(
+                "server binary is not a recognized native executable (expected ELF or Mach-O)"
+            )
         if evidence["server_binary_size"] < MIN_BINARY_SIZE:
             stub_reasons.append(
                 f"server binary size {evidence['server_binary_size']} B is below {MIN_BINARY_SIZE} B"
@@ -105,7 +133,8 @@ def gather(
         evidence["server_binary_realpath"] = None
         evidence["server_binary_size"] = None
         evidence["server_binary_sha256"] = None
-        evidence["server_binary_is_elf"] = None
+        evidence["server_binary_format"] = "unknown"
+        evidence["server_binary_is_native_executable"] = None
         evidence["server_binary_under_externals_install"] = False
         missing.append("server_binary not found at recorded path")
 

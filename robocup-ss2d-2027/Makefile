@@ -5,7 +5,7 @@ EVAL := $(ROOT)/evaluation
 
 .DEFAULT_GOAL := help
 
-.PHONY: help doctor probe smoke batch aggregate fetch-externals build-externals real-smoke build-baseline clean
+.PHONY: help doctor probe smoke batch aggregate fetch-externals build-externals real-smoke build-baseline clean test
 
 help:
 	@echo "Phase 1 harness targets:"
@@ -25,6 +25,7 @@ help:
 	@echo "                       (optional: ONLY=name, JOBS=N)"
 	@echo "  make real-smoke      Run 1 real Cyrus2DBase-vs-Cyrus2DBase match"
 	@echo "                       (optional: NUM_MATCHES, TIMEOUT, FORCE=1, DRY_RUN=1)"
+	@echo "  make test            Run the attestation self-tests"
 
 doctor:
 	@bash $(SCRIPTS)/doctor.sh
@@ -82,3 +83,6 @@ build-baseline:
 clean:
 	@find $(ROOT)/logs/runs -mindepth 1 -not -name .gitkeep -exec rm -rf {} +
 	@echo "[clean] logs/runs/ wiped (placeholder kept)."
+
+test:
+	@bash $(ROOT)/tests/test_attestation.sh
