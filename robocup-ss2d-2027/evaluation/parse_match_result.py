@@ -200,7 +200,14 @@ def main(argv: list[str] | None = None) -> int:
         if score is None:
             parser_notes.append("could not parse score from rcg filename")
 
-    if score:
+    if score and score.get("away_score") is None:
+        # One side never connected. We have the home score but not a
+        # comparable away score; classify cannot resolve the result.
+        result = "unknown"
+        parser_notes.append(
+            f"away_team={score.get('away_team')!r}; treating result as unknown"
+        )
+    elif score:
         result = classify(score["home_score"], score["away_score"])
     else:
         result = "unknown"
