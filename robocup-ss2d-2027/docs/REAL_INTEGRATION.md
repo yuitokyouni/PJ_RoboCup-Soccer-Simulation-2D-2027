@@ -15,28 +15,34 @@ Phase 2.5 closes that gap **before** any 30-match run. Until it is
 closed, `summary.json::sample_regime` can never legitimately read
 `RESEARCH_GRADE` — the tightened rule below blocks it.
 
-## Two regimes, named honestly
+## Three regimes, named honestly
 
 Every batch records `run_reality_status` in `summary.json`. One of:
 
-| Status                  | Meaning                                                   |
-|-------------------------|-----------------------------------------------------------|
-| `synthetic_or_stubbed`  | Default. The harness ran, but the server / teams may be   |
-|                         | stand-ins (CI, smoke, local self-test).                   |
-| `real_rcssserver`       | All matches in this batch ran against the rcssserver+team |
-|                         | binaries built from `externals/install/` by               |
-|                         | `make build-externals`, and `applied_server_options`      |
-|                         | matches `declared_server_options`.                        |
+| Status                   | Meaning                                                  |
+|--------------------------|----------------------------------------------------------|
+| `synthetic_or_stubbed`   | At least one completed match was observed to be a stub. CI, smoke, local self-test. |
+| `unknown_or_unverified`  | Not enough evidence to certify either way -- e.g. no matches completed, or evidence missing without stub indicators. |
+| `real_rcssserver`        | Every completed match was observed as real, declared as real, and no declared server option went unapplied. |
 
-The batch runner sets `run_reality_status="real_rcssserver"` only when:
+Promotion is gated by `scripts/attest_runtime.py`, **not** by the
+YAML claim. The full ladder is documented in
+`docs/REALITY_ATTESTATION.md`. A self-declared
+`declared_reality_assertion: real_rcssserver` is necessary but not
+sufficient: every completed match must also carry an observed
+`real_rcssserver` from attestation, and `unapplied_server_options`
+must be empty.
 
-1. `PATH` resolves `rcssserver` to `externals/install/bin/rcssserver`,
-   **or** the binary's `--version` line matches the lock file's
-   recorded version, **and**
-2. Every match completed with `unapplied_server_options` empty.
+Concretely, the aggregator promotes only when **all** of:
 
-Anything else is `synthetic_or_stubbed`. Tests run by this repo's CI
-stay in that bucket forever.
+1. `declared_reality_assertion == "real_rcssserver"`.
+2. `completed_matches > 0`.
+3. Every `match_completed` row has
+   `observed_reality_status == "real_rcssserver"` in its metadata.
+4. `unapplied_server_options == []`.
+
+`summary.run_reality_block_reasons` names every condition that
+failed so an honest "no" arrives with its receipt.
 
 ## The declared / applied / unapplied split
 
@@ -75,13 +81,15 @@ is non-empty.
 `RESEARCH_GRADE` **iff all** of the following hold:
 
 1. `completed_matches >= MIN_COMPLETED_FOR_CLAIMS` (= 30).
-2. `run_reality_status == "real_rcssserver"`.
-3. `unapplied_server_options == []`.
-4. `unknown_results == 0`.
-5. `match_status_counts["timeout"] == 0` **or** `summary.notes`
-   explicitly lists every timed-out match with a reason. The aggregator
-   adds a default note in the latter case so the regime change is never
-   silent.
+2. `run_reality_status == "real_rcssserver"` (which already implies
+   declared + observed for every completed match).
+3. Every `match_completed` row carries
+   `observed_reality_status == "real_rcssserver"` (explicit; the
+   aggregator checks this on top of `run_reality_status`).
+4. `unapplied_server_options == []`.
+5. `unknown_results == 0`.
+6. Timeouts are listed in `summary.notes` (the aggregator adds the
+   default note automatically so the regime change is never silent).
 
 Otherwise the regime is `SMOKE_ONLY`. The same threshold is referenced
 from this doc and from `MIN_COMPLETED_FOR_CLAIMS` so it cannot drift.

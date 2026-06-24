@@ -24,10 +24,12 @@ import math
 import sys
 from pathlib import Path
 
-SCHEMA_VERSION = "0.2.0"
+SCHEMA_VERSION = "0.3.0"
 MIN_COMPLETED_FOR_CLAIMS = 30
 REALITY_REAL = "real_rcssserver"
 REALITY_STUB = "synthetic_or_stubbed"
+REALITY_UNKNOWN = "unknown_or_unverified"
+OBSERVED_STATUSES = (REALITY_REAL, REALITY_STUB, REALITY_UNKNOWN)
 
 KNOWN_STATUSES = (
     "match_completed",
@@ -63,13 +65,14 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
     """Return (summary_dict, per_match_rows)."""
     notes: list[str] = []
 
-    # Experiment-level intent (Phase 2.5): what the YAML *declared*, and
-    # whether the operator asserted this is a real run.
+    # Experiment-level intent (Phase 2.5+2.6): what the YAML *declared*,
+    # and whether the operator asserted this is a real run. The assertion
+    # is no longer sufficient on its own; observation gates promotion.
     experiment_json = _read_json(experiment_dir / "experiment.json") or {}
     declared_server_options: list[str] = list(
         experiment_json.get("declared_server_options") or []
     )
-    declared_reality = experiment_json.get("reality_assertion") or REALITY_STUB
+    declared_reality = experiment_json.get("declared_reality_assertion") or REALITY_STUB
     for filter_note in experiment_json.get("declared_server_options_filter_notes") or []:
         notes.append(f"experiment: {filter_note}")
 
@@ -81,13 +84,14 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
         match_dirs = sorted(p for p in matches_dir.iterdir() if p.is_dir())
 
     status_counts = {s: 0 for s in KNOWN_STATUSES}
+    observed_counts: dict[str, int] = {s: 0 for s in OBSERVED_STATUSES}
     home_wins = away_wins = draws = unknown_results = 0
     home_scores: list[int] = []
     away_scores: list[int] = []
     goal_diffs: list[int] = []
     rows: list[dict] = []
     applied_union: set[str] = set()
-    match_realities: list[str] = []
+    block_reasons: list[str] = []
 
     for md in match_dirs:
         match_id = md.name
@@ -103,7 +107,19 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
 
         applied = metadata.get("applied_server_options") or []
         applied_union.update(a for a in applied if isinstance(a, str))
-        match_realities.append(metadata.get("reality_assertion") or "unknown")
+
+        observed = metadata.get("observed_reality_status") or REALITY_UNKNOWN
+        if observed not in observed_counts:
+            notes.append(f"{match_id}: unrecognized observed_reality_status '{observed}', folded into {REALITY_UNKNOWN}")
+            observed = REALITY_UNKNOWN
+        observed_counts[observed] += 1
+
+        if status == "match_completed" and observed != REALITY_REAL:
+            # Collect the per-match attestation gap so the summary can
+            # name *why* this completed match did not count as real.
+            missing = metadata.get("reality_evidence_missing") or []
+            reason_head = missing[0] if missing else "no reality_evidence_missing recorded"
+            block_reasons.append(f"{match_id}: observed={observed} ({reason_head})")
 
         if metrics is None:
             unknown_results += 1
@@ -163,21 +179,35 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
         o for o in declared_server_options if o not in applied_union
     )
 
-    # run_reality_status: real only if (a) the experiment asserts real,
-    # (b) every match asserts real, (c) at least one match completed,
-    # (d) no declared option went unapplied.
-    all_matches_real = (
-        len(match_realities) > 0
-        and all(r == REALITY_REAL for r in match_realities)
+    # Phase 2.6: run_reality_status is no longer set by declaration alone.
+    # The aggregator combines the operator's claim with the observed
+    # attestation written by scripts/attest_runtime.py.
+    completed_observed_real = (
+        completed_matches > 0
+        and status_counts["match_completed"] == observed_counts[REALITY_REAL]
     )
-    run_reality_status = (
-        REALITY_REAL
-        if (declared_reality == REALITY_REAL
-            and all_matches_real
+    if (declared_reality == REALITY_REAL
             and completed_matches > 0
-            and not unapplied_server_options)
-        else REALITY_STUB
-    )
+            and completed_observed_real
+            and not unapplied_server_options):
+        run_reality_status = REALITY_REAL
+    elif observed_counts[REALITY_STUB] > 0:
+        run_reality_status = REALITY_STUB
+    else:
+        run_reality_status = REALITY_UNKNOWN
+
+    # Explain *why* run_reality_status is not real. The aggregator's
+    # users care: an honest "no" needs a reason.
+    if declared_reality != REALITY_REAL:
+        block_reasons.insert(
+            0, f"declared_reality_assertion is '{declared_reality}', not '{REALITY_REAL}'"
+        )
+    if completed_matches == 0:
+        block_reasons.append("completed_matches == 0; no observation to verify")
+    if unapplied_server_options:
+        block_reasons.append(
+            f"{len(unapplied_server_options)} declared server_option(s) were not applied"
+        )
 
     mean_gd = _mean(goal_diffs)
     std_gd = _sample_std(goal_diffs)
@@ -189,7 +219,8 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
     else:
         se_gd = ci_low = ci_high = None
 
-    # Tightened RESEARCH_GRADE rule (see docs/REAL_INTEGRATION.md).
+    # Tightened RESEARCH_GRADE rule (docs/REAL_INTEGRATION.md +
+    # docs/REALITY_ATTESTATION.md).
     timeout_count = status_counts["timeout"]
     if timeout_count > 0:
         notes.append(
@@ -198,36 +229,39 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
     research_grade = (
         completed_matches >= MIN_COMPLETED_FOR_CLAIMS
         and run_reality_status == REALITY_REAL
+        and completed_observed_real
         and not unapplied_server_options
         and unknown_results == 0
     )
     sample_regime = "RESEARCH_GRADE" if research_grade else "SMOKE_ONLY"
 
     summary = {
-        "schema_version":            SCHEMA_VERSION,
-        "experiment_dir":            str(experiment_dir),
-        "total_matches":             total_matches,
-        "completed_matches":         completed_matches,
-        "failed_matches":            failed_matches,
-        "sample_regime":             sample_regime,
-        "min_completed_for_claims":  MIN_COMPLETED_FOR_CLAIMS,
-        "run_reality_status":        run_reality_status,
-        "declared_reality_assertion": declared_reality,
-        "declared_server_options":   declared_server_options,
-        "unapplied_server_options":  unapplied_server_options,
-        "match_status_counts":       status_counts,
-        "home_wins":                 home_wins,
-        "away_wins":                 away_wins,
-        "draws":                     draws,
-        "unknown_results":           unknown_results,
-        "mean_home_score":           _mean(home_scores),
-        "mean_away_score":           _mean(away_scores),
-        "mean_goal_diff":            mean_gd,
-        "std_goal_diff":             std_gd,
-        "se_goal_diff":              se_gd,
-        "ci95_goal_diff_low":        ci_low,
-        "ci95_goal_diff_high":       ci_high,
-        "notes":                     notes,
+        "schema_version":                 SCHEMA_VERSION,
+        "experiment_dir":                 str(experiment_dir),
+        "total_matches":                  total_matches,
+        "completed_matches":              completed_matches,
+        "failed_matches":                 failed_matches,
+        "sample_regime":                  sample_regime,
+        "min_completed_for_claims":       MIN_COMPLETED_FOR_CLAIMS,
+        "run_reality_status":             run_reality_status,
+        "run_reality_block_reasons":      block_reasons,
+        "declared_reality_assertion":     declared_reality,
+        "observed_reality_status_counts": observed_counts,
+        "declared_server_options":        declared_server_options,
+        "unapplied_server_options":       unapplied_server_options,
+        "match_status_counts":            status_counts,
+        "home_wins":                      home_wins,
+        "away_wins":                      away_wins,
+        "draws":                          draws,
+        "unknown_results":                unknown_results,
+        "mean_home_score":                _mean(home_scores),
+        "mean_away_score":                _mean(away_scores),
+        "mean_goal_diff":                 mean_gd,
+        "std_goal_diff":                  std_gd,
+        "se_goal_diff":                   se_gd,
+        "ci95_goal_diff_low":             ci_low,
+        "ci95_goal_diff_high":            ci_high,
+        "notes":                          notes,
     }
     return summary, rows
 
