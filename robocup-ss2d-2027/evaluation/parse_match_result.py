@@ -1,25 +1,34 @@
 #!/usr/bin/env python3
-"""parse_match_result.py - extract a coarse match result from rcssserver outputs.
+"""parse_match_result.py - extract a match result and merge runtime metadata.
 
-Reads the server stdout file and/or the .rcg filename and writes a minimal
-machine-readable metrics.json:
+The output schema (`schema_version: "1.1"`) augments the parsed score with
+the runtime metadata recorded by `scripts/run_smoke_match.sh`. The merge
+order is:
+
+    metrics.json = metadata.json (if present)  +  parsed score  +  file lists
+
+Every metrics.json contains the same keys regardless of whether the match
+completed. Unknown values are emitted as null (numbers) or "unknown"
+(strings); the reason is appended to `parser_notes`.
 
     {
-      "home_team":      "...",
-      "away_team":      "...",
-      "home_score":     0,
-      "away_score":     0,
-      "result":         "home_win" | "away_win" | "draw" | "unknown",
-      "rcg_path":       "...",
-      "rcl_path":       "...",
-      "server_version": "unknown",
-      "notes":          "..."
+      "schema_version":      "1.1",
+      "run_id":              "...",
+      "created_at_utc":      "...",
+      "server_binary":       "...",
+      "server_version":      "...",
+      "server_options":      [...],
+      "home_start_command":  "...",
+      "away_start_command":  "...",
+      "home_team":           "...",
+      "away_team":           "...",
+      "home_score":          0,
+      "away_score":          0,
+      "result":              "home_win" | "away_win" | "draw" | "unknown",
+      "rcg_files":           [...],
+      "rcl_files":           [...],
+      "parser_notes":        [...]
     }
-
-The parser is deliberately tolerant: if a field cannot be determined it is
-emitted as null (or "unknown") and the reason is appended to "notes" rather
-than raising. This keeps the harness output well-formed even when the server
-crashed early or named files unexpectedly.
 """
 from __future__ import annotations
 
@@ -29,7 +38,9 @@ import re
 import sys
 from pathlib import Path
 
-# Matches lines emitted by rcssserver-ish servers at end of game, e.g.
+SCHEMA_VERSION = "1.1"
+
+# Matches end-of-game lines from rcssserver-ish servers, e.g.
 #   "Result: helios 2 - 1 helios"
 #   "Final score helios_left 0 vs 0 helios_right"
 SCORE_LINE = re.compile(
@@ -38,11 +49,21 @@ SCORE_LINE = re.compile(
     re.IGNORECASE,
 )
 
-# Default rcg filename format from rcssserver, e.g.
+# Default rcg filename emitted by rcssserver, e.g.
 #   202606241530-helios_2-helios_1.rcg
 #   202606241530-helios_0-helios_0.rcg.gz
 RCG_FILENAME = re.compile(
     r"^[0-9]{8,14}-([A-Za-z0-9_]+?)_([0-9]+)-([A-Za-z0-9_]+?)_([0-9]+)\.rcg(?:\.gz)?$"
+)
+
+METADATA_KEYS = (
+    "run_id",
+    "created_at_utc",
+    "server_binary",
+    "server_version",
+    "server_options",
+    "home_start_command",
+    "away_start_command",
 )
 
 
@@ -51,12 +72,8 @@ def parse_score_from_text(text: str) -> dict | None:
     if not m:
         return None
     home, hs, as_, away = m.groups()
-    return {
-        "home_team": home,
-        "away_team": away,
-        "home_score": int(hs),
-        "away_score": int(as_),
-    }
+    return {"home_team": home, "away_team": away,
+            "home_score": int(hs), "away_score": int(as_)}
 
 
 def parse_score_from_rcg_name(path: Path) -> dict | None:
@@ -64,12 +81,8 @@ def parse_score_from_rcg_name(path: Path) -> dict | None:
     if not m:
         return None
     home, hs, away, as_ = m.groups()
-    return {
-        "home_team": home,
-        "away_team": away,
-        "home_score": int(hs),
-        "away_score": int(as_),
-    }
+    return {"home_team": home, "away_team": away,
+            "home_score": int(hs), "away_score": int(as_)}
 
 
 def classify(home: int, away: int) -> str:
@@ -80,13 +93,32 @@ def classify(home: int, away: int) -> str:
     return "draw"
 
 
+def load_metadata(run_dir: Path, notes: list[str]) -> dict:
+    """Load metadata.json if present; otherwise fill with placeholders."""
+    metadata_path = run_dir / "metadata.json"
+    defaults = {k: ("unknown" if k != "server_options" else []) for k in METADATA_KEYS}
+    if not metadata_path.is_file():
+        notes.append("metadata.json not found; runtime fields default to 'unknown'")
+        return defaults
+    try:
+        raw = json.loads(metadata_path.read_text())
+    except json.JSONDecodeError as e:
+        notes.append(f"metadata.json present but unreadable ({e}); runtime fields default to 'unknown'")
+        return defaults
+    merged = dict(defaults)
+    for k in METADATA_KEYS:
+        if k in raw:
+            merged[k] = raw[k]
+    return merged
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="parse_match_result.py",
-        description="Extract a coarse match result from rcssserver outputs.",
+        description="Extract a match result and merge runtime metadata.",
     )
     p.add_argument("--run-dir", type=Path, required=True,
-                   help="Directory containing server.out and the rcg/rcl logs.")
+                   help="Directory containing server.out, metadata.json, rcg/rcl logs.")
     p.add_argument("--rcg", type=Path, default=None,
                    help="Explicit path to the .rcg game log (optional).")
     p.add_argument("--rcl", type=Path, default=None,
@@ -94,7 +126,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--output", type=Path, required=True,
                    help="Where to write metrics.json.")
     p.add_argument("--notes", type=str, default="",
-                   help="Extra free-form notes recorded in metrics.json.")
+                   help="Extra note to record in metrics.json::parser_notes.")
     return p
 
 
@@ -105,46 +137,53 @@ def main(argv: list[str] | None = None) -> int:
         print(f"run-dir does not exist: {args.run_dir}", file=sys.stderr)
         return 2
 
-    parsed: dict | None = None
-    why: list[str] = []
+    parser_notes: list[str] = []
+    if args.notes:
+        parser_notes.append(args.notes)
 
+    metadata_fields = load_metadata(args.run_dir, parser_notes)
+
+    score: dict | None = None
     server_out = args.run_dir / "server.out"
     if server_out.is_file():
-        parsed = parse_score_from_text(server_out.read_text(errors="replace"))
-        if parsed is None:
-            why.append("no score line found in server.out")
+        score = parse_score_from_text(server_out.read_text(errors="replace"))
+        if score is None:
+            parser_notes.append("no score line found in server.out")
     else:
-        why.append("server.out not found")
+        parser_notes.append("server.out not found")
 
-    rcg = args.rcg
-    if rcg is None:
-        candidates = sorted(args.run_dir.glob("*.rcg")) + sorted(args.run_dir.glob("*.rcg.gz"))
-        rcg = candidates[0] if candidates else None
-    if parsed is None and rcg is not None:
-        parsed = parse_score_from_rcg_name(rcg)
-        if parsed is None:
-            why.append("could not parse score from rcg filename")
+    # Locate the rcg/rcl files. Lists, not singletons -- a run dir is
+    # allowed to contain >1 (e.g. server retry, partial logs).
+    rcg_files = sorted(
+        list(args.run_dir.glob("*.rcg")) + list(args.run_dir.glob("*.rcg.gz"))
+    )
+    rcl_files = sorted(args.run_dir.glob("*.rcl"))
+    if args.rcg and args.rcg not in rcg_files:
+        rcg_files.insert(0, args.rcg)
+    if args.rcl and args.rcl not in rcl_files:
+        rcl_files.insert(0, args.rcl)
 
-    rcl = args.rcl
-    if rcl is None:
-        candidates = sorted(args.run_dir.glob("*.rcl"))
-        rcl = candidates[0] if candidates else None
+    if score is None and rcg_files:
+        score = parse_score_from_rcg_name(rcg_files[0])
+        if score is None:
+            parser_notes.append("could not parse score from rcg filename")
 
-    if parsed:
-        result = classify(parsed["home_score"], parsed["away_score"])
+    if score:
+        result = classify(score["home_score"], score["away_score"])
     else:
         result = "unknown"
 
     metrics = {
-        "home_team":      (parsed or {}).get("home_team", "unknown"),
-        "away_team":      (parsed or {}).get("away_team", "unknown"),
-        "home_score":     (parsed or {}).get("home_score"),
-        "away_score":     (parsed or {}).get("away_score"),
-        "result":         result,
-        "rcg_path":       str(rcg) if rcg else None,
-        "rcl_path":       str(rcl) if rcl else None,
-        "server_version": "unknown",
-        "notes":          "; ".join(s for s in ([args.notes] + why) if s),
+        "schema_version": SCHEMA_VERSION,
+        **metadata_fields,
+        "home_team":   (score or {}).get("home_team", "unknown"),
+        "away_team":   (score or {}).get("away_team", "unknown"),
+        "home_score":  (score or {}).get("home_score"),
+        "away_score":  (score or {}).get("away_score"),
+        "result":      result,
+        "rcg_files":   [str(p) for p in rcg_files],
+        "rcl_files":   [str(p) for p in rcl_files],
+        "parser_notes": parser_notes,
     }
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
