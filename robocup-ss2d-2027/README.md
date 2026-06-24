@@ -59,7 +59,13 @@ prerequisites and `setup/DEPENDENCIES.md` for the dependency table.
   `experiments/cyrus_vs_cyrus_smoke.yaml` (default `NUM_MATCHES=1`).
   Requires the externals to be on `PATH` and the UNVERIFIED prefixes on
   the YAML start commands to have been removed. See
-  `docs/REAL_INTEGRATION.md` for the declared-vs-applied contract.
+  `docs/REAL_INTEGRATION.md` for the declared-vs-applied contract and
+  `docs/REALITY_ATTESTATION.md` for the declared-vs-observed contract
+  (Phase 2.6): a YAML self-declaration is no longer enough to call a
+  run real; `scripts/attest_runtime.py` runs automatically after each
+  match and the aggregator only promotes
+  `summary.run_reality_status = real_rcssserver` when observed
+  evidence matches.
 - `make build-baseline` — not automated; points at `setup/SETUP.md`
   and the Phase 2.5 fetch+build path.
 - `make clean` — wipes `logs/runs/*` but keeps the `.gitkeep`.
