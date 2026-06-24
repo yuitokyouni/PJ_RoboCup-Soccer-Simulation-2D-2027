@@ -115,12 +115,12 @@ AWAY_CMD="$(yaml_get away_start_command)"
 [[ "$TIMEOUT_SECS" =~ ^[1-9][0-9]*$ ]] \
   || die "timeout_secs must be a positive integer, got '$TIMEOUT_SECS'"
 
-# yaml.reality_assertion (default synthetic_or_stubbed). Validated here
-# so a malformed value is caught before any match runs.
-REALITY_ASSERTION="$(python3 -c 'import json,sys; d=json.loads(sys.argv[1]) or {}; v=d.get("reality_assertion") or "synthetic_or_stubbed"; sys.stdout.write(v)' "$YAML_JSON")"
-case "$REALITY_ASSERTION" in
+# yaml.declared_reality_assertion (default synthetic_or_stubbed).
+# Validated here so a malformed value is caught before any match runs.
+DECLARED_REALITY="$(python3 -c 'import json,sys; d=json.loads(sys.argv[1]) or {}; v=d.get("declared_reality_assertion") or "synthetic_or_stubbed"; sys.stdout.write(v)' "$YAML_JSON")"
+case "$DECLARED_REALITY" in
   synthetic_or_stubbed|real_rcssserver) ;;
-  *) die "yaml reality_assertion must be 'synthetic_or_stubbed' or 'real_rcssserver', got '$REALITY_ASSERTION'" ;;
+  *) die "yaml declared_reality_assertion must be 'synthetic_or_stubbed' or 'real_rcssserver', got '$DECLARED_REALITY'" ;;
 esac
 
 # Filter yaml.server_options: strip entries that begin with "UNVERIFIED:"
@@ -170,7 +170,7 @@ write_experiment_json() {
     "$NUM_MATCHES" "$TIMEOUT_SECS" \
     "$FORCE" "$DRY_RUN" \
     "$run" "$skipped" "$total_seen" \
-    "$REALITY_ASSERTION" \
+    "$DECLARED_REALITY" \
     "$FILTER_JSON" <<'PYEOF'
 import json, sys
 (path, exp_id, yaml_source, yaml_json,
@@ -178,7 +178,7 @@ import json, sys
  num_matches, timeout_secs,
  force, dry_run,
  num_run, num_skipped, num_seen,
- reality_assertion, filter_json) = sys.argv[1:]
+ declared_reality, filter_json) = sys.argv[1:]
 def _maybe_int(s):
     try: return int(s)
     except ValueError: return None
@@ -188,7 +188,7 @@ data = {
     "experiment_id": exp_id,
     "yaml_source": yaml_source,
     "yaml_content": json.loads(yaml_json),
-    "reality_assertion": reality_assertion,
+    "declared_reality_assertion": declared_reality,
     "declared_server_options": filt["declared"],
     "applied_server_options_subset": filt["kept"],
     "declared_server_options_filter_notes": filt["filter_notes"],
@@ -218,7 +218,7 @@ echo "[batch] num_matches:      $NUM_MATCHES"
 echo "[batch] timeout_secs:     $TIMEOUT_SECS"
 echo "[batch] home_command:     $HOME_CMD"
 echo "[batch] away_command:     $AWAY_CMD"
-echo "[batch] reality_assertion:$REALITY_ASSERTION"
+echo "[batch] declared_reality:  $DECLARED_REALITY"
 echo "[batch] kept server_options: ${#KEPT_SERVER_OPTIONS[@]} (filter_notes recorded in experiment.json)"
 echo "[batch] experiment_dir:   $EXP_DIR"
 [[ "$FORCE"   == true ]] && echo "[batch] --force: re-running completed matches"
@@ -262,7 +262,7 @@ for i in $(seq 1 "$NUM_MATCHES"); do
     bash "$SMOKE" \
       --timeout "$TIMEOUT_SECS" \
       --run-dir "$MATCH_DIR" \
-      --reality-assertion "$REALITY_ASSERTION" \
+      --declared-reality-assertion "$DECLARED_REALITY" \
       ${SMOKE_EXTRA_FLAGS[@]+"${SMOKE_EXTRA_FLAGS[@]}"} \
     || true
   NUM_RUN=$((NUM_RUN + 1))

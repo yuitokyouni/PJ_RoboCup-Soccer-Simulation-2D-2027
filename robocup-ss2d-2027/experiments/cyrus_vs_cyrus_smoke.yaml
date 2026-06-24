@@ -26,10 +26,10 @@ timeout_secs: 300
 
 # Claim that this experiment is real. The aggregator promotes
 # summary.json::run_reality_status to "real_rcssserver" only when this
-# claim is matched by every match's metadata AND no declared server
-# option went unapplied. Self-tests must keep the default
-# "synthetic_or_stubbed".
-reality_assertion: "real_rcssserver"
+# CLAIM matches every match's OBSERVED attestation (see
+# docs/REALITY_ATTESTATION.md). The claim alone is never enough;
+# self-tests with a stub rcssserver will be downgraded automatically.
+declared_reality_assertion: "real_rcssserver"
 
 # No experiment-specific overrides yet. The smoke runner's hardcoded
 # required options (game_log_dir, text_log_dir, game_log_compression,

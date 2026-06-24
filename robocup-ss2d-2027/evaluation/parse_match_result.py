@@ -1,34 +1,39 @@
 #!/usr/bin/env python3
 """parse_match_result.py - extract a match result and merge runtime metadata.
 
-The output schema (`schema_version: "1.2"`) augments the parsed score with
-the runtime metadata recorded by `scripts/run_smoke_match.sh`. The merge
-order is:
+The output schema (`schema_version: "1.3"`) augments the parsed score with
+the runtime metadata recorded by `scripts/run_smoke_match.sh` and the
+attestation written by `scripts/attest_runtime.py`. The merge order is:
 
     metrics.json = metadata.json (if present)  +  parsed score  +  file lists
 
 Every metrics.json contains the same keys regardless of whether the match
-completed. Unknown values are emitted as null (numbers) or "unknown"
-(strings); the reason is appended to `parser_notes`.
+completed. Unknown values are emitted as null (numbers), "unknown"
+(strings), [] (lists), or {} (dicts); the reason is appended to
+`parser_notes`.
 
     {
-      "schema_version":          "1.2",
-      "run_id":                  "...",
-      "created_at_utc":          "...",
-      "server_binary":           "...",
-      "server_version":          "...",
-      "applied_server_options":  [...],
-      "reality_assertion":       "synthetic_or_stubbed" | "real_rcssserver",
-      "home_start_command":      "...",
-      "away_start_command":      "...",
-      "home_team":               "...",
-      "away_team":               "...",
-      "home_score":              0,
-      "away_score":              0,
-      "result":                  "home_win" | "away_win" | "draw" | "unknown",
-      "rcg_files":               [...],
-      "rcl_files":               [...],
-      "parser_notes":            [...]
+      "schema_version":             "1.3",
+      "run_id":                     "...",
+      "created_at_utc":             "...",
+      "server_binary":              "...",
+      "server_version":             "...",
+      "applied_server_options":     [...],
+      "declared_reality_assertion": "synthetic_or_stubbed" | "real_rcssserver",
+      "observed_reality_status":    "real_rcssserver" | "synthetic_or_stubbed"
+                                    | "unknown_or_unverified",
+      "reality_evidence":           { ... },
+      "reality_evidence_missing":   [...],
+      "home_start_command":         "...",
+      "away_start_command":         "...",
+      "home_team":                  "...",
+      "away_team":                  "...",
+      "home_score":                 0,
+      "away_score":                 0,
+      "result":                     "home_win" | "away_win" | "draw" | "unknown",
+      "rcg_files":                  [...],
+      "rcl_files":                  [...],
+      "parser_notes":               [...]
     }
 """
 from __future__ import annotations
@@ -39,7 +44,7 @@ import re
 import sys
 from pathlib import Path
 
-SCHEMA_VERSION = "1.2"
+SCHEMA_VERSION = "1.3"
 
 # Matches end-of-game lines from rcssserver-ish servers, e.g.
 #   "Result: helios 2 - 1 helios"
@@ -63,11 +68,15 @@ METADATA_KEYS = (
     "server_binary",
     "server_version",
     "applied_server_options",
-    "reality_assertion",
+    "declared_reality_assertion",
+    "observed_reality_status",
+    "reality_evidence",
+    "reality_evidence_missing",
     "home_start_command",
     "away_start_command",
 )
-LIST_KEYS = ("applied_server_options",)
+LIST_KEYS = ("applied_server_options", "reality_evidence_missing")
+DICT_KEYS = ("reality_evidence",)
 
 
 def parse_score_from_text(text: str) -> dict | None:
@@ -96,10 +105,18 @@ def classify(home: int, away: int) -> str:
     return "draw"
 
 
+def _default_for(key: str):
+    if key in LIST_KEYS:
+        return []
+    if key in DICT_KEYS:
+        return {}
+    return "unknown"
+
+
 def load_metadata(run_dir: Path, notes: list[str]) -> dict:
     """Load metadata.json if present; otherwise fill with placeholders."""
     metadata_path = run_dir / "metadata.json"
-    defaults = {k: ([] if k in LIST_KEYS else "unknown") for k in METADATA_KEYS}
+    defaults = {k: _default_for(k) for k in METADATA_KEYS}
     if not metadata_path.is_file():
         notes.append("metadata.json not found; runtime fields default to 'unknown'")
         return defaults

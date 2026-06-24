@@ -14,7 +14,8 @@ run_smoke_match.sh - run a single baseline-vs-baseline smoke match
 
 Usage:
   run_smoke_match.sh [--help] [--timeout SECONDS] [--run-dir PATH]
-                     [--server-option KEY=VALUE]... [--reality-assertion REALITY]
+                     [--server-option KEY=VALUE]...
+                     [--declared-reality-assertion REALITY]
 
 Options:
   --timeout SECONDS  Hard wall-clock cap for the match. Default: 120
@@ -33,14 +34,15 @@ Options:
                      May be passed multiple times. Recorded in
                      metadata.json::applied_server_options alongside
                      those required options.
-  --reality-assertion REALITY
+  --declared-reality-assertion REALITY
                      One of 'synthetic_or_stubbed' (default) or
                      'real_rcssserver'. Recorded in
-                     metadata.json::reality_assertion verbatim. The
-                     smoke runner does NOT verify the assertion; the
-                     aggregator combines it with other conditions before
-                     promoting summary.json::run_reality_status. See
-                     docs/REAL_INTEGRATION.md.
+                     metadata.json::declared_reality_assertion. The smoke
+                     runner does NOT verify the assertion; it calls
+                     scripts/attest_runtime.py after the match and
+                     writes the observed verdict to
+                     metadata.json::observed_reality_status. See
+                     docs/REALITY_ATTESTATION.md.
 
 Environment:
   HELIOS_BASE_DIR  Directory of a built helios-base checkout.
@@ -76,7 +78,7 @@ EOF
 TIMEOUT_SECS="${TIMEOUT_SECS:-120}"
 RUN_DIR_OVERRIDE=""
 EXTRA_SERVER_OPTIONS=()
-REALITY_ASSERTION="synthetic_or_stubbed"
+DECLARED_REALITY="synthetic_or_stubbed"
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -h|--help) usage; exit 0 ;;
@@ -86,16 +88,16 @@ while [[ $# -gt 0 ]]; do
     --run-dir=*) RUN_DIR_OVERRIDE="${1#*=}"; shift ;;
     --server-option) shift; [[ $# -gt 0 ]] || { echo "--server-option needs a value" >&2; exit 2; }; EXTRA_SERVER_OPTIONS+=("$1"); shift ;;
     --server-option=*) EXTRA_SERVER_OPTIONS+=("${1#*=}"); shift ;;
-    --reality-assertion) shift; [[ $# -gt 0 ]] || { echo "--reality-assertion needs a value" >&2; exit 2; }; REALITY_ASSERTION="$1"; shift ;;
-    --reality-assertion=*) REALITY_ASSERTION="${1#*=}"; shift ;;
+    --declared-reality-assertion) shift; [[ $# -gt 0 ]] || { echo "--declared-reality-assertion needs a value" >&2; exit 2; }; DECLARED_REALITY="$1"; shift ;;
+    --declared-reality-assertion=*) DECLARED_REALITY="${1#*=}"; shift ;;
     *) echo "run_smoke_match.sh: unknown argument: $1" >&2; usage >&2; exit 2 ;;
   esac
 done
 [[ "$TIMEOUT_SECS" =~ ^[1-9][0-9]*$ ]] \
   || { echo "run_smoke_match.sh: --timeout must be a positive integer, got '$TIMEOUT_SECS'" >&2; exit 2; }
-case "$REALITY_ASSERTION" in
+case "$DECLARED_REALITY" in
   synthetic_or_stubbed|real_rcssserver) ;;
-  *) echo "run_smoke_match.sh: --reality-assertion must be 'synthetic_or_stubbed' or 'real_rcssserver', got '$REALITY_ASSERTION'" >&2; exit 2 ;;
+  *) echo "run_smoke_match.sh: --declared-reality-assertion must be 'synthetic_or_stubbed' or 'real_rcssserver', got '$DECLARED_REALITY'" >&2; exit 2 ;;
 esac
 
 die() { echo "[smoke] ERROR: $*" >&2; exit 1; }
@@ -165,6 +167,10 @@ MATCH_STATUS="unknown_failure"
 SERVER_PID=""
 
 write_metadata() {
+  # Merge-write: read any existing metadata, overwrite the core fields
+  # this runner owns, leave any other keys (notably the attestation
+  # fields added by scripts/attest_runtime.py) intact. The EXIT trap
+  # calls this again, so attestation must survive the re-write.
   python3 - \
     "$RUN_DIR/metadata.json" \
     "$TS" \
@@ -175,27 +181,33 @@ write_metadata() {
     "$AWAY_TEAM_START" \
     "$TIMEOUT_SECS" \
     "$MATCH_STATUS" \
-    "$REALITY_ASSERTION" \
+    "$DECLARED_REALITY" \
     "${SERVER_OPTIONS[@]}" <<'PYEOF'
-import json, sys
+import json, os, sys
 (path, run_id, created_at, binary, version,
  home_cmd, away_cmd, timeout_secs, match_status,
- reality_assertion, *opts) = sys.argv[1:]
-data = {
-    "schema_version":          "1.2",
-    "run_id":                  run_id,
-    "created_at_utc":          created_at,
-    "server_binary":           binary,
-    "server_version":          version,
-    "applied_server_options":  opts,
-    "reality_assertion":       reality_assertion,
-    "home_start_command":      home_cmd,
-    "away_start_command":      away_cmd,
-    "timeout_secs":            int(timeout_secs),
-    "match_status":            match_status,
-}
+ declared_reality, *opts) = sys.argv[1:]
+existing = {}
+if os.path.exists(path):
+    try:
+        existing = json.loads(open(path).read())
+    except (json.JSONDecodeError, OSError):
+        existing = {}
+existing.update({
+    "schema_version":             "1.3",
+    "run_id":                     run_id,
+    "created_at_utc":             created_at,
+    "server_binary":              binary,
+    "server_version":             version,
+    "applied_server_options":     opts,
+    "declared_reality_assertion": declared_reality,
+    "home_start_command":         home_cmd,
+    "away_start_command":         away_cmd,
+    "timeout_secs":               int(timeout_secs),
+    "match_status":               match_status,
+})
 with open(path, "w") as f:
-    json.dump(data, f, indent=2)
+    json.dump(existing, f, indent=2)
     f.write("\n")
 PYEOF
 }
@@ -278,6 +290,11 @@ fi
 # runs (the parser does not consume match_status, but a forensic reader
 # expecting an up-to-date file will see the right value).
 write_metadata
+
+# Attestation runs regardless of match outcome -- the evidence schema
+# is also useful for explaining why a failed match was not real.
+python3 "$ROOT/scripts/attest_runtime.py" --run-dir "$RUN_DIR" >/dev/null \
+  || echo "[smoke] WARN: attest_runtime.py exited non-zero; metadata.json may lack observed_reality_status" >&2
 
 if [[ "$MATCH_STATUS" != "match_completed" ]]; then
   echo "[smoke] match_status: $MATCH_STATUS" >&2
