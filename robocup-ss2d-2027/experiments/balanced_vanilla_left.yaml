@@ -1,0 +1,33 @@
+schema_version: "0.1.0"
+
+experiment_id: "balanced_vanilla_left"
+description: >
+  Balanced n=30 leg 1 of 2 (vanilla on LEFT). Pair this experiment
+  with balanced_improved_left.yaml (improved on LEFT) so that each
+  team plays 15 matches per side. The pair tests improved-vs-vanilla
+  while cancelling out the cross-binary side bias documented in the
+  2026-06-25 session handoff (~40 pp LEFT advantage with vanilla on
+  one side and improved on the other).
+
+  This leg runs vanilla on the LEFT, improved on the RIGHT.
+
+home_team: "CYRUS_VANILLA"
+away_team: "CYRUS_IMPROVED"
+
+home_start_command: "scripts/team_launchers/cyrus_vanilla_left.sh"
+away_start_command: "scripts/team_launchers/cyrus_improved_right.sh"
+
+num_matches: 15
+timeout_secs: 600
+
+declared_reality_assertion: "real_rcssserver"
+
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"
+
+notes:
+  - "Balanced eval leg 1/2: vanilla LEFT, improved RIGHT."
+  - "Pair with balanced_improved_left.yaml (improved LEFT, vanilla RIGHT)."
+  - "Aggregate by hand: combine summary.json from both legs to compute the side-corrected mean_goal_diff for improved."

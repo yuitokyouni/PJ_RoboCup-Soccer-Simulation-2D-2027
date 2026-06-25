@@ -29,7 +29,8 @@ for f in chance_signal.h chance_signal.cpp \
          bhv_smart_clearance.h bhv_smart_clearance.cpp \
          territory_recovery_state.h territory_recovery_state.cpp \
          counter_press_state.h counter_press_state.cpp \
-         defense_block.h defense_block.cpp; do
+         defense_block.h defense_block.cpp \
+         intercept_discipline.h intercept_discipline.cpp; do
   if [[ -f "$PATCH_ROOT/src/phase5/$f" ]]; then
     cp -v "$PATCH_ROOT/src/phase5/$f" "$SRC/phase5/$f"
   else
@@ -248,7 +249,9 @@ add = anchor + '''
 
 // PHASE5_BBM: Phase 5 defensive/offensive modulation hooks.
 #include "phase5/counter_press_state.h"
-#include "phase5/defense_block.h"'''
+#include "phase5/defense_block.h"
+// PHASE8_BBM: position-aware CDM intercept gate.
+#include "phase5/intercept_discipline.h"'''
 if anchor not in src:
     sys.exit('  ERROR: using namespace rcsc anchor not found in bhv_basic_move.cpp')
 src = src.replace(anchor, add, 1)
@@ -263,6 +266,25 @@ add = '''const WorldModel &wm = agent->world();
     // tackle'''
 if anchor not in src:
     sys.exit('  ERROR: tackle block anchor not found')
+src = src.replace(anchor, add, 1)
+
+# 5c (PHASE8): gate the unconditional Body_InterceptPlan call. For
+# CDM uniforms (6, 7), refuse to commit if the intercept would leave
+# the central screen exposed (no teammate cover behind AND an opponent
+# runner is breaking in). All other uniforms get the existing behavior.
+anchor = '''    if (Body_InterceptPlan().execute(agent)) {
+        return true;
+    }'''
+add = '''    // PHASE8_BBM: position-aware CDM intercept gate. False -> skip
+    // Body_InterceptPlan this cycle and fall through to formation
+    // positioning so the central channel stays covered.
+    if ( cyrus_phase5::intercept_safe_for_unum( wm.self().unum(), wm ) ) {
+        if (Body_InterceptPlan().execute(agent)) {
+            return true;
+        }
+    }'''
+if anchor not in src:
+    sys.exit('  ERROR: Body_InterceptPlan block anchor not found in bhv_basic_move.cpp')
 src = src.replace(anchor, add, 1)
 
 # 5c: apply defense_block modulator at end of updateTarget(). Find the
