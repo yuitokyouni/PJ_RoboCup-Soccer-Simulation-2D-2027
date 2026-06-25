@@ -563,11 +563,23 @@ print('  CMakeLists.txt patched')
 PYEOF
 
 # -------------------------------------------------------------------
-# Step 9: switch the default "Other" tactics file to use Formation 325
-# so when Cyrus plays an unknown opponent (HELIOS_R in our smokes),
-# it picks our 3-2-5 instead of 4-3-3.
+# Step 9: keep Spica325 on the F433 formation file at *load* time.
+#
+# Per 2026-06-25 Phase 5 ablation (notes/2026-06-25_phase5_ablation.md):
+# loading the F325 conf files produced a multi-goal offensive
+# regression because the Delaunay sample points were not retuned for
+# Cyrus's chain-action pass-success model. Phase 9 (2026-06-25)
+# re-measured the same regression in a fresh container build (-2.07
+# goal/match) and confirmed F433 + Phase 5 hooks recovers to within
+# noise of vanilla.
+#
+# Spica325 still satisfies "variable 4-3-3 / 3-2-5 tactical overlay":
+# the rest shape is the loaded F433 formation, and defense_block.cpp's
+# modulate_position dynamically lifts a side-back into a wing-back +
+# drops a CDM into a 3-back during the attack phase, producing 3-2-5
+# in possession and 5-2-3 out of possession without any new conf file.
 # -------------------------------------------------------------------
-echo "[phase5] forcing Formation=\"325\" in Other.json"
+echo "[phase5] forcing Formation=\"433\" in Other.json"
 python3 - "$CYRUS" <<'PYEOF'
 import sys, pathlib, re
 root = pathlib.Path(sys.argv[1])
@@ -583,7 +595,7 @@ for path in candidates:
     if not path.exists():
         continue
     text = path.read_text()
-    new = re.sub(r'"Formation"\s*:\s*"\d+"', '"Formation": "325"', text, count=1)
+    new = re.sub(r'"Formation"\s*:\s*"\d+"', '"Formation": "433"', text, count=1)
     if new != text:
         path.write_text(new)
         print(f'  patched {path}')
