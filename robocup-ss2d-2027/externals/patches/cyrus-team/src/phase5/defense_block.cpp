@@ -206,34 +206,30 @@ rcsc::Vector2D modulate_position(
                 shifted_y = cdm_y;
             }
         }
-        // Phase 7 corrected (2026-06-25): Dembele 25/26 pattern.
-        // CF (unum 11) is NOT a false-9 dropping back -- he is a true
-        // centre-forward making DIAGONAL ATTACKING RUNS into the
-        // OPPOSITE pocket from the pushing wing-back. "Pocket" =
-        // inside half-space in the final third, between opp FB and CB
-        // (roughly x in [25, 40], y around ±12).
+        // Phase 7 corrected (2026-06-25 v2): Dembele 25/26 pattern.
+        // CF (unum 11) is a true CF making DIAGONAL ATTACKING RUNS
+        // into the SAME-SIDE pocket as the pushing wing-back. The CF
+        // joins the side of the attack so the WB has a forward outlet
+        // ahead of his carry, and the pass becomes a slight inside-cut
+        // wedge into the inside half-space.
         //
-        //   LB (Nuno) carries up left -> CF (Dembele) diagonal run
-        //   from centre to RIGHT pocket (y = +12, x = ball.x + 25)
-        //   RB carries up right       -> CF diagonal run to LEFT
-        //   pocket (y = -12, x = ball.x + 25)
+        //   LB (Nuno) carries up left  -> CF diagonal run from centre
+        //                                 to LEFT pocket  (y = -12)
+        //   RB carries up right        -> CF diagonal run from centre
+        //                                 to RIGHT pocket (y = +12)
+        //   pocket x = clamp(ball.x + 25, 15, 38)
         //
         // Trigger: we're attacking and a SB is actively pushing
-        // (ball.y |>| 3 means an attack side is committed). When the
+        // (|ball.y| > 3 means an attack side is committed). When the
         // ball is deep in our half (ball.x < -25) the run hasn't
         // started yet -- CF stays at his raw formation position.
         if ( is_false_nine( self_unum )
              && ball_pos.x >= -25.0
              && std::abs( ball_pos.y ) > 3.0 ) {
             const double by = ball_pos.y;
-            const double pocket_y = ( by > 3.0 ) ? -12.0   // right attack -> LEFT pocket
-                                  :                12.0;  // left attack  -> RIGHT pocket
-            // Pocket x: well ahead of ball, but cap inside the final
-            // third (we don't want CF stranded behind the opp goal).
+            const double pocket_y = ( by > 3.0 ) ?  12.0  // right attack -> RIGHT pocket (same side as RB)
+                                  :               -12.0;  // left attack  -> LEFT pocket  (same side as LB)
             const double pocket_x = clamp_d( ball_pos.x + 25.0, 15.0, 38.0 );
-            // Only OVERRIDE the raw target if the pocket position is
-            // higher than where the CF would otherwise be -- we never
-            // want the modulator to PULL the CF back during an attack.
             if ( pocket_x > shifted_x ) shifted_x = pocket_x;
             shifted_y = pocket_y;
         }
