@@ -1,10 +1,21 @@
-# robocup-ss2d-2027
+# Spica2D
 
-Goal: Build and evaluate a RoboCup Soccer Simulation 2D team for RoboCup 2027, with emphasis on statistically robust multi-agent strategy evaluation and opponent modeling.
+Spica2D is a RoboCup Soccer Simulation 2D project targeting RoboCup 2027.
+
+The current research model, Spica325, is a variable 4-3-3/3-2-5 tactical overlay evaluated against a Cyrus-style Vanilla baseline using a reproducible batch evaluation harness.
 
 ## Deadline Assumption
 
 RoboCup 2027 Soccer Simulation 2D qualification is expected around Feb-Mar 2027, based on RoboCup 2026 timelines.
+
+## Naming
+
+| Concept    | Name                       | Notes |
+|------------|----------------------------|-------|
+| Team       | Spica2D                    | Project / team name. |
+| Research model | Spica325               | Current tactical overlay (variable 4-3-3 ↔ 3-2-5). |
+| Baseline   | Vanilla (Cyrus-style)      | Built from the upstream cyrus-soccer-simulation-team tree with only the rapidjson vendor patch. |
+| Project ID | robocup-spica-2027         | Future rename target for this repository. |
 
 ## Near-term milestones
 
