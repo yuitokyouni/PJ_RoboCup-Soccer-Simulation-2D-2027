@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup_cyrus_snapshots.sh -- materialize the two cyrus-team snapshots
-# the team_launchers/cyrus_{vanilla,improved}_*.sh scripts expect.
+# the team_launchers/{cyrus_vanilla,spica325}_*.sh scripts expect.
 #
 # Run AFTER `make build-externals` has produced a clean cyrus-team
 # build under externals/src/cyrus-team/build/src/sample_player. This
@@ -13,9 +13,9 @@
 #   2. Run apply_phase5.sh against externals/src/cyrus-team/ to add
 #      the Phase 5/6/7/8 patches in place. Rebuild.
 #
-#   3. Copy the now-improved cyrus-team tree to
-#      externals/src/cyrus-team-v3-snapshot/ -- this is the "improved"
-#      snapshot used by the cyrus_improved_*.sh launchers.
+#   3. Copy the now-Spica325 cyrus-team tree to
+#      externals/src/cyrus-team-v3-snapshot/ -- this is the "Spica325"
+#      snapshot used by the spica325_*.sh launchers.
 #
 # Idempotent: if vanilla snapshot already exists, step 1 is skipped.
 # If apply_phase5.sh sentinels are present (PHASE5_F325 etc.), step 2's
@@ -74,7 +74,7 @@ cmake -DCMAKE_INSTALL_PREFIX="$CYRUS_PREFIX" \
 make -j"$JOBS"
 popd >/dev/null
 
-echo "[snapshots] (re)creating v3 (improved) snapshot"
+echo "[snapshots] (re)creating v3 (Spica325) snapshot"
 rm -rf "$V3_SNAP"
 cp -a "$CYRUS" "$V3_SNAP"
 
@@ -106,4 +106,4 @@ popd >/dev/null
 
 echo "[snapshots] DONE"
 echo "[snapshots]   vanilla : $VAN_SNAP/build/src/sample_player"
-echo "[snapshots]   improved: $V3_SNAP/build/src/sample_player"
+echo "[snapshots]   Spica325: $V3_SNAP/build/src/sample_player"

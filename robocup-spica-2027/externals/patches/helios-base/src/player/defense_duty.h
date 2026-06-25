@@ -6,7 +6,7 @@
 // per-cycle "defensive duty" (press / cover / none) so the team can
 // stop relying on Bhv_BasicMove's universal chase-the-ball heuristic.
 //
-// Added by: 2026-06-24 robocup-ss2d-2027/scripts session.
+// Added by: 2026-06-24 robocup-spica-2027/scripts session.
 // Not part of helios upstream.
 
 #ifndef DEFENSE_DUTY_H

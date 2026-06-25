@@ -7,8 +7,7 @@ RoboCup 2027 under the team name **Spica2D**. The current research
 model is **Spica325**, a variable 4-3-3 / 3-2-5 tactical overlay
 evaluated against a Cyrus-style **Vanilla** baseline.
 
-Project ID: `robocup-spica-2027` (the current `robocup-ss2d-2027/`
-top-level directory is a pending rename target).
+Project ID: `robocup-spica-2027` (top-level project directory).
 
 The immediate focus is harness engineering:
 - reproducible setup

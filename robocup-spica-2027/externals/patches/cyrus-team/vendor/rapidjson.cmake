@@ -1,4 +1,4 @@
-# PATCHED by robocup-ss2d-2027 build harness.
+# PATCHED by robocup-spica-2027 build harness.
 # Upstream uses ExternalProject_Add to git-clone rapidjson at build
 # time. Outbound git is restricted in some sandboxes; instead we fetch
 # the same rapidjson commit (f54b0e47) via our tarball fetcher into
