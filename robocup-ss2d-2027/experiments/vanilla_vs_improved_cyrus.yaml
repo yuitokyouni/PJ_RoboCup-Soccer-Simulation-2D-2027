@@ -13,7 +13,7 @@ away_team: "CYRUS_IMPROVED"
 home_start_command: "scripts/team_launchers/cyrus_vanilla_left.sh"
 away_start_command: "scripts/team_launchers/cyrus_improved_right.sh"
 
-num_matches: 3
+num_matches: 30
 timeout_secs: 600
 
 declared_reality_assertion: "real_rcssserver"
