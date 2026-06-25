@@ -1,0 +1,31 @@
+schema_version: "0.1.0"
+
+experiment_id: "balanced_spica325_left"
+description: >
+  Balanced n=30 leg 2 of 2 (Spica325 on LEFT). Pair with
+  balanced_vanilla_left.yaml. Combined these two legs make a
+  side-balanced 30-match evaluation of Spica325 vs the Vanilla
+  (Cyrus-style) baseline.
+
+  This leg runs Spica325 on the LEFT, Vanilla on the RIGHT.
+
+home_team: "SPICA325"
+away_team: "CYRUS_VANILLA"
+
+home_start_command: "scripts/team_launchers/spica325_left.sh"
+away_start_command: "scripts/team_launchers/cyrus_vanilla_right.sh"
+
+num_matches: 15
+timeout_secs: 600
+
+declared_reality_assertion: "real_rcssserver"
+
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"
+
+notes:
+  - "Balanced eval leg 2/2: Spica325 LEFT, Vanilla RIGHT."
+  - "Pair with balanced_vanilla_left.yaml (Vanilla LEFT, Spica325 RIGHT)."
+  - "Combine summary.json from both legs via scripts/combine_balanced_legs.py to get side-corrected mean_goal_diff for Spica325."

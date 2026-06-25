@@ -61,8 +61,8 @@ CMD_TOKEN = re.compile(r"\((kick|dash|turn|turn_neck|catch|tackle)\b")
 
 
 def parse_match_filename(rcl_path: pathlib.Path):
-    """20260625060005-CYRUS_VANILLA_1-vs-CYRUS_IMPROVED_0.rcl
-       -> ('CYRUS_VANILLA', 1, 'CYRUS_IMPROVED', 0)"""
+    """20260625060005-CYRUS_VANILLA_1-vs-SPICA325_0.rcl
+       -> ('CYRUS_VANILLA', 1, 'SPICA325', 0)"""
     stem = rcl_path.stem
     m = re.match(
         r"\d+-(?P<h>[^-]+(?:_[A-Z]+)*)_(?P<hs>\d+)-vs-(?P<a>[^-]+(?:_[A-Z]+)*)_(?P<as>\d+)$",

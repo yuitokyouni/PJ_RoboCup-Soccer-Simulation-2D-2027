@@ -204,7 +204,76 @@ build.make points at itself, not at $CYRUS).
 
 ### Sanity n=10 with the actually-updated binary
 
-_(running)_
+```
+match  imp_score  van_score  diff      (kill switch ON)
+m1     1          0          +1
+m2     0          2          -2
+m3     0          4          -4
+m4     1          1           0
+m5     0          1          -1
+m6     0          2          -2
+m7     0          3          -3
+m8     0          2          -2
+m9     0          5          -5
+m10    0          4          -4
+```
+
+Mean diff: **-2.20 ± 0.43 SE** (improved 0.2 mean goals, vanilla 2.4 mean).
+
+This is essentially the same as the Phase-8-on result (-2.07). The
+gate-disabled binary has `intercept_safe_for_unum` linked and the
+function unconditionally returns true (verified by hand-tracing the
+patched source and by `nm | grep intercept_safe`).
+
+### Revised interpretation
+
+Phase 8 is NOT the cause of the -2 goal/match regression. The
+regression exists with Phase 8 disabled. The improved binary built
+in this fresh cloud container is genuinely weaker than the
+"improved" binary the prior session measured at -0.033 tie, despite
+both being built from the same cyrus-team@7283c0de tree with the
+same `apply_phase5.sh` patches.
+
+Candidates for the actual cause:
+1. Library / compiler environment in the fresh container (Eigen 3.4
+   from apt, Boost 1.83 from apt, GCC 13.3) differs from the prior
+   session's build environment. Subtle FP / iteration-order
+   differences in librcsc + chance_signal could swing close matches.
+2. `apply_phase5.sh` may have applied a step in a different order
+   than the handoff state. Particularly, the step-9 "force
+   Formation=325 in Other.json" is order-sensitive — it patches the
+   `src/data/settings/Other.json` BEFORE the cmake build copies it
+   into `build/src/data/settings/`, but in this run cmake had already
+   copied it once (during the first `make build-externals` pass)
+   before phase5 reset the src/. The improved binary may be reading
+   a stale or otherwise-incorrect Other.json at runtime.
+3. The defense_block.cpp v2 SAME-SIDE pocket logic from commit
+   1926cd1 may have additive effects with the rest of the F325
+   modulator that I have not separated.
+
+Phase 8 stays disabled. The Phase 8 design (gate the CDM intercept)
+remains plausible as a tactical improvement, but cannot be
+evaluated cleanly until the underlying -2 baseline drift is
+diagnosed.
+
+### What to actually try next session
+
+1. **Build hygiene**: wipe `externals/src/cyrus-team/` and refetch +
+   rebuild from a clean slate to confirm the regression reproduces
+   from a known starting point.
+2. **Other.json content check**: dump `data/settings/Other.json`
+   from inside the v3 snapshot and confirm Formation == "325" at
+   runtime. Compare with what the vanilla snapshot loads.
+3. **Bisect phase5 modules**: produce two intermediate binaries —
+   (a) cyrus-team with only chance_signal patched (no F325, no
+   defense_block, no counter_press); (b) cyrus-team with chance_signal
+   + counter_press only. Measure each vs vanilla. The module that
+   first introduces the regression is the culprit.
+4. **Compare runtime Other.json under sed**: prior sessions applied
+   `goaliesleep=1 -> 3` via a sed-patched start.sh. Check if the
+   sed expression still matches (cyrus master may have changed the
+   start.sh format).
+
 
 
 ---

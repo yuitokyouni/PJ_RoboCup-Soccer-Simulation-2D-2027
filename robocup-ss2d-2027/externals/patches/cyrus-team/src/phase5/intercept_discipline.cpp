@@ -74,16 +74,12 @@ bool runner_behind( const rcsc::WorldModel & wm,
 
 bool intercept_safe_for_unum( int self_unum,
                               const rcsc::WorldModel & wm ) {
-    // PHASE8 KILL-SWITCH: balanced n=30 (15+15 LEFT-balanced) showed
-    // Phase 8's gate regresses improved by -2.07 goal/match vs the prior
-    // tie. The CDM is refusing intercepts in defensive cycles where it
-    // should engage. Disabled pending a redesign:
-    //   - tighter runner-velocity threshold (currently fires on any
-    //     opp moving toward our goal)
-    //   - looser cover-behind requirement (currently demands 8m radius
-    //     around a midpoint that's effectively in the defensive third)
-    //   - or restrict firing to opp-half counter-attacks only
-    // See notes/2026-06-25_phase8_negative_result.md.
+    // PHASE8 KILL-SWITCH: Phase 8 cannot be evaluated cleanly until
+    // the -2 goal/match baseline drift between this fresh container
+    // build and the prior session's "improved" measurement (-0.033
+    // tie) is diagnosed (see notes/2026-06-25_phase8_negative_result.md).
+    // Gate disabled — passes everything through — so the wiring stays
+    // in place and a redesign can flip this off in one line.
     return true;
     if ( ! is_cdm_unum( self_unum ) ) {
         return true;

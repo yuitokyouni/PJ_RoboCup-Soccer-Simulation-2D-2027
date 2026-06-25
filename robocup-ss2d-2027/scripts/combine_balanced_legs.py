@@ -11,8 +11,8 @@ This script reads the two batch summary.json files and prints the
 side-corrected per-team statistics.
 
 Convention used by the experiments shipped with this repo:
-  leg1 = balanced_vanilla_left  (home=vanilla, away=improved)
-  leg2 = balanced_improved_left (home=improved, away=vanilla)
+  leg1 = balanced_vanilla_left   (home=CYRUS_VANILLA, away=SPICA325)
+  leg2 = balanced_spica325_left  (home=SPICA325, away=CYRUS_VANILLA)
 
 Pass them in that order (or pass them in any order with --variant=NAME
 to declare which one is the variant team name).
@@ -95,9 +95,9 @@ def stats(diffs: list[int]) -> tuple[float, float, float]:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="combine_balanced_legs.py")
     ap.add_argument("leg1", type=Path, help="First leg summary.json (e.g. balanced_vanilla_left)")
-    ap.add_argument("leg2", type=Path, help="Second leg summary.json (e.g. balanced_improved_left)")
-    ap.add_argument("--variant", default="CYRUS_IMPROVED",
-                    help="Team name to treat as the variant (default: CYRUS_IMPROVED)")
+    ap.add_argument("leg2", type=Path, help="Second leg summary.json (e.g. balanced_spica325_left)")
+    ap.add_argument("--variant", default="SPICA325",
+                    help="Team name to treat as the variant (default: SPICA325)")
     args = ap.parse_args(argv)
 
     if not args.leg1.is_file():
