@@ -184,7 +184,28 @@ build.
 
 ## Sanity check (n=10 improved-LEFT with kill switch)
 
-_(awaiting batch completion)_
+### Binary-aliasing bug uncovered first
+
+After flipping the kill switch, an n=10 sanity check still returned
+mean_diff ≈ -2.3. Investigation showed `setup_cyrus_snapshots.sh`'s
+`cp -a $CYRUS $V3_SNAP` step preserves the cmake-generated `build.make`
+verbatim, and that file hard-codes absolute paths back to `$CYRUS`.
+Result: running `make` inside `$V3_SNAP/build` actually compiles and
+links into `$CYRUS/build/src/sample_player`, and `$V3_SNAP/build/src/
+sample_player` is never touched.
+
+The launchers point at `$V3_SNAP/build/src/sample_player`, so even
+with the kill switch applied + rebuilt, matches ran the original
+Phase-8-on binary. Fix: rebuild via `make sample_player` inside
+`$CYRUS/build`, then `cp $CYRUS/build/src/sample_player
+$V3_SNAP/build/src/sample_player`. Long-term fix lives in
+`setup_cyrus_snapshots.sh` (re-cmake the V3 build dir so its
+build.make points at itself, not at $CYRUS).
+
+### Sanity n=10 with the actually-updated binary
+
+_(running)_
+
 
 ---
 
