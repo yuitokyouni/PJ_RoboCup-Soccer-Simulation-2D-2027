@@ -13,13 +13,16 @@ away_team: "CYRUS_IMPROVED"
 home_start_command: "scripts/team_launchers/cyrus_vanilla_left.sh"
 away_start_command: "scripts/team_launchers/cyrus_improved_right.sh"
 
-num_matches: 30
+num_matches: 30  # F433-only Improved (chance threshold 0.5, mag 50), PK disabled
 timeout_secs: 600
 
 declared_reality_assertion: "real_rcssserver"
 
 server_options:
   - "server::synch_mode=true"
+  # No penalty shootouts; ties in regular time are recorded as draws.
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"
 
 notes:
   - "Both binaries built from cyrus-soccer-simulation-team@7283c0d; vanilla has zero modifications, improved has the full Phase 5 patch set."
