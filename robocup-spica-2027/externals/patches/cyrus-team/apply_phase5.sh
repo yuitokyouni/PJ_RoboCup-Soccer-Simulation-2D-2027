@@ -476,6 +476,43 @@ if eval_anchor not in src:
     sys.exit('  ERROR: per-candidate evaluator call anchor not found')
 src = src.replace(eval_anchor, bias_block, 1)
 
+# PHASE9_ACG_MIRROR: symmetrize Cyrus's right-side-only pull-back boost.
+# Upstream adds +20 to a pass evaluation when carrier unum is 8/4/10
+# (right-side roles) AND ball.y > 15 AND target.y < 15. No mirror for
+# left-side play exists. The 2026-06-25 handoff flagged this as the
+# strongest LEFT-side-bias source visible by code inspection. Add a
+# mirror so Spica325 evaluates left-wing pull-back passes the same
+# way it evaluates right-wing pull-back passes.
+mirror_anchor = '''            if(wm.self().unum() == 8 || wm.self().unum() == 4 || wm.self().unum() == 10){
+                if(wm.ball().pos().x > 0 && wm.ball().pos().y > 15){
+                    if(candidate_series.front().action().targetPoint().y < 15){
+                        ev += 20;
+                        #ifdef ACTION_CHAIN_DEBUG
+                        dlog.addText(Logger::ACTION_CHAIN, "__  ev:%.1f ball to up", ev);
+                        #endif
+                    }
+
+                }
+            }'''
+mirror_add = mirror_anchor + '''
+            // PHASE9_ACG_MIRROR: symmetric left-wing pull-back boost so
+            // Spica325 does not inherit Cyrus's right-only asymmetry.
+            if(wm.self().unum() == 7 || wm.self().unum() == 3 || wm.self().unum() == 9){
+                if(wm.ball().pos().x > 0 && wm.ball().pos().y < -15){
+                    if(candidate_series.front().action().targetPoint().y > -15){
+                        ev += 20;
+                        #ifdef ACTION_CHAIN_DEBUG
+                        dlog.addText(Logger::ACTION_CHAIN, "__  ev:%.1f ball to down (mirror)", ev);
+                        #endif
+                    }
+                }
+            }'''
+if mirror_anchor not in src:
+    print('  WARN: PHASE9_ACG_MIRROR anchor (unum==8||4||10 block) not found; left-wing mirror NOT installed')
+else:
+    src = src.replace(mirror_anchor, mirror_add, 1)
+    print('  PHASE9_ACG_MIRROR installed')
+
 p.write_text(src)
 print('  action_chain_graph.cpp patched')
 PYEOF
