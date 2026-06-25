@@ -426,6 +426,91 @@ print('  action_chain_graph.cpp patched')
 PYEOF
 
 # -------------------------------------------------------------------
+# Step 7b: wire counter-press multiplier into bhv_mark_execute. The
+# CounterPressState already updates on possession transitions; here we
+# multiply mark dash_power by aggression_multiplier so we recover the
+# ball more aggressively for 50 cycles after losing it in opp half.
+# -------------------------------------------------------------------
+echo "[phase5] patching bhv_mark_execute.cpp"
+python3 - "$SRC/move_def/bhv_mark_execute.cpp" <<'PYEOF'
+import sys, pathlib
+p = pathlib.Path(sys.argv[1])
+src = p.read_text()
+if 'PHASE5_MARK' in src:
+    print('  bhv_mark_execute.cpp already patched; skipping')
+    sys.exit(0)
+
+# 7b-a: add include after the local includes.
+anchor = '#include "move_def/mark_position_finder.h"'
+add = anchor + '''
+
+// PHASE5_MARK: counter-press dash multiplier consumer.
+#include "phase5/counter_press_state.h"'''
+if anchor not in src:
+    sys.exit('  ERROR: mark_position_finder.h include anchor not found')
+src = src.replace(anchor, add, 1)
+
+# 7b-b: multiply mark dash_power by aggression_multiplier in the
+# three mark-type branches.
+old_block = '''    if (marktype == MarkType::ThMark) {
+        #ifdef DEBUG_MARK_EXECUTE
+        dlog.addText(Logger::MARK, ">>>>ThMark");
+        #endif
+        double dash_power = th_mark_power(agent, opp_pos, target_pos);
+        th_mark_move(agent, targ, dash_power, dist_thr, opp_unum);
+    }
+    else if (marktype == MarkType::LeadProjectionMark || marktype == MarkType::LeadNearMark) {
+        #ifdef DEBUG_MARK_EXECUTE
+        dlog.addText(Logger::MARK, ">>>>is LeadProj or LeadNear mark");
+        #endif
+        double dash_power = lead_mark_power(agent, opp_pos, target_pos);
+        lead_mark_move(agent, targ, dash_power, dist_thr, marktype, opp_pos);
+    }
+    else {
+        #ifdef DEBUG_MARK_EXECUTE
+        dlog.addText(Logger::MARK, ">>>>is other mark");
+        #endif
+        double dash_power = other_mark_power(agent, opp_pos, target_pos);
+        other_mark_move(agent, targ, dash_power, dist_thr);
+    }'''
+new_block = '''    // PHASE5_MARK: boost dash power during counter-press window.
+    const double cp_mult = cyrus_phase5::CounterPressState::instance()
+        .aggression_multiplier( agent->world().time().cycle() );
+    const double cp_cap = ServerParam::i().maxDashPower();
+
+    if (marktype == MarkType::ThMark) {
+        #ifdef DEBUG_MARK_EXECUTE
+        dlog.addText(Logger::MARK, ">>>>ThMark");
+        #endif
+        double dash_power = th_mark_power(agent, opp_pos, target_pos) * cp_mult;
+        if ( dash_power > cp_cap ) dash_power = cp_cap;
+        th_mark_move(agent, targ, dash_power, dist_thr, opp_unum);
+    }
+    else if (marktype == MarkType::LeadProjectionMark || marktype == MarkType::LeadNearMark) {
+        #ifdef DEBUG_MARK_EXECUTE
+        dlog.addText(Logger::MARK, ">>>>is LeadProj or LeadNear mark");
+        #endif
+        double dash_power = lead_mark_power(agent, opp_pos, target_pos) * cp_mult;
+        if ( dash_power > cp_cap ) dash_power = cp_cap;
+        lead_mark_move(agent, targ, dash_power, dist_thr, marktype, opp_pos);
+    }
+    else {
+        #ifdef DEBUG_MARK_EXECUTE
+        dlog.addText(Logger::MARK, ">>>>is other mark");
+        #endif
+        double dash_power = other_mark_power(agent, opp_pos, target_pos) * cp_mult;
+        if ( dash_power > cp_cap ) dash_power = cp_cap;
+        other_mark_move(agent, targ, dash_power, dist_thr);
+    }'''
+if old_block not in src:
+    sys.exit('  ERROR: mark-type dispatch block anchor not found')
+src = src.replace(old_block, new_block, 1)
+
+p.write_text(src)
+print('  bhv_mark_execute.cpp patched')
+PYEOF
+
+# -------------------------------------------------------------------
 # Step 8: patch CMakeLists.txt to compile phase5/*.cpp
 # -------------------------------------------------------------------
 echo "[phase5] patching src/CMakeLists.txt"
