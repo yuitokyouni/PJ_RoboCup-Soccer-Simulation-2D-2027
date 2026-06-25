@@ -408,14 +408,30 @@ bias_block = eval_anchor + '''
                 const bool hold_cat    = ( cat == CooperativeAction::Hold
                                            || cat == CooperativeAction::Move );
                 double bias = 0.0;
-                // Tuned 2026-06-25: keep the "decisive when chance is
-                // high" property strong, but soften the penalty on
-                // forward chains in chance-poor states so we still
-                // pressure the defense via passing options.
-                if ( cs > 0.7 && forward_cat ) bias = +30.0 * (cs - 0.7) / 0.3;
+                // Phase 6 tuning: lower the forward-boost threshold
+                // from 0.7 -> 0.5 so the bias fires in the chance-
+                // range that Cyrus-vs-Cyrus matches actually produce.
+                if ( cs > 0.5 && forward_cat ) bias = +30.0 * (cs - 0.5) / 0.5;
                 else if ( cs < 0.3 && forward_cat ) bias = -8.0  * (0.3 - cs) / 0.3;
                 else if ( cs < 0.3 && hold_cat )    bias = +6.0  * (0.3 - cs) / 0.3;
                 ev += bias;
+
+                // Phase 6 wedge bias: prefer the diagonal pass from a
+                // wing-back to the false-9 / half-space. Matches the
+                // Nuno-Mendes -> Dembele pattern.
+                if ( cat == CooperativeAction::Pass ) {
+                    const int sender = wm.self().unum();
+                    const int rcv    = candidate_series[0].action().targetPlayerUnum();
+                    const rcsc::Vector2D tp = candidate_series[0].action().targetPoint();
+                    const bool from_wb     = ( sender == 3 || sender == 4 );
+                    const bool to_f9       = ( rcv == 11 );
+                    const bool target_opp  = ( tp.x > 0.0 );
+                    const double ay = std::abs( tp.y );
+                    const bool half_space  = ( ay >= 6.0 && ay <= 16.0 );
+                    if ( from_wb && to_f9 && target_opp && half_space ) {
+                        ev += 25.0;
+                    }
+                }
             }'''
 if eval_anchor not in src:
     sys.exit('  ERROR: per-candidate evaluator call anchor not found')
