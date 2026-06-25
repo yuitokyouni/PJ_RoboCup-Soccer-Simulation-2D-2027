@@ -1,0 +1,26 @@
+schema_version: "0.1.0"
+
+experiment_id: "vanilla_vs_improved_cyrus"
+description: >
+  Head-to-head: vanilla CYRUS_L (no Phase 5, F433) vs improved
+  CYRUS_R (Phase 5 hooks active, F325-hybrid = F325 defense conf +
+  F433 offense conf, counter-press wired into bhv_block / mark,
+  continuous chance-signal bias).
+
+home_team: "CYRUS_VANILLA"
+away_team: "CYRUS_IMPROVED"
+
+home_start_command: "scripts/team_launchers/cyrus_vanilla_left.sh"
+away_start_command: "scripts/team_launchers/cyrus_improved_right.sh"
+
+num_matches: 3
+timeout_secs: 600
+
+declared_reality_assertion: "real_rcssserver"
+
+server_options:
+  - "server::synch_mode=true"
+
+notes:
+  - "Both binaries built from cyrus-soccer-simulation-team@7283c0d; vanilla has zero modifications, improved has the full Phase 5 patch set."
+  - "Two separate build dirs so each binary loads its own data/settings/Other.json."
