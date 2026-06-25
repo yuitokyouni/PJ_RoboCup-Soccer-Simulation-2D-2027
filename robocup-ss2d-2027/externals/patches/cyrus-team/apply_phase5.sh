@@ -431,6 +431,23 @@ bias_block = eval_anchor + '''
                     if ( from_wb && to_f9 && target_opp && half_space ) {
                         ev += 25.0;
                     }
+
+                    // Phase 6.2 side-switch via backs (Pep verlagerung).
+                    // When the attack on one flank is dead-ended, a
+                    // long lateral pass from the back line to the
+                    // OPPOSITE flank opens space.
+                    const rcsc::Vector2D sp = wm.self().pos();
+                    const bool from_back = ( sender >= 2 && sender <= 4 );
+                    const bool sender_own_half = ( sp.x < 0.0 );
+                    const bool flank_flip = ( ( sp.y < -5.0 && tp.y >  5.0 )
+                                              || ( sp.y >  5.0 && tp.y < -5.0 ) );
+                    const double abs_dy = std::abs( tp.y - sp.y );
+                    const bool long_switch = ( abs_dy >= 20.0 );
+                    const bool target_safe = ( tp.x <= 25.0 );
+                    if ( from_back && sender_own_half && flank_flip
+                         && long_switch && target_safe ) {
+                        ev += 15.0;
+                    }
                 }
             }'''
 if eval_anchor not in src:

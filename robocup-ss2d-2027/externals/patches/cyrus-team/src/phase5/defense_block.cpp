@@ -108,10 +108,14 @@ static bool is_false_nine( int self_unum ) {
 //   attackers ahead of the ball, fall back to LB if symmetric.
 static bool should_this_sb_push( int self_unum, const rcsc::WorldModel & wm ) {
     const double by = wm.ball().pos().y;
-    if ( by < -3.0 ) return ( self_unum == 3 );
-    if ( by >  3.0 ) return ( self_unum == 4 );
-    // Center channel: pick LB as the default push side.
-    return ( self_unum == 3 );
+    // Phase 6.1 (2026-06-25): require the ball to be CLEARLY on a
+    // flank before committing a SB to push. Center channel (|by|<5)
+    // means we're in build-up and the attack hasn't picked a side --
+    // both SBs should stay back so we don't telegraph and the back
+    // line stays balanced.
+    if ( by < -5.0 ) return ( self_unum == 3 );  // left attack -> LB push
+    if ( by >  5.0 ) return ( self_unum == 4 );  // right attack -> RB push
+    return false;                                // center / undecided
 }
 
 // Forwards in F433 are 9 / 10 / 11. In defense they drop to support
@@ -176,6 +180,7 @@ rcsc::Vector2D modulate_position(
                 if ( shifted_x < target_min_x ) {
                     shifted_x = target_min_x;
                 }
+                // Push width kept at ±22 per user direction.
                 const double width_target = ( self_unum == 3 ) ? -22.0 : 22.0;
                 if ( ( self_unum == 3 && shifted_y > -15.0 )
                      || ( self_unum == 4 && shifted_y <  15.0 ) ) {
