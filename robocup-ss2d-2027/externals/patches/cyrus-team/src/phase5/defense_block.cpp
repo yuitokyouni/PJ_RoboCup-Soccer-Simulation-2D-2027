@@ -207,20 +207,21 @@ rcsc::Vector2D modulate_position(
             }
         }
         // Phase 6 false-9 drop: CF (unum 11) drops into the half-space
-        // BEHIND the opp DM line so a wedge from the pushing WB has a
-        // receiver between the lines. Only active during build-up
-        // (ball in our half). Once the ball clears midline we keep the
-        // CF as the line-breaking runner (raw formation target).
+        // BEHIND the opp DM line so a diagonal wedge from the pushing
+        // WB has a receiver between the lines.
+        //
+        // Phase 7 fix (2026-06-25): the half-space y is on the
+        // OPPOSITE side from the pushing WB. This creates the actual
+        // diagonal wedge -- LB (left) plays across the pitch to CF
+        // in the RIGHT half-space, bypassing central defenders.
+        // The previous same-side variant produced a vertical pass
+        // along the touchline that defenders could easily anticipate.
         if ( is_false_nine( self_unum ) ) {
             if ( ball_pos.x < 10.0 ) {
-                // half-space y on the SAME side as the pushing WB
-                // (so a diagonal wedge from that WB lands here).
                 const double by = ball_pos.y;
-                const double cf_y = ( by > 3.0 )  ? 10.0   // right attack -> right half-space
-                                  : ( by < -3.0 ) ? -10.0  // left attack -> left half-space
+                const double cf_y = ( by > 3.0 )  ? -10.0  // right attack -> LEFT half-space (Dembele cross-field)
+                                  : ( by < -3.0 ) ?  10.0  // left attack -> RIGHT half-space (Dembele cross-field)
                                   :                  0.0;
-                // Pull the CF down toward midline: a sensible drop is
-                // ~10 m ahead of the ball.
                 const double cf_target_x = std::max( ball_pos.x + 8.0, 0.0 );
                 if ( shifted_x > cf_target_x ) shifted_x = cf_target_x;
                 shifted_y = cf_y;
