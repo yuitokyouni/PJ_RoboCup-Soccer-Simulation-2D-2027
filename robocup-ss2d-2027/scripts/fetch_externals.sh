@@ -66,12 +66,21 @@ LOCK="$ROOT/externals/EXTERNALS.lock"
 mkdir -p "$SRC"
 
 # (name repo requested_ref) tuples. Keep in sync with externals/EXTERNALS.md.
+#
+# cyrus-soccer-simulation-lib + cyrus-soccer-simulation-team are the
+# REAL Cyrus2D competition codebase (2021 champion + ML upgrades). They
+# replace the older Cyrus2DBase, which turned out to be a stale helios
+# fork (identical bhv_basic_move; only bhv_penalty_kick + sample_coach
+# differ for old-librcsc API compatibility). See notes/.
 EXTERNALS=(
   "rcssserver     https://github.com/rcsoccersim/rcssserver         rcssserver-19.0.0"
   "rcssmonitor    https://github.com/rcsoccersim/rcssmonitor        master"
   "librcsc        https://github.com/helios-base/librcsc            master"
   "helios-base    https://github.com/helios-base/helios-base        master"
-  "cyrus2dbase    https://github.com/Cyrus2D/Cyrus2DBase            master"
+  "cyrus-lib      https://github.com/Cyrus2D/cyrus-soccer-simulation-lib   cyrus"
+  "cppdnn         https://github.com/Cyrus2D/CppDNN                         develop"
+  "rapidjson      https://github.com/Tencent/rapidjson                      f54b0e47a08782a6131cc3d60f94d038fa6e0a51"
+  "cyrus-team     https://github.com/Cyrus2D/cyrus-soccer-simulation-team  master"
   "wrighteaglebase https://github.com/wrighteagle2d/wrighteaglebase  master"
 )
 

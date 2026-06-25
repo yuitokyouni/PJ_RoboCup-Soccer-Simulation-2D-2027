@@ -103,6 +103,16 @@ preflight() {
     echo "[build] WARN: qmake (Qt5) not found; helios-base / cyrus2dbase builds may fail."
     echo "[build]       on Debian/Ubuntu: sudo apt install -y qtbase5-dev qt5-qmake"
   fi
+  # cmake (needed for the cyrus-* / cppdnn builds). Warn rather than fail.
+  if ! command -v cmake >/dev/null 2>&1; then
+    echo "[build] WARN: cmake not found; cyrus-lib / cppdnn / cyrus-team builds will fail."
+    echo "[build]       on Debian/Ubuntu: sudo apt install -y cmake"
+  fi
+  # Eigen3 (needed for CppDNN -- header-only, ships with libeigen3-dev).
+  if [[ ! -d /usr/include/eigen3 && ! -d /usr/local/include/eigen3 ]]; then
+    echo "[build] WARN: Eigen3 not found; cppdnn build will fail."
+    echo "[build]       on Debian/Ubuntu: sudo apt install -y libeigen3-dev"
+  fi
 }
 
 # Common build steps for autotools-based externals.
@@ -177,6 +187,71 @@ build_cyrus2dbase() {
   build_autotools cyrus2dbase --with-librcsc="$INSTALL"
 }
 
+# --- Cyrus team (real 2021 RoboCup champion code) ------------------
+#
+# cyrus-soccer-simulation-team uses CMake, depends on the cyrus-soccer-
+# simulation-lib branch `cyrus` (their fork of librcsc with extra
+# cyrus-flavored intercept tables, etc) and on Cyrus2D/CppDNN
+# (header-only, requires Eigen3) and on rapidjson (vendored at build
+# time via ExternalProject in upstream, but we pre-fetch since outbound
+# git from the build sandbox is not guaranteed; the apply.sh script
+# patches vendor/rapidjson.cmake to use the pre-fetched copy).
+#
+# Install lives under a SEPARATE prefix ($CYRUS_PREFIX) so the librcsc
+# fork (libversion 18) does not collide with the helios librcsc in
+# $INSTALL.
+CYRUS_PREFIX="$ROOT/externals/install-cyrus"
+
+build_cmake_in_prefix() {
+  # Args: name install_prefix [extra cmake flags]
+  local name="$1"; shift
+  local prefix="$1"; shift
+  local dir="$SRC/$name"
+  [[ -d "$dir" ]] || die "$name not fetched: $dir missing. Run: make fetch-externals"
+  echo "[build] === $name (cmake) ==="
+  rm -rf "$dir/build"
+  mkdir -p "$dir/build"
+  pushd "$dir/build" >/dev/null
+  cmake -DCMAKE_INSTALL_PREFIX="$prefix" -DCMAKE_BUILD_TYPE=Release "$@" ..
+  make -j"$JOBS"
+  make install
+  popd >/dev/null
+  echo "[build] === $name DONE ==="
+}
+
+build_cyrus_lib() {
+  build_cmake_in_prefix cyrus-lib "$CYRUS_PREFIX"
+}
+
+build_cppdnn() {
+  # CppDNN's CMakeLists.txt hard-codes /usr/local/include/CppDNN as the
+  # install destination, ignoring CMAKE_INSTALL_PREFIX. We tolerate
+  # this: it's a header-only library and cyrus-team finds the headers
+  # via the standard include path.
+  echo "[build] cppdnn install path is upstream-hardcoded /usr/local/include/CppDNN"
+  echo "[build] (header-only; sudo may be required for the first install)"
+  build_cmake_in_prefix cppdnn /usr/local
+}
+
+build_cyrus_team() {
+  [[ -d "$CYRUS_PREFIX/lib" ]] \
+    || die "cyrus-team: cyrus-lib not installed under $CYRUS_PREFIX. Build cyrus-lib first."
+  [[ -d "$SRC/rapidjson/include/rapidjson" ]] \
+    || die "cyrus-team: rapidjson not fetched. Run: make fetch-externals"
+  # Apply the vendor/rapidjson.cmake patch so we use the pre-fetched
+  # rapidjson tree at $SRC/rapidjson/ instead of ExternalProject_Add'ing
+  # a fresh git clone (which fails in sandboxed builds).
+  local patch="$ROOT/externals/patches/cyrus-team/apply.sh"
+  if [[ -x "$patch" ]]; then
+    echo "[build] applying cyrus-team vendor/rapidjson.cmake patch"
+    bash "$patch" "$SRC/cyrus-team"
+  else
+    echo "[build] WARN: $patch missing; cyrus-team build may try ExternalProject git clone"
+  fi
+  build_cmake_in_prefix cyrus-team "$CYRUS_PREFIX" \
+    -DCMAKE_PREFIX_PATH="$CYRUS_PREFIX"
+}
+
 # Cyrus2DBase master fails to build against librcsc master as of
 # 2026-06-24 -- librcsc changed PenaltyKickState's return type from
 # pointer to value, and Cyrus2DBase's bhv_penalty_kick.cpp still
@@ -185,7 +260,7 @@ build_cyrus2dbase() {
 # Cyrus2DBase to update), it is excluded from the default ORDER.
 # Pass `--only cyrus2dbase` to attempt the build anyway; the same
 # compile error will reappear.
-ORDER=(librcsc rcssserver helios-base)
+ORDER=(librcsc rcssserver helios-base cyrus-lib cppdnn cyrus-team)
 
 run_one() {
   case "$1" in
@@ -194,7 +269,10 @@ run_one() {
     rcssmonitor) build_rcssmonitor ;;
     helios-base) build_helios_base ;;
     cyrus2dbase) build_cyrus2dbase ;;
-    *) die "unknown external: $1 (one of: librcsc, rcssserver, rcssmonitor, helios-base, cyrus2dbase)" ;;
+    cyrus-lib)   build_cyrus_lib ;;
+    cppdnn)      build_cppdnn ;;
+    cyrus-team)  build_cyrus_team ;;
+    *) die "unknown external: $1 (one of: librcsc, rcssserver, rcssmonitor, helios-base, cyrus2dbase, cyrus-lib, cppdnn, cyrus-team)" ;;
   esac
 }
 
