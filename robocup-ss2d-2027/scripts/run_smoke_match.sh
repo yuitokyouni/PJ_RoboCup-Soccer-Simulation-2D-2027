@@ -310,6 +310,15 @@ python3 "$ROOT/evaluation/parse_match_result.py" \
   --output "$RUN_DIR/metrics.json" \
   --notes "smoke test"
 
+# Best-effort tactical report. Failure here must not abort the smoke
+# (the harness's other deliverables -- rcg, rcl, metrics.json -- are
+# already written and committed).
+if [[ -n "$RCL" && -f "$RCL" ]]; then
+  python3 "$ROOT/scripts/match_report.py" "$RUN_DIR" 2>&1 \
+    | sed 's/^/[smoke] match_report: /' \
+    || echo "[smoke] match_report: generation failed (non-fatal)"
+fi
+
 echo "[smoke] match_status: $MATCH_STATUS"
 echo "[smoke] done: $RUN_DIR/metrics.json"
 echo "[smoke]       $RUN_DIR/metadata.json"
