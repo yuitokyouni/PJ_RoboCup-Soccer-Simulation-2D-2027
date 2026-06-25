@@ -72,11 +72,30 @@ bool is_wing_back( int self_unum ) {
 }
 
 // In F433 the holding CDMs are 5 and 6 (pp_ch). When we're building
-// up, unum 6 drops between the CBs — Pep-style "midfielder dropping
+// up, ONE CDM drops between the CBs — Pep-style "midfielder dropping
 // to form a back-3" so we can push one SB high without exposing the
 // back line.
-static bool is_build_up_drop_cdm( int self_unum ) {
+//
+// Phase 6 (2026-06-25): symmetric CDM drop based on attack side.
+//   left attack  (ball.y < -3) -> unum 6 drops (mirrors LB push)
+//   right attack (ball.y > +3) -> unum 7 drops (mirrors RB push)
+//   center        -> unum 6 drops (same default as the SB picker)
+// This guarantees the dropping CDM is on the SAME side as the
+// pushing SB, so the back-3 forms as: stay-side SB + remaining CBs
+// + dropping CDM, all on the side away from the attack.
+static bool is_build_up_drop_cdm( int self_unum, const rcsc::WorldModel & wm ) {
+    const double by = wm.ball().pos().y;
+    if ( by > 3.0 ) return ( self_unum == 7 );  // right attack
+    // ball.y <= 3.0 (left or center) -> unum 6 drops
     return ( self_unum == 6 );
+}
+
+// Phase 6 false-9 detection: in build-up phase (ball still in our
+// half), the centre forward drops into the half-space behind the
+// SF/RF line so a wedge pass from the WB has a receiver between the
+// opp DM line and the opp CB line.
+static bool is_false_nine( int self_unum ) {
+    return ( self_unum == 11 );  // CF in F433
 }
 
 // Decide which SB pushes high this cycle. The user's spec: only ONE
@@ -170,15 +189,42 @@ rcsc::Vector2D modulate_position(
                 if ( self_unum == 4 && shifted_y > y_inside ) shifted_y = y_inside;
             }
         }
-        // CDM CB-ization: unum 6 drops between the CBs during the
-        // build-up moment (ball still in our half).
-        if ( is_build_up_drop_cdm( self_unum ) ) {
+        // CDM CB-ization (Phase 6 symmetric): drop the same-side CDM
+        // so the resulting 3-back is on the opposite flank from the
+        // pushing SB.
+        if ( is_build_up_drop_cdm( self_unum, wm ) ) {
             if ( ball_pos.x < 10.0 ) {
                 shifted_x = std::min( shifted_x, -20.0 );
-                shifted_y = clamp_d( shifted_y, -4.0, 4.0 );
+                // Side-aware y: place the dropping CDM on the side
+                // OPPOSITE to the pushing SB so it covers the gap.
+                const double by = ball_pos.y;
+                const double cdm_y = ( by > 3.0 ) ? -4.0   // right attack -> CDM left of centre
+                                  : ( by < -3.0 ) ? 4.0    // left attack -> CDM right of centre
+                                  : 0.0;                   // center
+                shifted_y = cdm_y;
             }
         }
-        // Forwards: keep raw formation target.
+        // Phase 6 false-9 drop: CF (unum 11) drops into the half-space
+        // BEHIND the opp DM line so a wedge from the pushing WB has a
+        // receiver between the lines. Only active during build-up
+        // (ball in our half). Once the ball clears midline we keep the
+        // CF as the line-breaking runner (raw formation target).
+        if ( is_false_nine( self_unum ) ) {
+            if ( ball_pos.x < 10.0 ) {
+                // half-space y on the SAME side as the pushing WB
+                // (so a diagonal wedge from that WB lands here).
+                const double by = ball_pos.y;
+                const double cf_y = ( by > 3.0 )  ? 10.0   // right attack -> right half-space
+                                  : ( by < -3.0 ) ? -10.0  // left attack -> left half-space
+                                  :                  0.0;
+                // Pull the CF down toward midline: a sensible drop is
+                // ~10 m ahead of the ball.
+                const double cf_target_x = std::max( ball_pos.x + 8.0, 0.0 );
+                if ( shifted_x > cf_target_x ) shifted_x = cf_target_x;
+                shifted_y = cf_y;
+            }
+        }
+        // Forwards (SF / RF — unum 9 / 10): keep raw formation target.
     } else {
         // -- DEFENSE PHASE -------------------------------------------
         // Skip very deep opp-half attacks (we're already chasing).
