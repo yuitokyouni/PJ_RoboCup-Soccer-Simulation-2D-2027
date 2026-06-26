@@ -132,7 +132,7 @@ FILTER_JSON="$(python3 - "$YAML_JSON" <<'PYEOF'
 import json, re, sys
 d = json.loads(sys.argv[1]) or {}
 declared = d.get("server_options") or []
-SHAPE = re.compile(r'^server::[A-Za-z_][A-Za-z_0-9]*(::[A-Za-z_][A-Za-z_0-9]*)?=.+$')
+SHAPE = re.compile(r'^(server|player|CSVSaver)::[A-Za-z_][A-Za-z_0-9]*(::[A-Za-z_][A-Za-z_0-9]*)?=.+$')
 kept, notes = [], []
 for o in declared:
     if not isinstance(o, str):
