@@ -47,9 +47,18 @@ remaining 0.75 appears to be env-level drift I cannot patch around
 with phase5 module tweaks (every one I tried was either neutral, made
 defense worse, or made shooting reckless).
 
+## Additional tries after the n=30 (still ≥0 unreached)
+
+| try | n=20 mean | notes |
+|---|---|---|
+| Attack-phase position changes OFF (SB push, CDM drop) | -0.95 | offense died; the SB push IS net-positive |
+| **Vanilla binary swapped in as Spica325 (literal vanilla self-swap)** | **-0.65** | even identical binaries showed LEFT-side variance at n=20 in this env |
+| ULTRA-RETREAT (forwards cap = ball.x) + Shoot v3 (+10 cond) | -0.85 | leg2 was -0.30 (2 SPICA wins!) but leg1 -1.10 |
+| FORWARD_PROGRESS (+12 for any forward pass in opp half) | -1.10 | Spica scored 4/20 (best yet) but Vanilla also +2 |
+
 ## Strategic options to reach ≥0
 
-1. **Accept -0.75 as best achievable here, document, claim goal at
+1. **Accept -0.767 as best achievable here, document, claim goal at
    "within 1 SD of 0"** — needs goal redefinition / extension.
 2. **Re-author F325 conf files with Cyrus's FormationEditor** —
    the prior session's ablation explicitly identified F325 conf files
@@ -60,4 +69,12 @@ defense worse, or made shooting reckless).
    push + CDM CB-ization)** — these tested as the only consistently
    net-positive modules. Minimal Spica might converge on vanilla
    (~0) but loses the "research model" identity.
+5. **Surprising finding**: even literal vanilla-vs-vanilla self-swap
+   showed -0.65 ± 0.23 at n=20 in this env. There IS a residual
+   LEFT-side variance independent of Spica patches. The Vanilla
+   binary running as "SPICA325" still loses on average to Vanilla
+   running as "CYRUS_VANILLA" at small n — possibly an rcssserver
+   coin-toss / kick-off-taker artifact. A much larger sample
+   (n=100+) would be needed to characterize whether this is true
+   bias or just RNG noise that dominates the signal at n=20.
 
