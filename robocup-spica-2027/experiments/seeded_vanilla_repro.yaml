@@ -16,11 +16,11 @@ description: >
   help the final balanced eval — in which case env-drift is
   irreducible at this layer.
 
-home_team: "CYRUS_VANILLA"
-away_team: "CYRUS_VANILLA"
+home_team: "CYRUS_VAN_LL"
+away_team: "CYRUS_VAN_RR"
 
-home_start_command: "scripts/team_launchers/cyrus_vanilla_left.sh"
-away_start_command: "scripts/team_launchers/cyrus_vanilla_right.sh"
+home_start_command: "scripts/team_launchers/_tmp_vanilla_LL_left.sh"
+away_start_command: "scripts/team_launchers/_tmp_vanilla_RR_right.sh"
 
 num_matches: 4
 timeout_secs: 600
