@@ -206,33 +206,26 @@ rcsc::Vector2D modulate_position(
                 shifted_y = cdm_y;
             }
         }
-        // Phase 7 corrected (2026-06-25 v2): Dembele 25/26 pattern.
-        // CF (unum 11) is a true CF making DIAGONAL ATTACKING RUNS
-        // into the SAME-SIDE pocket as the pushing wing-back. The CF
-        // joins the side of the attack so the WB has a forward outlet
-        // ahead of his carry, and the pass becomes a slight inside-cut
-        // wedge into the inside half-space.
-        //
-        //   LB (Nuno) carries up left  -> CF diagonal run from centre
-        //                                 to LEFT pocket  (y = -12)
-        //   RB carries up right        -> CF diagonal run from centre
-        //                                 to RIGHT pocket (y = +12)
-        //   pocket x = clamp(ball.x + 25, 15, 38)
-        //
-        // Trigger: we're attacking and a SB is actively pushing
-        // (|ball.y| > 3 means an attack side is committed). When the
-        // ball is deep in our half (ball.x < -25) the run hasn't
-        // started yet -- CF stays at his raw formation position.
-        if ( is_false_nine( self_unum )
-             && ball_pos.x >= -25.0
-             && std::abs( ball_pos.y ) > 3.0 ) {
-            const double by = ball_pos.y;
-            const double pocket_y = ( by > 3.0 ) ?  12.0  // right attack -> RIGHT pocket (same side as RB)
-                                  :               -12.0;  // left attack  -> LEFT pocket  (same side as LB)
-            const double pocket_x = clamp_d( ball_pos.x + 25.0, 15.0, 38.0 );
-            if ( pocket_x > shifted_x ) shifted_x = pocket_x;
-            shifted_y = pocket_y;
-        }
+        // PHASE9 OFF (2026-06-26): Phase 7 false-9 pocket run pulled
+        // CF unum 11 wide (y = ±12), away from the central scoring
+        // zone. With the apply_phase5.sh step 9 switch to "Formation":
+        // "433" (Phase 9), the CF is a true centre-forward; the pocket
+        // run was designed for the F325 hybrid where unum 11 was an
+        // outside wing-forward. In n=20 balanced eval, leaving Phase 7
+        // on under F433 made Spica score 0 / 20; turning it off let
+        // Spica score (1 win + draws) at the best stable -0.75 vs
+        // -0.95 with Phase 7 still on. Disabled pending an F325-conf
+        // retune via Cyrus's FormationEditor.
+        // if ( is_false_nine( self_unum )
+        //      && ball_pos.x >= -25.0
+        //      && std::abs( ball_pos.y ) > 3.0 ) {
+        //     const double by = ball_pos.y;
+        //     const double pocket_y = ( by > 3.0 ) ?  12.0
+        //                           :               -12.0;
+        //     const double pocket_x = clamp_d( ball_pos.x + 25.0, 15.0, 38.0 );
+        //     if ( pocket_x > shifted_x ) shifted_x = pocket_x;
+        //     shifted_y = pocket_y;
+        // }
         // Forwards (SF / RF — unum 9 / 10): keep raw formation target.
     } else {
         // -- DEFENSE PHASE -------------------------------------------
