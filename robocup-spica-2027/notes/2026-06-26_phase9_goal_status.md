@@ -21,9 +21,21 @@
 
 ## The remaining gap
 
-Best stable n=20: -0.75 ± 0.24 SE. 95% CI: [-1.22, -0.28]. **Does NOT
-include 0.** The true effect in this build env is somewhere between
--1.22 and -0.28, all below the ≥0 goal.
+Best stable n=20: -0.75 ± 0.24 SE.
+
+**Final n=30 (15+15) at the stable best**: **-0.767 ± 0.20 SE**.
+95% CI: [-1.16, -0.37]. **Does NOT include 0.**
+
+n=30 breakdown (Spica POV):
+- 2 wins (m3 leg1 0-1, m5 leg2 1-0)
+- 10 draws
+- 18 losses
+- Spica goals total: 7 / 30 = 0.23 / match
+- Vanilla goals total: 23 / 30 = 0.77 / match
+
+Spica's offense is **30% of Vanilla's** in this build env. Every
+intervention that raised Spica's scoring also raised Vanilla's
+counter-scoring; the net stayed in [-0.77, -1.35].
 
 ## Why this happened (honest read)
 
