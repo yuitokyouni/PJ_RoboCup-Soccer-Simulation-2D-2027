@@ -96,17 +96,67 @@ stripped. Regex updated to allow `(server|player|CSVSaver)::...`.
 (same scoreline AND same metrics.json::goals timing). Result will be
 appended below.
 
-### Reproducibility result
+### Reproducibility result — seed insufficient
 
-(filled in by the run — pending)
+n=4 with `player::random_seed=42`, both binaries from the vanilla
+snapshot (named `CYRUS_VAN_LL` LEFT, `CYRUS_VAN_RR` RIGHT):
 
-## Next decision tree
+| Match | LL | RR | Result    |
+|-------|----|----|-----------|
+| 1     | 0  | 1  | away_win  |
+| 2     | 2  | 1  | home_win  |
+| 3     | 0  | 1  | away_win  |
+| 4     | 0  | 2  | away_win  |
 
-| Repro result            | Implication                                  | Next step                                             |
-|-------------------------|----------------------------------------------|-------------------------------------------------------|
-| All 4 identical         | Seed propagates → control axis is real       | Re-run balanced n=30 vs Vanilla with seeds 1..30      |
-| 2-3 identical           | Partial propagation → seed reduces variance  | Re-run balanced n=30 with seeds, accept higher noise  |
-| All 4 different         | Async/client RNG dominates → seed useless    | Try gcc-12 rebuild + sealed-container snapshot       |
+Mean LL goal_diff = -0.75 → matches the previous "literal vanilla
+self-swap = -0.65 ± 0.23" floor finding.
+
+Critically: server log confirms `Using given Hetero Player Seed: 42`
+applied (so the seed reached the server), but matches are NOT
+identical. The server seed only controls hetero-player generation;
+the client AI's stochastic decisions come from a separate engine.
+
+### Root cause (located in librcsc)
+
+`externals/src/librcsc/rcsc/random.h:62`:
+
+```cpp
+RandomEngine()
+    : M_engine( std::random_device()() )
+  { }
+```
+
+The player-side `std::mt19937` is seeded from `std::random_device`
+(OS entropy / `/dev/urandom`). Per-match this gives a fresh seed,
+which dominates the variance even with the server seed pinned. Same
+pattern in `librcsc/rcsc/common/player_type.cpp:74-75` and several
+`librcsc/rcsc/ann/*.cpp` engines.
+
+### Strategic implication
+
+Server-layer seed pinning is necessary but not sufficient. To get
+deterministic matches we'd need to patch librcsc to seed from an env
+var (e.g. `RCSC_RANDOM_SEED`) and rebuild librcsc + both Cyrus
+snapshots. That's a tractable 30-minute change but it only buys us
+TIGHTER CIs at the same MEAN — it does not change Spica325's
+-0.77 vs Vanilla expected value. Reducing variance moves us closer
+to the floor, not above it.
+
+So seed pinning **alone is not a path to >0**. Two follow-ups remain
+on the (a) axis:
+
+1. **Compiler swap (gcc-13 → gcc-12)**: a different toolchain may
+   produce different vectorization and call-order patterns, which
+   could shift the EXPECTED value (not just the variance).
+2. **Client-side RNG patch + per-seed n=30**: if we can sweep many
+   seeds and find any seeds where Spica wins, we have evidence that
+   the floor IS env-dependent rather than intrinsic; useful even if
+   the mean stays negative.
+
+Task #39 stays open with a re-scoped target: try (1) gcc-12 rebuild
+as the next iteration. If that also lands at -0.77, accept the floor
+and pivot the project narrative to "Spica325 vs helios-base" where
+the +5.1 / 10-0-0 result IS positive (already committed).
 
 ## Files touched
 
