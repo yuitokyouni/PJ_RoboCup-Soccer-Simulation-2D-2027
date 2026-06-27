@@ -60,7 +60,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 037 | iter_035 config (continue) | 0-2 L | | — | — | — | streak still 0/5 |
 | 038 | iter_035 config (continue) | 0-0 D | clean | — | — | — | 38 iter: 3W 8D 27L |
 | 039 | iter_035 config (continue) | 0-0 D | clean | — | — | — | |
-| 040 | iter_035 config (continue) | (TBD) | | | | | 39 iter: 3W 9D 27L |
+| 040 | iter_035 config (continue) | 0-2 L | | — | — | — | 40 iter: 3W 9D 28L, P(W)=7.5% |
+| 041 | remove side-switch +15 | (TBD) | | | | | Test if side-switch was hurting |
 
 
 ## Failed approaches (DO NOT REPEAT)
