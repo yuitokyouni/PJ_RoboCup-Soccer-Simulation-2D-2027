@@ -52,7 +52,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 029 | iter_025 config (continue) | 0-1 L | | — | — | — | halved-shift 5: 0W 2D 3L |
 | 030 | iter_025 config (continue) | 0-0 D | clean | — | — | — | halved-shift 6 samples: 0W 3D 3L (P(W)=0%) — worse than full shift |
 | 031 | revert halved shift → iter_019 config | 1-1 D | | scored! | — | — | back to full shift → score recovered |
-| 032 | iter_019 config (continue) | (TBD) | | | | | best stack 8: 1W 3D 4L → P(W)=12.5% |
+| 032 | iter_019 config (continue) | 0-0 D | clean | — | — | — | best stack 8: 1W 4D 3L (now incl 31, 32) |
+| 033 | iter_019 config (continue) | (TBD) | | | | | |
 
 
 ## Failed approaches (DO NOT REPEAT)
