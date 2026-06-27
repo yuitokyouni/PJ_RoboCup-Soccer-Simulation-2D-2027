@@ -206,10 +206,21 @@ rcsc::Vector2D modulate_position(
                 shifted_y = cdm_y;
             }
         }
-        // iter 2 CF push reverted -- iter_003 showed possession
-        // collapse (opp_half 373 vs iter_002's 814) and 8 dangerous
-        // SPs (vs 1). The CF target was outside formation context,
-        // ChainAction pass selection couldn't reach him.
+        // PSG-loop iter 11: u9 (LF) late-run push.
+        // iter_010 (1W 2D over 3 matches @ this config) showed Spica
+        // dominating possession (opp_half 915 vs spica_half 473) but
+        // unable to convert. CF push regressed in iter 3 because u11
+        // got isolated. u9 (LF) is a wing-IF naturally in the chain
+        // (HRs in iter_002/006/010 frequently involved u9).
+        //
+        // Rule: in attack phase, when ball is deep (ball.x > 15) AND
+        // we have possession, push u9's target.x to max(raw, ball.x
+        // - 5) so the LF runs JUST behind the ball line into shot
+        // range, like PSG's Doué late runs.
+        if ( self_unum == 9 && ball_pos.x > 15.0 ) {
+            const double push_x = std::min( 42.0, ball_pos.x - 5.0 );
+            if ( shifted_x < push_x ) shifted_x = push_x;
+        }
         // PHASE9 OFF (2026-06-26): Phase 7 false-9 pocket run pulled
         // CF unum 11 wide (y = ±12), away from the central scoring
         // zone. With the apply_phase5.sh step 9 switch to "Formation":
