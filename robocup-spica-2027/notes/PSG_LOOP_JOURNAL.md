@@ -68,7 +68,7 @@ State at iter_041/047 (side-switch removed; P(W)=43% over 7):
 | 045 | iter_041 config (continue) | **2-1 W** ✓ | cyc 752 (-43.5,-0.4) | cyc 3575 (+41.8,-2.4) + cyc 4618 (+46.7,-3.1) BOTH PA FK | 888 | 915 | 5th WIN, 2 goals! side-switch removed 5: 2W 2D 1L mean +0.4 |
 | 046 | streak attempt 2/5 (same config) | 0-2 L | | — | — | — | streak broken; side-switch removed 6: 2W 2D 2L (P(W)=33%) |
 | 047 | iter_041 config (continue) | **2-0 W** ✓ | clean | cyc 4812 (+45.8,-2.6) + cyc 5653 (+44.4,-6.4) BOTH PA FK | 819 | 665 | 6th WIN, 2 goals clean sheet! Side-switch-removed config: 7 samples 3W 2D 2L mean +0.57 P(W)=43% |
-| 048 | streak attempt 2/5 (same config) | (TBD) | | | | | streak=1 |
+| 048 | streak attempt 2/5 (same config) | 0-2 L | | — | — | — | streak broken; side-switch-removed 8: 3W 2D 3L (P(W)=38%) |
 
 
 ## Failed approaches (DO NOT REPEAT)
