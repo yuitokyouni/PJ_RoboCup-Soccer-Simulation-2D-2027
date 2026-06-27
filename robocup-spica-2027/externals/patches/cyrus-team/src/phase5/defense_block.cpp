@@ -206,6 +206,26 @@ rcsc::Vector2D modulate_position(
                 shifted_y = cdm_y;
             }
         }
+        // PSG-loop iter 2: CF vertical push in attack phase.
+        // iter_002 (0-0 draw) showed Spica recovering the ball at
+        // x=+22..+33 multiple times but failing to convert. The CF
+        // (unum 11) sits at his formation x (~+25..+30) and doesn't
+        // aggressively advance ahead of the ball. PSG 24-25 plays
+        // unum 11 (Dembele) as a forward runner who stays one step
+        // ahead of the ball when we're in possession, anchoring the
+        // line that opens space behind for the IFs.
+        //
+        // Rule: in attack phase, when ball is at ball.x >= 0 (we are
+        // attacking and in opp half), push u11 forward to at least
+        // ball.x + 10 and into the central scoring channel (|y|<=8).
+        // Don't push x beyond +40 so we stay onside vs the typical
+        // opp CB line.
+        if ( self_unum == 11 && ball_pos.x >= 0.0 ) {
+            const double push_x = std::min( 40.0, ball_pos.x + 10.0 );
+            if ( shifted_x < push_x ) shifted_x = push_x;
+            if ( shifted_y >  8.0 ) shifted_y =  8.0;
+            if ( shifted_y < -8.0 ) shifted_y = -8.0;
+        }
         // PHASE9 OFF (2026-06-26): Phase 7 false-9 pocket run pulled
         // CF unum 11 wide (y = ±12), away from the central scoring
         // zone. With the apply_phase5.sh step 9 switch to "Formation":
