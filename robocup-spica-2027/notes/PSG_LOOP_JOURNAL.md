@@ -41,6 +41,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 018 | iter_017 reverify (cross bonus) | 0-1 L | cyc 3356 (-43.0,+3.0) corner→FK→GOAL | — | 787 | 754 | No score; cross bonus alone insufficient. HRs reach +46/+50 |
 | 019 | +through-ball bonus (CDM sp.x>-5 → forward tp.x>+25, +25) | **1-0 W** ✓ | clean sheet | cyc 4049 (+45.6,-0.2) FK cascade→GOAL PA central | **1073** | 567 | 2nd WIN. cross+through+wedge stack. Best possession ever |
 | 020 | iter_019 reverify (streak attempt 1) | 0-1 L | cyc 5947 (-41.4,-0.5) FK→GOAL late | — | 526 | 1146 | Streak broken (0/5). Variance dominant. |
+| 021 | iter_019 config (continue) | 0-1 L | — | — | — | — | 2nd consecutive L; iter 19 win may be lucky |
+| 022 | iter_019 config (continue) | (TBD) | | | | | |
 
 
 ## Failed approaches (DO NOT REPEAT)
