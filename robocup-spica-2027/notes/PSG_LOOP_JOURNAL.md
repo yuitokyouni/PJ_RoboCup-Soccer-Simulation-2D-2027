@@ -7,14 +7,14 @@ failed approaches. Update at the END of each iteration with the new data.
 
 ## Current best known config
 
-State at iter_019 (1-0 WIN, best so far):
+State at iter_041/047 (side-switch removed; P(W)=43% over 7):
 - F433 conf: **Y-symmetric** (scripts/symmetrize_f433.py applied)
 - defense_block.cpp Phase 5e: dynamic 3-2-5 / 5-2-3 transition (vanilla Phase 5e)
 - defense_block.cpp **iter 1 SB tuck-in**: in DEFENSE PHASE, if ball.x<-30, cap |y| of u3/u4 to 12
 - action_chain_graph.cpp **iter 4 wedge x2**: ev += 50 (was 25) for SB→CF half-space pass
 - action_chain_graph.cpp **iter 17 cross bonus**: ev += 35 for SB (u3/u4) wide (sp.x≥20, |sp.y|≥18) → PA central (tp.x≥30, |tp.y|≤15)
 - action_chain_graph.cpp **iter 19 through-ball bonus**: ev += 25 for CDM (u6/u7) sp.x>-5 → forward (u9/u10/u11) tp.x>+25
-- action_chain_graph.cpp side-switch: +15 (NOT doubled — iter 5 failed)
+- action_chain_graph.cpp side-switch: **REMOVED** (iter 41 — net negative)
 - kickoff: defensive (NOT merged)
 
 ## Match-by-match log
@@ -67,7 +67,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 044 | iter_041 config (continue) | 0-0 D | clean | — | — | — | side-switch removed 4: 1W 2D 1L (mean 0) |
 | 045 | iter_041 config (continue) | **2-1 W** ✓ | cyc 752 (-43.5,-0.4) | cyc 3575 (+41.8,-2.4) + cyc 4618 (+46.7,-3.1) BOTH PA FK | 888 | 915 | 5th WIN, 2 goals! side-switch removed 5: 2W 2D 1L mean +0.4 |
 | 046 | streak attempt 2/5 (same config) | 0-2 L | | — | — | — | streak broken; side-switch removed 6: 2W 2D 2L (P(W)=33%) |
-| 047 | iter_041 config (continue) | (TBD) | | | | | |
+| 047 | iter_041 config (continue) | **2-0 W** ✓ | clean | cyc 4812 (+45.8,-2.6) + cyc 5653 (+44.4,-6.4) BOTH PA FK | 819 | 665 | 6th WIN, 2 goals clean sheet! Side-switch-removed config: 7 samples 3W 2D 2L mean +0.57 P(W)=43% |
+| 048 | streak attempt 2/5 (same config) | (TBD) | | | | | streak=1 |
 
 
 ## Failed approaches (DO NOT REPEAT)
