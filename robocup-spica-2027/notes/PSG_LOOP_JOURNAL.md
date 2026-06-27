@@ -1,6 +1,16 @@
 # PSG-loop decision journal
 
-Target: 5 consecutive Spica wins vs Vanilla.
+Target (updated 2026-06-27): **10 consecutive unbeaten** (W or D) vs Vanilla.
+(Was: 5 consecutive wins. User-revised because mean +0.57 / P(W)=43% in
+side-switch-removed config implies P(unbeaten) ~= 62-70%, achievable in
+about 100 matches; 5 wins-only was 1-in-many-hundreds.)
+
+Also updated ledger.py to record per-goal:
+- kick_chain (last 4 kicks before goal, newest=shot)
+- through_ball flag (receiver got ball BEYOND opp DL)
+
+This makes "PA central" descriptions less interesting than the actual
+LAST PASS origin and 裏抜け evidence.
 
 This file MUST be read at the start of every iteration to avoid repeating
 failed approaches. Update at the END of each iteration with the new data.

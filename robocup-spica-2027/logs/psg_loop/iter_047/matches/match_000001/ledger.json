@@ -21,7 +21,54 @@
           "corner_kick_l",
           "play_on"
         ],
-        "play_mode_before": "play_on"
+        "play_mode_before": "play_on",
+        "through_ball": true,
+        "kick_chain": [
+          {
+            "cycle": 4807,
+            "pos": [
+              45.75,
+              -2.63
+            ],
+            "kicker": [
+              "l",
+              10
+            ]
+          },
+          {
+            "cycle": 4800,
+            "pos": [
+              38.83,
+              -10.18
+            ],
+            "kicker": [
+              "r",
+              6
+            ]
+          },
+          {
+            "cycle": 4780,
+            "pos": [
+              48.49,
+              -27.51
+            ],
+            "kicker": [
+              "l",
+              9
+            ]
+          },
+          {
+            "cycle": 4777,
+            "pos": [
+              51.05,
+              -31.64
+            ],
+            "kicker": [
+              "l",
+              7
+            ]
+          }
+        ]
       },
       {
         "cycle": 5653,
@@ -37,7 +84,54 @@
           "kick_in_l",
           "play_on"
         ],
-        "play_mode_before": "play_on"
+        "play_mode_before": "play_on",
+        "through_ball": true,
+        "kick_chain": [
+          {
+            "cycle": 5651,
+            "pos": [
+              48.16,
+              -6.15
+            ],
+            "kicker": [
+              "r",
+              1
+            ]
+          },
+          {
+            "cycle": 5641,
+            "pos": [
+              35.64,
+              -18.09
+            ],
+            "kicker": [
+              "l",
+              6
+            ]
+          },
+          {
+            "cycle": 5636,
+            "pos": [
+              37.3,
+              -23.56
+            ],
+            "kicker": [
+              "l",
+              5
+            ]
+          },
+          {
+            "cycle": 5632,
+            "pos": [
+              46.64,
+              -28.29
+            ],
+            "kicker": [
+              "l",
+              9
+            ]
+          }
+        ]
       }
     ],
     "high_recoveries": [

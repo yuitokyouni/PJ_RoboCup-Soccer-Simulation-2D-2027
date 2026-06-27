@@ -147,6 +147,84 @@ def main():
         "bad": defaultdict(list),
     }
 
+    # --- last-pass + behind-line analysis helpers ---
+    # Walk back from a goal cycle to find the last "kick" event:
+    # ball velocity magnitude jumped by >= 1.0 m/cycle.
+    def find_last_kicks(goal_cycle, search_window=120, max_kicks=4):
+        """Return list of up to `max_kicks` most-recent kicks (jumps of
+        ball velocity >= 1.0 m/cycle) in [goal_cycle - window, goal_cycle].
+        Includes the SHOT and the prior passes. Newest kick first."""
+        prev_v = None
+        kicks = []  # list of dicts
+        for st in states:
+            cyc = st[0]
+            if cyc > goal_cycle: break
+            if cyc < goal_cycle - search_window: continue
+            bx, by, bvx, bvy = st[2]
+            v = (bvx*bvx + bvy*bvy) ** 0.5
+            if prev_v is not None and v - prev_v > 1.0:
+                closest, dist = closest_player(st[3], (bx, by))
+                kicks.append({
+                    "cycle": cyc,
+                    "ball_from": (bx, by),
+                    "ball_vel": (bvx, bvy),
+                    "kicker": closest,
+                    "kicker_dist": round(dist, 2),
+                })
+            prev_v = v
+        # Keep up to max_kicks most recent
+        return kicks[-max_kicks:][::-1]  # newest first
+
+    # Detect "behind defensive line" run: at last-pass cycle, the
+    # receiver's x position is BEYOND the opp defensive line x
+    # (defined as the opp defender with the smallest x distance to
+    # their goal, excluding goalie). For Spica scoring, opp defenders
+    # have x > 0 (they defend the +x goal); we want our receiver to
+    # be deeper into +x than the 2nd-deepest opp defender.
+    def opp_dl_x_at(cycle):
+        """Find opp's defensive-line x at given cycle (in Spica frame).
+        DL = 2nd-most-forward opp defender (closest to opp's own goal,
+        which sits at -x in their frame and +x in Spica's frame).
+        Excludes opp goalie."""
+        st = next((s for s in states if s[0] == cycle), None)
+        if not st: return None
+        xs = []
+        for (s, u), p in st[3].items():
+            if s == opp_side and u != 1:
+                xs.append(spc(p["x"], p["y"])[0])
+        if len(xs) < 2: return None
+        # Sort ASCENDING -- opp DL is at the SMALLEST x (closest to
+        # opp's goal at +x in Spica frame). Wait: opp's goal is at
+        # x=+52.5 in Spica frame (Spica attacks +x). Opp defenders
+        # DEFEND that goal so they stand AT high +x. The DL is the
+        # LOWEST x among opp defenders -- the one closest to our
+        # half. A "through run" is when a Spica receiver gets BEHIND
+        # the opp DL, i.e. AT HIGHER x than the line.
+        xs.sort()  # smallest first
+        return xs[1]  # 2nd-from-our-half = the offside-defining line
+
+    def is_through_kick(kick):
+        """Through-ball heuristic. Look at where the ball settles or
+        first becomes kickable to a Spica player after this kick. If
+        that Spica receiver's x is BEYOND opp DL at kick time, it's a
+        through ball."""
+        if not kick: return False
+        kc = kick["cycle"]
+        line_x = opp_dl_x_at(kc)
+        if line_x is None: return False
+        # Walk forward up to 40 cycles, find first cycle where Spica
+        # has a player within 1.5m of ball.
+        for st in states:
+            if st[0] <= kc: continue
+            if st[0] > kc + 40: break
+            bx, by = st[2][0], st[2][1]
+            rc, rd = closest_player(st[3], (bx, by))
+            if not rc: continue
+            if rc[0] == spica_side and rd < 1.5:
+                rx_spc = spc(bx, by)[0]
+                return rx_spc > line_x + 2.0
+        return False
+
     # --- goals analysis ---
     goal_cycles_set = set(c for c, _ in goal_evts)
     for gc, ge in goal_evts:
@@ -163,17 +241,34 @@ def main():
                     break
             if gstate:
                 break
+        # Last 4 kicks before this goal (newest = shot, prior = passes)
+        kicks = find_last_kicks(gc)
+        # Through-ball flag: any of the pre-shot kicks (kicks[1:])
+        # leads to a Spica player getting the ball BEYOND opp DL
+        any_through = any(is_through_kick(k) for k in kicks[1:])
+
         if gstate:
             _, pm, ball, players = gstate
             bxy = spc(ball[0], ball[1])
             # Last 6 referee events before goal
             pre = [e for c, e in events if c < gc][-6:]
-            ledger[bucket][bucket_key].append({
+            entry = {
                 "cycle": gc,
                 "ball": [round(bxy[0], 2), round(bxy[1], 2)],
                 "preamble": pre,
                 "play_mode_before": pm,
-            })
+                "through_ball": any_through,
+            }
+            # Record kick chain in Spica frame (newest=shot at index 0)
+            entry["kick_chain"] = []
+            for k in kicks:
+                kfs = spc(*k["ball_from"])
+                entry["kick_chain"].append({
+                    "cycle": k["cycle"],
+                    "pos": [round(kfs[0], 2), round(kfs[1], 2)],
+                    "kicker": k["kicker"],
+                })
+            ledger[bucket][bucket_key].append(entry)
 
     # --- aggregate possession / dangerous SPs ---
     spica_def_third_setpieces = []  # opp set pieces deep in Spica's half
