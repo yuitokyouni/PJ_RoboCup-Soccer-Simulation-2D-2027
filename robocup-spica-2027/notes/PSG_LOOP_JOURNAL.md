@@ -62,7 +62,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 039 | iter_035 config (continue) | 0-0 D | clean | — | — | — | |
 | 040 | iter_035 config (continue) | 0-2 L | | — | — | — | 40 iter: 3W 9D 28L, P(W)=7.5% |
 | 041 | remove side-switch +15 | **1-0 W** ✓ | clean | cyc 2845 (+48.7,-14) FK | 613 | 1165 | 4th WIN! removing side-switch might help |
-| 042 | streak attempt 2/5 (same config) | (TBD) | | | | | streak=1 |
+| 042 | streak attempt 2/5 (same config) | 0-1 L | | — | — | — | streak broken |
+| 043 | iter_041 config (continue) | (TBD) | | | | | side-switch removed 2 samples: 1W 1L |
 
 
 ## Failed approaches (DO NOT REPEAT)
