@@ -82,7 +82,8 @@ State at iter_041/047 (side-switch removed; P(W)=43% over 7):
 | 049 | iter_041 config (continue) | 0-2 L | cyc 2456 (-44.5,-1.0) **through** chain: opp wing→u2 CB clearance BACKWARD→opp shot. cyc 5242 (-40.5,-5.0) corner cascade | — | — | — | u2 mis-clearance is observable. Through-ball over Spica DL identified |
 | 050 | iter_041 config (continue) | 0-0 D | clean | — | — | — | unbeaten 1/10 ✓ |
 | 051 | iter_041 config (continue) | 0-0 D | clean | — | — | — | unbeaten 2/10 ✓ |
-| 052 | iter_041 config (continue) | (TBD) | | | | | unbeaten=2 |
+| 052 | iter_041 config (continue) | **1-0 W** ✓ | clean | cyc 5212 (+43,-2) through=T chain: u7 LMF(+9,-26) → opp deflect → u10 RF(+45,0) 裏抜け → SHOT | — | — | 7th WIN; unbeaten 3/10 ✓ |
+| 053 | iter_041 config (continue) | (TBD) | | | | | unbeaten=3 |
 
 
 ## Failed approaches (DO NOT REPEAT)
