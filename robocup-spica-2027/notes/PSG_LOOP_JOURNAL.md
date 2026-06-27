@@ -7,11 +7,13 @@ failed approaches. Update at the END of each iteration with the new data.
 
 ## Current best known config
 
-State at iter_004 (1-0 WIN):
+State at iter_019 (1-0 WIN, best so far):
 - F433 conf: **Y-symmetric** (scripts/symmetrize_f433.py applied)
 - defense_block.cpp Phase 5e: dynamic 3-2-5 / 5-2-3 transition (vanilla Phase 5e)
 - defense_block.cpp **iter 1 SB tuck-in**: in DEFENSE PHASE, if ball.x<-30, cap |y| of u3/u4 to 12
 - action_chain_graph.cpp **iter 4 wedge x2**: ev += 50 (was 25) for SB→CF half-space pass
+- action_chain_graph.cpp **iter 17 cross bonus**: ev += 35 for SB (u3/u4) wide (sp.x≥20, |sp.y|≥18) → PA central (tp.x≥30, |tp.y|≤15)
+- action_chain_graph.cpp **iter 19 through-ball bonus**: ev += 25 for CDM (u6/u7) sp.x>-5 → forward (u9/u10/u11) tp.x>+25
 - action_chain_graph.cpp side-switch: +15 (NOT doubled — iter 5 failed)
 - kickoff: defensive (NOT merged)
 
@@ -37,7 +39,8 @@ State at iter_004 (1-0 WIN):
 | 016 | u5 anticipation -y when ball.x<-10 | 0-2 L | cyc 992 ball=(-50.7,+15.9), cyc 4151 ball=(-46.0,+2.3) | — | 787 | 955 | u5 at +14.9 and +5.3 -- rule did NOT apply. mark/intercept overrides modulate_position |
 | 017 | revert u5; +cross bonus +35 (SB wide x>=20 |y|>=18 to PA central) | **1-1 D** | cyc 3240 (-43.6,+7.3) FK cascade | cyc 5434 (+47.9,-7.9) goal_kick→FK→GOAL | 609 | 809 | **First SCORE in 7 iter**. Cross pattern visible (PA central -y goal). |
 | 018 | iter_017 reverify (cross bonus) | 0-1 L | cyc 3356 (-43.0,+3.0) corner→FK→GOAL | — | 787 | 754 | No score; cross bonus alone insufficient. HRs reach +46/+50 |
-| 019 | +through-ball bonus (CDM sp.x>-5 → forward tp.x>+25, +25) | (TBD) | | | | | HR→through-ball→shot chain hypothesis |
+| 019 | +through-ball bonus (CDM sp.x>-5 → forward tp.x>+25, +25) | **1-0 W** ✓ | clean sheet | cyc 4049 (+45.6,-0.2) FK cascade→GOAL PA central | **1073** | 567 | 2nd WIN. cross+through+wedge stack. Best possession ever |
+| 020 | iter_019 reverify (streak attempt 1) | (TBD) | | | | | Streak so far: 1/5 |
 
 
 ## Failed approaches (DO NOT REPEAT)
