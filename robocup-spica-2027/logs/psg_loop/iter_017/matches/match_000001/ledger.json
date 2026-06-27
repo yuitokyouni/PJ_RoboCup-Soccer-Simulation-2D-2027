@@ -1,0 +1,232 @@
+{
+  "match_dir": "logs/psg_loop/iter_017/matches/match_000001",
+  "home": "SPICA325",
+  "away": "CYRUS_VANILLA",
+  "spica_side": "l",
+  "home_score": 1,
+  "away_score": 1,
+  "good": {
+    "goals_scored": [
+      {
+        "cycle": 5434,
+        "ball": [
+          47.86,
+          -7.85
+        ],
+        "preamble": [
+          "goal_kick_l",
+          "play_on",
+          "foul_charge_r",
+          "yellow_card_r_9",
+          "free_kick_l",
+          "play_on"
+        ],
+        "play_mode_before": "play_on"
+      }
+    ],
+    "high_recoveries": [
+      {
+        "cycle": 421,
+        "ball": [
+          31.44,
+          -21.27
+        ],
+        "spica_winner_unum": 11
+      },
+      {
+        "cycle": 585,
+        "ball": [
+          9.09,
+          8.94
+        ],
+        "spica_winner_unum": 10
+      },
+      {
+        "cycle": 593,
+        "ball": [
+          11.22,
+          -4.07
+        ],
+        "spica_winner_unum": 9
+      },
+      {
+        "cycle": 1198,
+        "ball": [
+          0.4,
+          -14.87
+        ],
+        "spica_winner_unum": 7
+      },
+      {
+        "cycle": 2789,
+        "ball": [
+          1.45,
+          0.17
+        ],
+        "spica_winner_unum": 8
+      }
+    ]
+  },
+  "bad": {
+    "goals_conceded": [
+      {
+        "cycle": 3240,
+        "ball": [
+          -43.63,
+          7.33
+        ],
+        "preamble": [
+          "before_kick_off",
+          "kick_off_r",
+          "play_on",
+          "foul_charge_l",
+          "indirect_free_kick_r",
+          "play_on"
+        ],
+        "play_mode_before": "play_on"
+      }
+    ],
+    "dangerous_setpieces_conceded": [
+      {
+        "cycle": 1491,
+        "type": "free_kick_r",
+        "ball": [
+          -29.51,
+          29.36
+        ]
+      },
+      {
+        "cycle": 2048,
+        "type": "free_kick_r",
+        "ball": [
+          -38.56,
+          32.55
+        ]
+      },
+      {
+        "cycle": 3230,
+        "type": "indirect_free_kick_r",
+        "ball": [
+          -41.36,
+          7.98
+        ]
+      },
+      {
+        "cycle": 5747,
+        "type": "free_kick_r",
+        "ball": [
+          -34.13,
+          18.21
+        ]
+      }
+    ],
+    "conceded_shape": [
+      {
+        "cycle": 3240,
+        "ball": [
+          -43.63,
+          7.33
+        ],
+        "spica_defs": [
+          {
+            "unum": 1,
+            "x": -51.0,
+            "y": 1.3,
+            "stamina": 7845.0
+          },
+          {
+            "unum": 2,
+            "x": -49.3,
+            "y": 1.1,
+            "stamina": 7040.0
+          },
+          {
+            "unum": 3,
+            "x": -48.8,
+            "y": -1.8,
+            "stamina": 6718.0
+          },
+          {
+            "unum": 4,
+            "x": -50.7,
+            "y": 4.1,
+            "stamina": 3819.0
+          },
+          {
+            "unum": 5,
+            "x": -49.8,
+            "y": 2.1,
+            "stamina": 5697.0
+          },
+          {
+            "unum": 6,
+            "x": -48.5,
+            "y": 0.0,
+            "stamina": 5024.0
+          },
+          {
+            "unum": 7,
+            "x": -46.7,
+            "y": -4.3,
+            "stamina": 6342.0
+          },
+          {
+            "unum": 8,
+            "x": -51.3,
+            "y": 7.2,
+            "stamina": 5367.0
+          }
+        ],
+        "opp_attackers_near_ball": [
+          {
+            "unum": 5,
+            "x": -36.6,
+            "y": 5.1,
+            "dist_to_ball": 7.4
+          },
+          {
+            "unum": 6,
+            "x": -40.3,
+            "y": 1.1,
+            "dist_to_ball": 7.0
+          },
+          {
+            "unum": 7,
+            "x": -41.2,
+            "y": 6.9,
+            "dist_to_ball": 2.4
+          },
+          {
+            "unum": 8,
+            "x": -45.3,
+            "y": 2.1,
+            "dist_to_ball": 5.5
+          },
+          {
+            "unum": 9,
+            "x": -47.0,
+            "y": 8.4,
+            "dist_to_ball": 3.6
+          },
+          {
+            "unum": 10,
+            "x": -46.2,
+            "y": -0.7,
+            "dist_to_ball": 8.4
+          },
+          {
+            "unum": 11,
+            "x": -48.1,
+            "y": 3.2,
+            "dist_to_ball": 6.1
+          }
+        ]
+      }
+    ]
+  },
+  "possession_summary": {
+    "spica_kickable_opp_half_cycles": 609,
+    "opp_kickable_spica_half_cycles": 809,
+    "spica_kickable_own_third_cycles": 181
+  }
+}

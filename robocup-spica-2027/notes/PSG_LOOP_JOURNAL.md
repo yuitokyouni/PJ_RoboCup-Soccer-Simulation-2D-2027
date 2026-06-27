@@ -35,7 +35,8 @@ State at iter_004 (1-0 WIN):
 | 014 | iter_004 base (resume) | 0-2 L | cyc 833 + 2555 both DEF-C +y stack | — | 559 | 1303 | u4+14.6, u8+17, u8+16; recurring +y stack |
 | 015 | CB Y-mirror \|y\|>1 | 0-2 L | cyc 2394 (-40.9,+5.0) FK cascade + cyc 5131 (-46.5,+4.8) | — | 478 | 1111 | Rule fired but target-steering lag: u5 still +6.2 at goal |
 | 016 | u5 anticipation -y when ball.x<-10 | 0-2 L | cyc 992 ball=(-50.7,+15.9), cyc 4151 ball=(-46.0,+2.3) | — | 787 | 955 | u5 at +14.9 and +5.3 -- rule did NOT apply. mark/intercept overrides modulate_position |
-| 017 | revert u5; +cross bonus +35 (SB wide x>=20 |y|>=18 to PA central) | (TBD) | | | | | ChainAction-side approach; defense_block patches don't reach mark/intercept |
+| 017 | revert u5; +cross bonus +35 (SB wide x>=20 |y|>=18 to PA central) | **1-1 D** | cyc 3240 (-43.6,+7.3) FK cascade | cyc 5434 (+47.9,-7.9) goal_kick→FK→GOAL | 609 | 809 | **First SCORE in 7 iter**. Cross pattern visible (PA central -y goal). |
+| 018 | iter_017 reverify | (TBD) | | | | | If scores again, cross bonus confirmed as P(Score) booster |
 
 
 ## Failed approaches (DO NOT REPEAT)
