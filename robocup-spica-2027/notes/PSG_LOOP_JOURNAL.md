@@ -55,7 +55,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 032 | iter_019 config (continue) | 0-0 D | clean | — | — | — | best stack 8: 1W 4D 3L (now incl 31, 32) |
 | 033 | iter_019 config (continue) | 0-1 L | | — | — | — | |
 | 034 | iter_019 config (continue) | 0-1 L | | — | — | — | 34 iter total: 2W 7D 25L |
-| 035 | TRS bias bumped (8,5)→(12,8) | (TBD) | | | | | Stronger forward push after clearances |
+| 035 | TRS bias bumped (8,5)→(12,8) | **1-0 W** ✓ | clean | cyc 5082 (+45.1,-2.3) FK→GOAL PA central (5th template) | 536 | 1214 | 3rd WIN. TRS forward push after clearance might be the trigger |
+| 036 | streak attempt 1/5 (same config) | (TBD) | | | | | streak=1 |
 
 
 ## Failed approaches (DO NOT REPEAT)
@@ -79,6 +80,9 @@ State at iter_019 (1-0 WIN, best so far):
 1. **F433 Y-symmetrize** — possession boost (~+100 opp_half cycles vs vanilla F433). Kept.
 2. **SB tuck-in (u3/u4 |y|≤12 when ball.x<-30)** — fixed iter_000 u4-stranded-wide pattern. Kept.
 3. **Wedge bonus ×2 (50)** — first WIN came via this (iter_004 kick_in→GOAL). Kept.
+4. **Cross bonus +35** (iter 17) — SB wide → PA central; locked-in template +47/-5 PA goal repeatable.
+5. **Through-ball bonus +25** (iter 19) — CDM → forward at x>+25; chains compose with cross+wedge.
+6. **TRS bias bump (8,5)→(12,8)** (iter 35) — stronger post-clearance forward push; may have produced 3rd WIN.
 
 ## Recurring patterns observed (open improvement targets)
 
