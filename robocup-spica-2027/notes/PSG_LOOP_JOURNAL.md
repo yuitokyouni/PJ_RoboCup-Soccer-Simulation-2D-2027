@@ -43,7 +43,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 020 | iter_019 reverify (streak attempt 1) | 0-1 L | cyc 5947 (-41.4,-0.5) FK→GOAL late | — | 526 | 1146 | Streak broken (0/5). Variance dominant. |
 | 021 | iter_019 config (continue) | 0-1 L | — | — | — | — | 2nd consecutive L; iter 19 win may be lucky |
 | 022 | iter_019 config (continue) | 0-0 D | clean | — | 407 | 1202 | Defense holds; offense dead. opp dominates possession. |
-| 023 | iter_019 config (continue) | (TBD) | | | | | best stack 4 samples: 1W 1D 2L → P(W)=25% |
+| 023 | iter_019 config (continue) | 0-1 L | | — | — | — | 5 samples 1W 1D 3L → P(W)=20% |
+| 024 | iter_019 config (continue) | (TBD) | | | | | |
 
 
 ## Failed approaches (DO NOT REPEAT)
