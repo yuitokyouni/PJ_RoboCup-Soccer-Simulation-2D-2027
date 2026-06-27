@@ -58,7 +58,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 035 | TRS bias bumped (8,5)→(12,8) | **1-0 W** ✓ | clean | cyc 5082 (+45.1,-2.3) FK→GOAL PA central (5th template) | 536 | 1214 | 3rd WIN. TRS forward push after clearance might be the trigger |
 | 036 | streak attempt 1/5 (same config) | 1-2 L | | scored 1 | — | — | streak broken; TRS bumped 2 samples 1W 1L |
 | 037 | iter_035 config (continue) | 0-2 L | | — | — | — | streak still 0/5 |
-| 038 | iter_035 config (continue) | (TBD) | | | | | 37 iter: 3W 7D 27L, P(W)=8% |
+| 038 | iter_035 config (continue) | 0-0 D | clean | — | — | — | 38 iter: 3W 8D 27L |
+| 039 | iter_035 config (continue) | (TBD) | | | | | |
 
 
 ## Failed approaches (DO NOT REPEAT)
