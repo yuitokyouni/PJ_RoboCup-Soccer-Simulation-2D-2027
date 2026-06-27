@@ -1,0 +1,1303 @@
+rcssserver-19.0.0
+
+Copyright (C) 1995, 1996, 1997, 1998, 1999 Electrotechnical Laboratory.
+2000 - RoboCup Soccer Simulator Maintenance Group.
+
+Simulator Random Seed: 1782551312
+CSVSaver: Ready
+STDOutSaver: Ready
+Using simulator's random seed as Hetero Player Seed: 1782551312
+******************************************************************
+ HELIOS base
+ Created by Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2000-2007.  Hidehisa Akiyama
+ Copyright 2007-2011.  Hidehisa Akiyama and Hiroki Shimora
+ All rights reserved.
+******************************************************************
+PING localhost (127.0.0.1) 56(84) bytes of data.
+64 bytes from localhost (127.0.0.1): icmp_seq=1 ttl=64 time=0.046 ms
+
+--- localhost ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.046/0.046/0.046/0.000 ms
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+SPICA325: init ok.  unum: 1 side: l
+SPICA325 1: [-1, 0] (v18+) force synch see mode.
+wind factor: rand: 0.000000, vector: (0.000000, 0.000000)
+
+Hit CTRL-C to exit
+Starting "/bin/sh -c scripts/team_launchers/spica325_left.sh"
+Waiting for players to connect
+A new (v18) player (SPICA325 1) connected.
+******************************************************************
+ HELIOS base
+ Created by Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2000-2007.  Hidehisa Akiyama
+ Copyright 2007-2011.  Hidehisa Akiyama and Hiroki Shimora
+ All rights reserved.
+******************************************************************
+PING localhost (127.0.0.1) 56(84) bytes of data.
+64 bytes from localhost (127.0.0.1): icmp_seq=1 ttl=64 time=0.025 ms
+
+--- localhost ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.025/0.025/0.025/0.000 ms
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+SPICA325 1:  KickTable created.
+SPICA325 1: [-1, 0] set synch see mode.
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+CYRUS_VANILLA: init ok.  unum: 1 side: r
+CYRUS_VANILLA 1: [-1, 0] (v18+) force synch see mode.
+Starting "/bin/sh -c scripts/team_launchers/cyrus_vanilla_right.sh"
+A new (v18) player (CYRUS_VANILLA 1) connected.
+CYRUS_VANILLA 1:  KickTable created.
+CYRUS_VANILLA 1: [-1, 0] set synch see mode.
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+A new (v18) player (SPICA325 2) connected.
+SPICA325: init ok.  unum: 3 side: l
+SPICA325 3: [-1, 0] (v18+) force synch see mode.
+A new (v18) player (SPICA325 3) connected.
+SPICA325: init ok.  unum: 2 side: l
+SPICA325 2: [-1, 0] (v18+) force synch see mode.
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+A new (v18) player (SPICA325 4) connected.
+A new (v18) player (SPICA325 5) connected.
+A new (v18) player (SPICA325 6) connected.
+A new (v18) player (SPICA325 7) connected.
+A new (v18) online coach (SPICA325) connected.
+SPICA325SPICA325: : init ok.  unum: init ok.  unum: 54 side:  side: ll
+
+SPICA325 5: [-1, 0] (v18+) force synch see mode.
+SPICA325 4: [-1, 0] (v18+) force synch see mode.
+SPICA325: init ok.  unum: 6 side: l
+SPICA325 6: [-1, 0] (v18+) force synch see mode.
+SPICA325: init ok.  unum: 7 side: l
+SPICA325 7: [-1, 0] (v18+) force synch see mode.
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+SPICA325 coach: [-1, 0] recv (ok eye on)
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+SPICA325 3:  KickTable created.
+SPICA325 3: [-1, 0] set synch see mode.
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+SPICA325 2:  KickTable created.
+SPICA325 2: [-1, 0] set synch see mode.
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+A new (v18) player (SPICA325 8) connected.
+SPICA325: init ok.  unum: 8 side: l
+SPICA325 8: [-1, 0] (v18+) force synch see mode.
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+******************************************************************
+ librcsc 
+ Copyright 2000 - 2007. Hidehisa Akiyama.
+ Copyright 2007 - 2011. Hidehisa Akiyama and Hiroki Shimora
+ Copyright 2011 -  Hidehisa Akiyama, Hiroki Shimora
+   Takuya Fukushima (2019-)
+ All rights reserved.
+******************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+SPICA325: init ok.  unum: 9 side: l
+SPICA325 9: [-1, 0] (v18+) force synch see mode.
+A new (v18) player (SPICA325 9) connected.
+CYRUS_VANILLA: init ok.  unum: 2 side: r
+CYRUS_VANILLA 2: [-1, 0] (v18+) force synch see mode.
+A new (v18) player (CYRUS_VANILLA 2) connected.
+A new (v18) player (SPICA325 10) connected.
+A new (v18) player (CYRUS_VANILLA 3) connected.
+A new (v18) online coach (CYRUS_VANILLA) connected.
+SPICA325: init ok.  unum: 10 side: l
+CYRUS_VANILLA: init ok.  unum: SPICA325 10: [-13,  side: 0] (v18+) force synch see mode.
+r
+CYRUS_VANILLA 3: [-1, 0] (v18+) force synch see mode.
+SPICA325 4:  KickTable created.
+SPICA325 4: [-1, 0] set synch see mode.
+CYRUS_VANILLA coach: [-1, 0] recv (ok eye on)
+SPICA325 6:  KickTable created.
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+A new (v18) player (SPICA325 11) connected.
+SPICA325 7:  KickTable created.
+SPICA325 7: [-1, 0] set synch see mode.
+SPICA325: init ok.  unum: 11 side: l
+SPICA325 11: [-1, 0] (v18+) force synch see mode.
+SPICA325 5:  KickTable created.
+SPICA325 5: [-1, 0] set synch see mode.
+SPICA325 6: [-1, 0] set synch see mode.
+SPICA325 8:  KickTable created.
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+A new (v18) player (CYRUS_VANILLA 4) connected.
+SPICA325 8: [-1, 0] set synch see mode.
+CYRUS_VANILLA: init ok.  unum: 4 side: r
+CYRUS_VANILLA 4: [-1, 0] (v18+) force synch see mode.
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+CYRUS_VANILLA 2:  KickTable created.
+CYRUS_VANILLA 2: [-1, 0] set synch see mode.
+CYRUS_VANILLA 3:  KickTable created.
+CYRUS_VANILLA 3: [-1, 0] set synch see mode.
+SPICA325 9:  KickTable created.
+SPICA325 9: [-1, 0] set synch see mode.
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+SPICA325 11:  KickTable created.
+SPICA325 11: [-1, 0] set synch see mode.
+SPICA325 10:  KickTable created.
+SPICA325 10: [-1, 0] set synch see mode.
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+CYRUS_VANILLA: init ok.  unum: 5 side: r
+CYRUS_VANILLA 5: [-1, 0] (v18+) force synch see mode.
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+CYRUS_VANILLA 4:  KickTable created.
+CYRUS_VANILLA 4: [-1, 0] set synch see mode.
+A new (v18) player (CYRUS_VANILLA 5) connected.
+CYRUS_VANILLA: init ok.  unum: 6 side: r
+CYRUS_VANILLA 6: [-1, 0] (v18+) force synch see mode.
+A new (v18) player (CYRUS_VANILLA 6) connected.
+A new (v18) player (CYRUS_VANILLA 7) connected.
+CYRUS_VANILLA: init ok.  unum: 8 side: r
+CYRUS_VANILLA 8: [-1, 0] (v18+) force synch see mode.
+CYRUS_VANILLA: init ok.  unum: 7 side: r
+CYRUS_VANILLA 7: [-1, 0] (v18+) force synch see mode.
+A new (v18) player (CYRUS_VANILLA 8) connected.
+A new (v18) player (CYRUS_VANILLA 9) connected.
+A new (v18) player (CYRUS_VANILLA 10) connected.
+*****************************************************************
+ This program is based on agent2d created by Hidehisa Akiyama.
+ Copyright 2006 - 2011. Hidehisa Akiyama and Hiroki Shimora.
+ All rights reserved.
+*****************************************************************
+CYRUS_VANILLA: init ok.  unum: 9 side: r
+CYRUS_VANILLA 9: [-1, 0] (v18+) force synch see mode.
+CYRUS_VANILLA: init ok.  unum: 10 side: r
+CYRUS_VANILLA 10: [-1, 0] (v18+) force synch see mode.
+CYRUS_VANILLA: init ok.  unum: 11 side: r
+CYRUS_VANILLA 11: [-1, 0] (v18+) force synch see mode.
+A new (v18) player (CYRUS_VANILLA 11) connected.
+CYRUS_VANILLA 5:  KickTable created.
+CYRUS_VANILLA 5: [-1, 0] set synch see mode.
+CYRUS_VANILLA 6:  KickTable created.
+CYRUS_VANILLA 6: [-1, 0] set synch see mode.
+CYRUS_VANILLA 7:  KickTable created.
+CYRUS_VANILLA 7: [-1, 0] set synch see mode.
+CYRUS_VANILLA 10:  KickTable created.
+CYRUS_VANILLA 10: [-1, 0] set synch see mode.
+CYRUS_VANILLA 9:  KickTable created.
+CYRUS_VANILLA 9: [-1, 0] set synch see mode.
+CYRUS_VANILLA 8:  KickTable created.
+CYRUS_VANILLA 8: [-1, 0] set synch see mode.
+CYRUS_VANILLA 11:  KickTable created.
+CYRUS_VANILLA 11: [-1, 0] set synch see mode.
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+id speed step inc  power  stam  karea
+ 0 1.000   6  45.0 100.0  55.0  1.085
+ 1 0.867   4  43.6 100.0  56.4  1.079
+ 2 1.010   5  41.4 100.0  58.6  1.071
+ 3 0.871   6  49.5 100.0  50.5  0.998
+ 4 0.794   5  46.0 100.0  54.0  1.131
+ 5 0.783   5  51.5 100.0  48.5  1.041
+ 6 0.883   5  45.3 100.0  54.7  1.181
+ 7 0.976   6  46.5 100.0  53.5  1.030
+ 8 0.912   6  48.7 100.0  51.3  0.988
+ 9 0.812   5  49.5 100.0  50.5  1.141
+ 10 0.969   7  44.4 100.0  55.6  0.994
+ 11 0.826   6  52.0 100.0  48.0  1.099
+ 12 1.022   7  46.3 100.0  53.7  1.136
+ 13 0.942   6  44.5 100.0  55.5  1.133
+ 14 1.021   6  44.3 100.0  55.7  1.085
+ 15 0.867   6  50.9 100.0  49.1  1.100
+ 16 0.921   6  48.5 100.0  51.5  1.089
+ 17 0.820   5  48.0 100.0  52.0  1.140
+$$$$$$$$$$$$$$$$$$$$$$$$isother
+SPICA325 coach: change player 1 to type 0
+SPICA325 coach: change player 9 to type 14
+SPICA325 coach: change player 2 to type 12
+SPICA325 coach: change player 11 to type 2
+SPICA325 coach: change player 4 to type 7
+SPICA325 coach: change player 10 to type 10
+SPICA325 coach: change player 3 to type 13
+SPICA325 coach: change player 5 to type 8
+SPICA325 coach: change player 7 to type 16
+SPICA325 coach: change player 8 to type 6
+SPICA325 coach: change player 6 to type 1
+id speed step inc  power  stam  karea
+ 0 1.000   6  45.0 100.0  55.0  1.085
+ 1 0.867   4  43.6 100.0  56.4  1.079
+ 2 1.010   5  41.4 100.0  58.6  1.071
+ 3 0.871   6  49.5 100.0  50.5  0.998
+ 4 0.794   5  46.0 100.0  54.0  1.131
+ 5 0.783   5  51.5 100.0  48.5  1.041
+ 6 0.883   5  45.3 100.0  54.7  1.181
+ 7 0.976   6  46.5 100.0  53.5  1.030
+ 8 0.912   6  48.7 100.0  51.3  0.988
+ 9 0.812   5  49.5 100.0  50.5  1.141
+ 10 0.969   7  44.4 100.0  55.6  0.994
+ 11 0.826   6  52.0 100.0  48.0  1.099
+ 12 1.022   7  46.3 100.0  53.7  1.136
+ 13 0.942   6  44.5 100.0  55.5  1.133
+ 14 1.021   6  44.3 100.0  55.7  1.085
+ 15 0.867   6  50.9 100.0  49.1  1.100
+ 16 0.921   6  48.5 100.0  51.5  1.089
+ 17 0.820   5  48.0 100.0  52.0  1.140
+$$$$$$$$$$$$$$$$$$$$$$$$isother
+CYRUS_VANILLA coach: change player 1 to type 0
+CYRUS_VANILLA coach: change player 9 to type 14
+CYRUS_VANILLA coach: change player 2 to type 12
+CYRUS_VANILLA coach: change player 11 to type 2
+CYRUS_VANILLA coach: change player 4 to type 7
+CYRUS_VANILLA coach: change player 10 to type 10
+CYRUS_VANILLA coach: change player 3 to type 13
+CYRUS_VANILLA coach: change player 5 to type 8
+CYRUS_VANILLA coach: change player 7 to type 16
+CYRUS_VANILLA coach: change player 8 to type 6
+CYRUS_VANILLA coach: change player 6 to type 1
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+Read Setting: ./data/settings/Other.json
+Waiting to kick off
+Kick_off_left
+CYRUS_VANILLA coach: [94, 0] no player type for opponent 9. restart analysis.
+CYRUS_VANILLA coach: [95, 0] determined opponent 6 type = 1
+CYRUS_VANILLA coach: [95, 0] determined opponent 11 type = 2
+CYRUS_VANILLA coach: [95, 0] no player type for opponent 9. restart analysis.
+SPICA325 coach: [95, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [95, 0] no player type for opponent 2. restart analysis.
+SPICA325 coach: [95, 0] no player type for opponent 6. restart analysis.
+SPICA325 coach: [95, 0] no player type for opponent 11. restart analysis.
+CYRUS_VANILLA coach: [96, 0] determined opponent 10 type = 10
+SPICA325 coach: [96, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [97, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [97, 0] determined opponent 6 type = 1
+SPICA325 coach: [97, 0] no player type for opponent 11. restart analysis.
+SPICA325 coach: [97, 0] no player type for opponent 9. restart analysis.
+SPICA325 coach: [97, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [98, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [99, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [99, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA coach: [100, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [100, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [101, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [101, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [102, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [102, 0] no player type for opponent 9. restart analysis.
+SPICA325 coach: [103, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [103, 0] no player type for opponent 11. restart analysis.
+SPICA325 coach: [103, 0] no player type for opponent 9. restart analysis.
+SPICA325 coach: [104, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [104, 0] no player type for opponent 2. restart analysis.
+SPICA325 coach: [104, 0] no player type for opponent 11. restart analysis.
+CYRUS_VANILLA coach: [104, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [105, 0] no player type for opponent 1. restart analysis.
+SPICA325 coach: [105, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [105, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [105, 0] determined opponent 1 type = 0
+CYRUS_VANILLA coach: [105, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [106, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [107, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [107, 0] no player type for opponent 2. restart analysis.
+SPICA325 coach: [107, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [107, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [107, 0] no player type for opponent 3. restart analysis.
+layerSize: 3
+SPICA325 coach: [110, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [111, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [111, 0] determined opponent 2 type = 12
+CYRUS_VANILLA coach: [112, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [113, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [114, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [115, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [115, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [115, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [116, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [116, 0] no player type for opponent 2. restart analysis.
+CYRUS_VANILLA coach: [116, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [116, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [117, 0] no player type for opponent 2. restart analysis.
+SPICA325 coach: [117, 0] no player type for opponent 9. restart analysis.
+SPICA325 coach: [118, 0] no player type for opponent 4. restart analysis.
+CYRUS_VANILLA coach: [118, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [119, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [119, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [119, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [120, 0] no player type for opponent 2. restart analysis.
+CYRUS_VANILLA coach: [120, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [121, 0] no player type for opponent 1. restart analysis.
+CYRUS_VANILLA coach: [121, 0] determined opponent 9 type = 14
+CYRUS_VANILLA coach: [121, 0] determined opponent 4 type = 7
+CYRUS_VANILLA coach: [122, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [122, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [123, 0] no player type for opponent 2. restart analysis.
+SPICA325 coach: [123, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [124, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [124, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [124, 0] no player type for opponent 11. restart analysis.
+SPICA325 coach: [125, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [125, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [126, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [127, 0] determined opponent 1 type = 0
+CYRUS_VANILLA coach: [128, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [128, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [129, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [130, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [130, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA coach: [131, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [132, 0] no player type for opponent 2. restart analysis.
+SPICA325 coach: [133, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [133, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [133, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [134, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [135, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [136, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [136, 0] determined opponent 11 type = 2
+SPICA325 coach: [136, 0] no player type for opponent 4. restart analysis.
+CYRUS_VANILLA coach: [136, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [137, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [139, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [140, 0] determined opponent 8 type = 6
+SPICA325 coach: [141, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [141, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [142, 0] no player type for opponent 5. restart analysis.
+SPICA325 3: [142, 0]  WARNING. no turn_neck.
+SPICA325 coach: [143, 0] no player type for opponent 2. restart analysis.
+CYRUS_VANILLA coach: [143, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [144, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [146, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [147, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA coach: [148, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [148, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [149, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [150, 0] no player type for opponent 4. restart analysis.
+CYRUS_VANILLA coach: [151, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [152, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [152, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [152, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [152, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [153, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA coach: [153, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [154, 0] no player type for opponent 9. restart analysis.
+CYRUS_VANILLA coach: [154, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [155, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [155, 0] no player type for opponent 2. restart analysis.
+SPICA325 coach: [155, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [155, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [156, 0] no player type for opponent 9. restart analysis.
+CYRUS_VANILLA coach: [157, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [158, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [159, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [160, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [162, 0] no player type for opponent 4. restart analysis.
+CYRUS_VANILLA coach: [162, 0] determined opponent 8 type = 6
+SPICA325 coach: [164, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [165, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [166, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [169, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [170, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [170, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [176, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [176, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [179, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [179, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [179, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [180, 0] no player type for opponent 9. restart analysis.
+SPICA325 coach: [181, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [181, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [182, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [183, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [185, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [185, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [185, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [187, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [187, 0] no player type for opponent 9. restart analysis.
+CYRUS_VANILLA coach: [193, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [194, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [195, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [195, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [196, 0] no player type for opponent 2. restart analysis.
+SPICA325 coach: [197, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [197, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [199, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [200, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [201, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [201, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [203, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [204, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [206, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [206, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [206, 0] no player type for opponent 5. restart analysis.
+SPICA325 7: [206, 0] lost kick by foul at [206, 0] sense=6 internal=7
+SPICA325 coach: [206, 1] sent freeform (player_types (1 0)(2 -1)(3 -1)(4 -1)(5 -1)(6 1)(7 -1)(8 6)(9 -1)(10 -1)(11 2))
+SPICA325 coach: [206, 1] freeform 1 / 128
+CYRUS_VANILLA coach: [206, 1] sent freeform (player_types (1 0)(2 12)(3 -1)(4 7)(5 -1)(6 1)(7 -1)(8 6)(9 14)(10 10)(11 2))
+CYRUS_VANILLA coach: [206, 1] freeform 1 / 128
+SPICA325 coach: [261, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [264, 0] determined opponent 2 type = 12
+SPICA325 coach: [264, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [265, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [266, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [266, 0] no player type for opponent 4. restart analysis.
+SPICA325 coach: [267, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [268, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [269, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [270, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [271, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [271, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [272, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [272, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [273, 0] determined opponent 4 type = 7
+SPICA325 coach: [273, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [274, 0] determined opponent 9 type = 14
+CYRUS_VANILLA coach: [277, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [278, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [281, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [282, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [285, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [285, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [285, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [286, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [288, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [288, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [293, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [294, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [297, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [297, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [298, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [298, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [298, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [300, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [301, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [301, 0] updated clang capacity.
+CYRUS_VANILLA coach: [301, 0] updated clang capacity.
+CYRUS_VANILLA coach: [303, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [304, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [313, 1] sent freeform (player_types (1 0)(2 12)(3 -1)(4 7)(5 -1)(6 1)(7 -1)(8 6)(9 14)(10 -1)(11 2))
+SPICA325 coach: [313, 1] freeform 2 / 128
+CYRUS_VANILLA coach: [366, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [370, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [375, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [376, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [376, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [384, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [385, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [386, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [387, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [387, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [387, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [389, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [390, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [392, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [393, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [394, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [395, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [398, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [398, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [400, 0] no player type for opponent 5. restart analysis.
+SPICA325 10: [401, 0] lost kick by foul at [401, 0] sense=7 internal=8
+CYRUS_VANILLA coach: [402, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [402, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [449, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [449, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [452, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [454, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [456, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [461, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [462, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [462, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [463, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [463, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [464, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [464, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [464, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [465, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [465, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [465, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [466, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [467, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [468, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [469, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [469, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [469, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [470, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [470, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [471, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [471, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [472, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [473, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [474, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [475, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [480, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [481, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [483, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [492, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [493, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [493, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [494, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [495, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [496, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [496, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [497, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [498, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [498, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [498, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [499, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [499, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [502, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [503, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [503, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [505, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [505, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [506, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [508, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [509, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [510, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [513, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [514, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [514, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [515, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [516, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [517, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [518, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [519, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [520, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [523, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [523, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [523, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [523, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [524, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [530, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [531, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [534, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [535, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [535, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [536, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [538, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [538, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [539, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [540, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [540, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [542, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [543, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [544, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [547, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [553, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [558, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [560, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [562, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [562, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [562, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [564, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [565, 0] no player type for opponent 5. restart analysis.
+SPICA325 6: [567, 0]  WARNING. no turn_neck.
+SPICA325 coach: [568, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [568, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [571, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [571, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [572, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [572, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [577, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [578, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [579, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [581, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [581, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [581, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [582, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [583, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [586, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [593, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [594, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [595, 0] no player type for opponent 10. restart analysis.
+SPICA325 11: [596, 0] lost kick by foul at [596, 0] sense=5 internal=6
+SPICA325 coach: [601, 0] updated clang capacity.
+CYRUS_VANILLA coach: [601, 0] updated clang capacity.
+CYRUS_VANILLA coach: [682, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [683, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [684, 0] determined opponent 3 type = 13
+CYRUS_VANILLA coach: [684, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [684, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [685, 0] determined opponent 5 type = 8
+SPICA325 coach: [692, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [693, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [695, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [696, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [703, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [704, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [706, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [709, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [711, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [715, 0] determined opponent 7 type = 16
+CYRUS_VANILLA coach: [722, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [730, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [731, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [733, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [734, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [740, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [744, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [744, 0] no player type for opponent 3. restart analysis.
+SPICA325 coach: [745, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [745, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [745, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [746, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [747, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [748, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [748, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [749, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [750, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [751, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [751, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [752, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [753, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [753, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [759, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [765, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [768, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [769, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [769, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [772, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [773, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [777, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [790, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [796, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [797, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [801, 0] no player type for opponent 3. restart analysis.
+CYRUS_VANILLA coach: [805, 0] no player type for opponent 5. restart analysis.
+CYRUS_VANILLA coach: [806, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [808, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [809, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [811, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [811, 0] no player type for opponent 5. restart analysis.
+SPICA325 coach: [812, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [816, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [816, 0] determined opponent 5 type = 8
+CYRUS_VANILLA coach: [816, 0] determined opponent 3 type = 13
+SPICA325 coach: [817, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [818, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [824, 0] no player type for opponent 10. restart analysis.
+SPICA325 coach: [832, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [833, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [835, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [850, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [854, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [856, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [867, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [871, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [875, 0] no player type for opponent 7. restart analysis.
+layerSize: 3
+SPICA325 coach: [883, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [887, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [892, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [894, 0] no player type for opponent 10. restart analysis.
+CYRUS_VANILLA coach: [895, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA 9: [899, 0] lost kick by foul at [899, 0] sense=17 internal=18
+SPICA325 coach: [901, 0] updated clang capacity.
+CYRUS_VANILLA coach: [901, 0] updated clang capacity.
+SPICA325 coach: [903, 0] determined opponent 10 type = 10
+CYRUS_VANILLA coach: [910, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [942, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [944, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [950, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [951, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [952, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [956, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [957, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [958, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [960, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1024, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1027, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1071, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1097, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1125, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1136, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1162, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1175, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1177, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1179, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1180, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1182, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1187, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1201, 0] updated clang capacity.
+SPICA325 coach: [1201, 0] updated clang capacity.
+CYRUS_VANILLA coach: [1210, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1220, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1223, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1224, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [1224, 1] sent freeform (player_types (1 0)(2 12)(3 13)(4 7)(5 8)(6 1)(7 16)(8 6)(9 14)(10 10)(11 2))
+SPICA325 coach: [1224, 1] freeform 3 / 128
+CYRUS_VANILLA coach: [1224, 1] sent freeform (player_types (1 0)(2 12)(3 13)(4 7)(5 8)(6 1)(7 -1)(8 6)(9 14)(10 10)(11 2))
+CYRUS_VANILLA coach: [1224, 1] freeform 2 / 128
+CYRUS_VANILLA coach: [1315, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1329, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1450, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1452, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1459, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1467, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1478, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1496, 0] no player type for opponent 7. restart analysis.
+SPICA325 coach: [1501, 0] updated clang capacity.
+CYRUS_VANILLA coach: [1501, 0] updated clang capacity.
+CYRUS_VANILLA coach: [1505, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1508, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1510, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1515, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1516, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1517, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1523, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1524, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1534, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1553, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1554, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1557, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1563, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1567, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1568, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1598, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1602, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1614, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1619, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1620, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1625, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1628, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1630, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1631, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1633, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1634, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1635, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1636, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1639, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1649, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1651, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1657, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1676, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1685, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1686, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1692, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1694, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA 7: [1715, 0]  WARNING. no turn_neck.
+CYRUS_VANILLA 7: [1716, 0]  WARNING. no turn_neck.
+CYRUS_VANILLA coach: [1728, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1729, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1730, 0] no player type for opponent 7. restart analysis.
+CYRUS_VANILLA coach: [1734, 0] determined opponent 7 type = 16
+SPICA325 9: [1787, 0] lost kick by foul at [1787, 0] sense=46 internal=47
+CYRUS_VANILLA 10: [1797, 0] lost kick by foul at [1797, 0] sense=11 internal=12
+SPICA325 coach: [1801, 0] updated clang capacity.
+CYRUS_VANILLA coach: [1801, 0] updated clang capacity.
+CYRUS_VANILLA coach: [1813, 0] sent freeform (player_types (1 0)(2 12)(3 13)(4 7)(5 8)(6 1)(7 16)(8 6)(9 14)(10 10)(11 2))
+CYRUS_VANILLA coach: [1813, 0] freeform 3 / 128
+CYRUS_VANILLA 10: [1813, 0] lost kick by foul at [1813, 0] sense=11 internal=12
+SPICA325 coach: [2101, 0] updated clang capacity.
+CYRUS_VANILLA coach: [2101, 0] updated clang capacity.
+CYRUS_VANILLA 11: [2132, 0] lost kick by foul at [2132, 0] sense=49 internal=50
+SPICA325 coach: [2401, 0] updated clang capacity.
+CYRUS_VANILLA coach: [2401, 0] updated clang capacity.
+SPICA325 coach: [2701, 0] updated clang capacity.
+CYRUS_VANILLA coach: [2701, 0] updated clang capacity.
+SPICA325 4: [2727, 0] lost kick by foul at [2727, 0] sense=7 internal=8
+Waiting to kick off
+Kick_off_right
+SPICA325 coach: [3001, 0] updated clang capacity.
+CYRUS_VANILLA coach: [3001, 0] updated clang capacity.
+CYRUS_VANILLA 6: [3182, 0] lost kick by foul at [3182, 0] sense=36 internal=37
+SPICA325 coach: [3301, 0] updated clang capacity.
+CYRUS_VANILLA coach: [3301, 0] updated clang capacity.
+CYRUS_VANILLA 7: [3388, 0] lost kick by foul at [3388, 0] sense=68 internal=69
+CYRUS_VANILLA 8: [3493, 0]  WARNING. no turn_neck.
+CYRUS_VANILLA 8: [3494, 0]  WARNING. no turn_neck.
+CYRUS_VANILLA 6: [3540, 0] lost kick by foul at [3540, 0] sense=39 internal=40
+SPICA325 coach: [3601, 0] updated clang capacity.
+CYRUS_VANILLA coach: [3601, 0] updated clang capacity.
+SPICA325 9: [3846, 0] over dash power range: 132.458
+CYRUS_VANILLA coach: [3901, 0] updated clang capacity.
+SPICA325 coach: [3901, 0] updated clang capacity.
+SPICA325 coach: [4201, 0] updated clang capacity.
+CYRUS_VANILLA coach: [4201, 0] updated clang capacity.
+CYRUS_VANILLA 11: [4218, 0]  WARNING. no turn_neck.
+CYRUS_VANILLA 11: [4219, 0]  WARNING. no turn_neck.
+SPICA325 4: [4237, 0]  WARNING. no body command.
+SPICA325 coach: [4501, 0] updated clang capacity.
+CYRUS_VANILLA coach: [4501, 0] updated clang capacity.
+SPICA325 coach: [4801, 0] updated clang capacity.
+CYRUS_VANILLA coach: [4801, 0] updated clang capacity.
+SPICA325 3: [5013, 0]  WARNING. no turn_neck.
+SPICA325 3: [5014, 0]  WARNING. no turn_neck.
+SPICA325 7: [5101, 0]  WARNING. no turn_neck.
+SPICA325 coach: [5101, 0] updated clang capacity.
+CYRUS_VANILLA coach: [5101, 0] updated clang capacity.
+SPICA325 7: [5102, 0]  WARNING. no turn_neck.
+SPICA325 7: [5103, 0]  WARNING. no turn_neck.
+SPICA325 coach: [5401, 0] updated clang capacity.
+CYRUS_VANILLA coach: [5401, 0] updated clang capacity.
+SPICA325 coach: change player 6 to type 15
+CYRUS_VANILLA coach: change player 6 to type 15
+CYRUS_VANILLA coach: change player 8 to type 3
+SPICA325 coach: [5545, 0] determined opponent 6 type = 15
+SPICA325 coach: [5547, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA coach: [5557, 0] no player type for opponent 6. restart analysis.
+SPICA325 coach: [5557, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5558, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA coach: [5558, 0] no player type for opponent 6. restart analysis.
+CYRUS_VANILLA 11: [5561, 0]  WARNING. no turn_neck.
+SPICA325 coach: [5563, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA coach: [5563, 0] no player type for opponent 6. restart analysis.
+CYRUS_VANILLA coach: [5564, 0] no player type for opponent 6. restart analysis.
+SPICA325 coach: [5569, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5570, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5571, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5572, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA coach: [5574, 0] no player type for opponent 6. restart analysis.
+CYRUS_VANILLA coach: [5576, 0] no player type for opponent 6. restart analysis.
+CYRUS_VANILLA coach: [5578, 0] no player type for opponent 6. restart analysis.
+SPICA325 coach: [5582, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA coach: [5592, 0] no player type for opponent 6. restart analysis.
+CYRUS_VANILLA coach: [5600, 0] no player type for opponent 6. restart analysis.
+CYRUS_VANILLA coach: [5604, 0] no player type for opponent 6. restart analysis.
+CYRUS_VANILLA coach: [5607, 0] no player type for opponent 6. restart analysis.
+SPICA325 coach: [5609, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA coach: [5610, 0] no player type for opponent 6. restart analysis.
+CYRUS_VANILLA coach: [5611, 0] no player type for opponent 6. restart analysis.
+CYRUS_VANILLA coach: [5612, 0] no player type for opponent 6. restart analysis.
+CYRUS_VANILLA coach: [5613, 0] no player type for opponent 6. restart analysis.
+CYRUS_VANILLA coach: [5621, 0] no player type for opponent 6. restart analysis.
+CYRUS_VANILLA coach: [5622, 0] no player type for opponent 6. restart analysis.
+SPICA325 coach: [5636, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5637, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5646, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA coach: [5653, 0] no player type for opponent 6. restart analysis.
+SPICA325 coach: [5657, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA coach: [5665, 0] determined opponent 6 type = 15
+SPICA325 coach: [5697, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5699, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5701, 0] updated clang capacity.
+CYRUS_VANILLA coach: [5701, 0] updated clang capacity.
+SPICA325 coach: [5705, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5706, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5725, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5727, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5728, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5731, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5732, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5738, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5742, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5745, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5769, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5770, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5771, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5774, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5792, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5793, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5794, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5795, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5804, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5805, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5825, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5827, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5832, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5837, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5838, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5842, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5844, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5847, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5849, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5850, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5851, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5852, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5853, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5854, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5859, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5862, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5867, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5869, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5873, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5887, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5892, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5894, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5896, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5898, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5901, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5902, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5908, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5912, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5921, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5922, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5931, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5933, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5934, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5939, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5943, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5953, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5956, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5957, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5960, 0] no player type for opponent 8. restart analysis.
+SPICA325 coach: [5964, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA coach: [5987, 0] sent freeform (player_types (1 0)(2 12)(3 13)(4 7)(5 8)(6 15)(7 16)(8 6)(9 14)(10 10)(11 2))
+CYRUS_VANILLA coach: [5987, 0] freeform 4 / 128
+SPICA325 coach: [5987, 0] sent freeform (player_types (1 0)(2 12)(3 13)(4 7)(5 8)(6 15)(7 16)(8 -1)(9 14)(10 10)(11 2))
+SPICA325 coach: [5987, 0] freeform 4 / 128
+SPICA325 coach: change player 8 to type 3
+CYRUS_VANILLA coach: change player 8 to type 9
+SPICA325 coach: change player 5 to type 9
+SPICA325 coach: [5999, 0] no player type for opponent 8. restart analysis.
+CYRUS_VANILLA 5: finished.
+SPICA325 coach: finished.
+CYRUS_VANILLA 10: finished.
+CYRUS_VANILLA 9: finished.
+CYRUS_VANILLA coach: finished.
+CYRUS_VANILLA 4: finished.
+SPICA325 8: finished.
+Waiting after end of match
+remoteclient.cpp: 149: Error sending to socket: Bad file descriptor
+msg = [(think)]
+remoteclient.cpp: 149: Error sending to socket: Bad file descriptor
+msg = [(think)]
+SPICA325 10: finished.
+SPICA325 5: finished.
+CYRUS_VANILLA 6: finished.
+SPICA325 9: finished.
+CYRUS_VANILLA 11: finished.
+SPICA325 11: finished.
+SPICA325 1: finished.
+SPICA325 4: finished.
+SPICA325 7: finished.
+SPICA325 3: finished.
+CYRUS_VANILLA 2: finished.
+CYRUS_VANILLA 3: finished.
+SPICA325 6: finished.
+CYRUS_VANILLA 1: finished.
+CYRUS_VANILLA 7: finished.
+SPICA325 2: finished.
+CYRUS_VANILLA 8: finished.
+A player disconnected : (SPICA325 8)
+A player disconnected : (CYRUS_VANILLA 4)
+A player disconnected : (SPICA325 10)
+An online coach disconnected : (CYRUS_VANILLA)
+An online coach disconnected : (SPICA325)
+A player disconnected : (CYRUS_VANILLA 5)
+A player disconnected : (CYRUS_VANILLA 10)
+A player disconnected : (CYRUS_VANILLA 9)
+A player disconnected : (SPICA325 5)
+A player disconnected : (CYRUS_VANILLA 6)
+A player disconnected : (SPICA325 9)
+A player disconnected : (CYRUS_VANILLA 11)
+A player disconnected : (SPICA325 11)
+A player disconnected : (SPICA325 7)
+A player disconnected : (SPICA325 3)
+A player disconnected : (SPICA325 1)
+A player disconnected : (SPICA325 4)
+A player disconnected : (CYRUS_VANILLA 2)
+A player disconnected : (CYRUS_VANILLA 3)
+A player disconnected : (CYRUS_VANILLA 1)
+A player disconnected : (SPICA325 6)
+A player disconnected : (CYRUS_VANILLA 7)
+A player disconnected : (SPICA325 2)
+A player disconnected : (CYRUS_VANILLA 8)
+Killing 27501
+Killing 27514
+
+Game Over. Exiting...
+
+Saving Results:
+	CSVSaver: saving...
+	CSVSaver: ...disabled
+	STDOutSaver: saving...
+
+Game Results:
+	2026-06-27 09:08:32
+	'SPICA325' vs 'CYRUS_VANILLA'
+	Score: 0 - 1
+ 
+	STDOutSaver: ...saved
+
+Saving Results Complete
