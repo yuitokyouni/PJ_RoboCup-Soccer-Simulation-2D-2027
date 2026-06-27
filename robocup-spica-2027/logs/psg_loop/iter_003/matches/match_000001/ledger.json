@@ -1,0 +1,117 @@
+{
+  "match_dir": "logs/psg_loop/iter_003/matches/match_000001",
+  "home": "SPICA325",
+  "away": "CYRUS_VANILLA",
+  "spica_side": "l",
+  "home_score": 0,
+  "away_score": 0,
+  "good": {
+    "high_recoveries": [
+      {
+        "cycle": 583,
+        "ball": [
+          5.03,
+          7.83
+        ],
+        "spica_winner_unum": 9
+      },
+      {
+        "cycle": 3735,
+        "ball": [
+          38.06,
+          -2.81
+        ],
+        "spica_winner_unum": 11
+      },
+      {
+        "cycle": 3802,
+        "ball": [
+          16.62,
+          16.33
+        ],
+        "spica_winner_unum": 8
+      },
+      {
+        "cycle": 3812,
+        "ball": [
+          23.29,
+          15.48
+        ],
+        "spica_winner_unum": 10
+      }
+    ]
+  },
+  "bad": {
+    "dangerous_setpieces_conceded": [
+      {
+        "cycle": 1358,
+        "type": "free_kick_r",
+        "ball": [
+          -33.73,
+          14.66
+        ]
+      },
+      {
+        "cycle": 2277,
+        "type": "corner_kick_r",
+        "ball": [
+          -51.5,
+          -33.0
+        ]
+      },
+      {
+        "cycle": 2639,
+        "type": "free_kick_r",
+        "ball": [
+          -32.47,
+          11.04
+        ]
+      },
+      {
+        "cycle": 2890,
+        "type": "free_kick_r",
+        "ball": [
+          -32.45,
+          -8.29
+        ]
+      },
+      {
+        "cycle": 3225,
+        "type": "free_kick_r",
+        "ball": [
+          -46.94,
+          32.69
+        ]
+      },
+      {
+        "cycle": 5624,
+        "type": "free_kick_r",
+        "ball": [
+          -25.26,
+          -2.25
+        ]
+      },
+      {
+        "cycle": 5798,
+        "type": "free_kick_r",
+        "ball": [
+          -33.15,
+          30.74
+        ]
+      },
+      {
+        "cycle": 5928,
+        "type": "free_kick_r",
+        "ball": [
+          -30.47,
+          22.16
+        ]
+      }
+    ]
+  },
+  "possession_summary": {
+    "spica_kickable_opp_half_cycles": 373,
+    "opp_kickable_spica_half_cycles": 1229,
+    "spica_kickable_own_third_cycles": 231
+  }
+}
