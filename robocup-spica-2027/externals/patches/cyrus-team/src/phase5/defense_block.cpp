@@ -28,8 +28,6 @@
 #include <rcsc/player/world_model.h>
 #include <rcsc/player/player_object.h>
 #include <rcsc/common/logger.h>
-#include <rcsc/common/server_param.h>
-#include <rcsc/game_mode.h>
 
 #include <algorithm>
 #include <cmath>
@@ -123,82 +121,6 @@ static bool is_forward_unum( int self_unum ) {
     return ( self_unum == 9 || self_unum == 10 || self_unum == 11 );
 }
 
-// Phase 9d: defensive set piece detection + post-SP persistence.
-//
-// All 6 conceded goals over the Phase 9c tournament came from
-// opponent set pieces (corner / kick-in / free kick / indirect FK)
-// AND in the DEF-C (own central) zone. The conceded-goal preambles
-// show the team's defensive shape is incorrect right at and just
-// after a set piece against us. Phase 9d encodes:
-//
-//   - is_their_set_piece: rcssserver play modes for opp-initiated SP.
-//   - is_dangerous_sp:    the SP is within 25m of our goal (ball
-//                         deep in our half).
-//   - post_sp_active:     a 30-cycle window after the SP concluded
-//                         (referee resumes play_on) during which the
-//                         block stays compact (mitigates the
-//                         "foul -> FK -> play -> foul -> FK -> goal"
-//                         chain we saw in Phase 9c).
-//
-// is_their_set_piece keys off rcssserver's GameMode codes via
-// gameMode().type() rather than the play-mode string so it's
-// resilient to v18/v19 string changes. We invert by ourSide().
-static bool is_their_set_piece( const rcsc::WorldModel & wm ) {
-    using namespace rcsc;
-    const GameMode & gm = wm.gameMode();
-    const GameMode::Type t = gm.type();
-    const SideID our = wm.ourSide();
-    // PlayOn is not a set piece. BeforeKickOff/AfterGoal_ handled
-    // separately by the kickoff formation set, so we treat them as
-    // not "dangerous" from a deep-block standpoint.
-    if ( t == GameMode::PlayOn ) return false;
-    if ( t == GameMode::BeforeKickOff || t == GameMode::AfterGoal_ ) return false;
-    if ( t == GameMode::TimeOver ) return false;
-    // KickIn / FreeKick / CornerKick / IndFreeKick / GoalKick / KickOff
-    // all carry the awarded-to side in gm.side(). If the awarded side
-    // is the opponent, it's a defensive SP.
-    if ( gm.side() != NEUTRAL && gm.side() != our ) {
-        return true;
-    }
-    return false;
-}
-
-static double our_goal_x( const rcsc::WorldModel & /*wm*/ ) {
-    // librcsc's coordinate convention from the WorldModel: positions
-    // are in the "our team attacks +x" frame irrespective of the
-    // actual rcssserver side. So our goal sits at x = -half-pitch.
-    return -rcsc::ServerParam::i().pitchHalfLength();
-}
-
-// Returns true if the current set piece is within 25m of our own goal
-// AND it's a set piece against us. Used to drive the heavy
-// shape override that addresses Phase 9c conceded goals.
-static bool is_dangerous_sp( const rcsc::WorldModel & wm ) {
-    if ( ! is_their_set_piece( wm ) ) return false;
-    const double dist_to_goal = std::abs( wm.ball().pos().x - our_goal_x( wm ) );
-    return dist_to_goal < 25.0;
-}
-
-// Phase 9d.6: post-set-piece concentration window.
-// A simple file-scope state. Caller is one player; each match starts
-// a fresh process. Coarser than CounterPressState because we only
-// need a "since" cycle.
-namespace {
-    int g_last_dangerous_sp_cycle = -1;
-}
-
-static void tick_post_sp_state( const rcsc::WorldModel & wm ) {
-    if ( is_dangerous_sp( wm ) ) {
-        g_last_dangerous_sp_cycle = wm.time().cycle();
-    }
-}
-
-static bool post_sp_active( const rcsc::WorldModel & wm ) {
-    if ( g_last_dangerous_sp_cycle < 0 ) return false;
-    const int dc = wm.time().cycle() - g_last_dangerous_sp_cycle;
-    return ( dc >= 0 && dc <= 30 );
-}
-
 double lateral_shift_amount( const rcsc::WorldModel & wm ) {
     const rcsc::Vector2D ball_pos = wm.ball().pos();
 
@@ -241,77 +163,7 @@ rcsc::Vector2D modulate_position(
     double shifted_x = raw_target.x;
     double shifted_y = raw_target.y;
 
-    // Phase 9d: tick the dangerous-SP timestamp so post_sp_active()
-    // reads up-to-date state for downstream decisions.
-    tick_post_sp_state( wm );
-
     const bool attacking = in_attack_phase( wm );
-
-    // Phase 9d.set-piece DISABLED (2026-06-27 ablation).
-    //
-    // Initial Phase 9d.1 patch overrode CB / WB / CDM positions on
-    // dangerous opp set pieces.  n=8 smoke regressed -0.625 -> -0.75
-    // vs the Phase 9c REV baseline (Spica scored 1/8 vs 4/12 prior).
-    // Likely cause: the override fights Cyrus's setplay-opp-formation
-    // .conf, leaving everyone out of position right when the SP is
-    // taken.  Disabled for now; addressing the conceded-from-SP
-    // problem from the conf side is a follow-up.
-    //
-    // Back-pass guard (#1, in simple_pass_checker.cpp) and the
-    // narrowed DL cap (just below) are independent and remain on.
-    if ( false && ( is_dangerous_sp( wm ) || post_sp_active( wm ) ) ) {
-        const double goal_x = our_goal_x( wm );
-        // Reference depth: 6m in front of own goal during a SP, 4m
-        // during the post-SP window.
-        const bool live_sp = is_dangerous_sp( wm );
-        const double ref_x = goal_x + ( live_sp ? 6.0 : 8.0 );
-        // SP-#3: CB pair Y-split. The closer CB (paired side to ball)
-        // tracks ball.y; the other CB covers the opposite side.
-        if ( self_unum == 2 || self_unum == 5 ) {
-            const double by = ball_pos.y;
-            // Y split: u2 takes the side AWAY from the ball, u5 the
-            // ball side (the closer marker). This guarantees one CB
-            // per Y half so no runner is uncontested.
-            const double away_y =  ( by >= 0.0 ) ? -5.0 :  5.0;
-            const double near_y =  ( by >= 0.0 ) ?  5.0 : -5.0;
-            shifted_y = ( self_unum == 2 ) ? away_y : near_y;
-            shifted_x = ref_x;
-            // Skip the rest of the modulator; the SP override is
-            // authoritative for these unums.
-            rcsc::dlog.addText( rcsc::Logger::TEAM,
-                                "[DefBlock SP] CB-split u%d x=%.1f y=%.1f live=%d",
-                                self_unum, shifted_x, shifted_y, live_sp ? 1 : 0 );
-            return rcsc::Vector2D( shifted_x, shifted_y );
-        }
-        // SP-#2: WB/SB drop into the box edge. Wide so they cover the
-        // far post on a cross, but inside enough to mark a runner.
-        if ( self_unum == 3 || self_unum == 4 ) {
-            const double y_target = ( self_unum == 3 ) ? -10.0 : 10.0;
-            shifted_x = ref_x + 1.0;
-            shifted_y = y_target;
-            rcsc::dlog.addText( rcsc::Logger::TEAM,
-                                "[DefBlock SP] WB-drop u%d x=%.1f y=%.1f live=%d",
-                                self_unum, shifted_x, shifted_y, live_sp ? 1 : 0 );
-            return rcsc::Vector2D( shifted_x, shifted_y );
-        }
-        // SP-#5: defenders' x cap relative to ball.x. The "defenders"
-        // here are unums 6, 7 (CDMs). We don't want them ahead of the
-        // ball during a SP against us.
-        if ( self_unum == 6 || self_unum == 7 ) {
-            const double cap_x = ball_pos.x + 3.0;
-            if ( shifted_x > cap_x ) shifted_x = cap_x;
-            // Also pull the CDMs inside (Y closer to the centre line)
-            // so they form the screen layer in front of the back four.
-            shifted_y = clamp_d( shifted_y, -8.0, 8.0 );
-            rcsc::dlog.addText( rcsc::Logger::TEAM,
-                                "[DefBlock SP] CDM-cap u%d x=%.1f y=%.1f",
-                                self_unum, shifted_x, shifted_y );
-            return rcsc::Vector2D( shifted_x, shifted_y );
-        }
-        // For other unums (forwards 9/10/11, goalie 1): leave the
-        // existing modulator behavior. Forwards should still drop
-        // toward the midline (handled by is_forward_unum block below).
-    }
 
     if ( attacking ) {
         // -- ATTACK PHASE -----------------------------------------------
@@ -410,22 +262,6 @@ rcsc::Vector2D modulate_position(
             } else {
                 // ball near midline: half retreat
                 shifted_x = std::min( shifted_x, -14.0 );
-            }
-        }
-
-        // Phase 9d.5 (revised): DL height cap only for the back-three
-        // (u2, u5) and only when the ball is deeply in our own half.
-        // The initial Phase 9d.1 version capped all of u2..u8 at
-        // ball.x + 3 for any ball.x <= 15, which killed CDM pressing
-        // and build-up forward runs. n=8 smoke regressed to -0.75 vs
-        // the Phase 9c REV -0.625 baseline; that swing was tracked to
-        // u7/u8 being capped at midfield. Narrow scope: only when ball
-        // is at or behind midfield (x <= -10) AND only the CB pair
-        // (u2, u5) so we can't be played behind by a long ball.
-        if ( ( self_unum == 2 || self_unum == 5 ) && ball_pos.x <= -10.0 ) {
-            const double cap_x = ball_pos.x + 5.0;
-            if ( shifted_x > cap_x ) {
-                shifted_x = cap_x;
             }
         }
     }
