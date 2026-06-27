@@ -14,3 +14,4 @@ __pycache__/
 
 # rcssserver-19 creates default configs at literal '~/.rcssserver/' when run from a dir without a real HOME context
 ~/
+logs/psg_loop/*/match_video.mp4
