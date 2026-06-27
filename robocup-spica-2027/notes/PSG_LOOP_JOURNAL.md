@@ -65,7 +65,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 042 | streak attempt 2/5 (same config) | 0-1 L | | — | — | — | streak broken |
 | 043 | iter_041 config (continue) | 1-1 D | | scored! | — | — | 3 samples: 1W 1D 1L = mean 0 |
 | 044 | iter_041 config (continue) | 0-0 D | clean | — | — | — | side-switch removed 4: 1W 2D 1L (mean 0) |
-| 045 | iter_041 config (continue) | (TBD) | | | | | |
+| 045 | iter_041 config (continue) | **2-1 W** ✓ | cyc 752 (-43.5,-0.4) | cyc 3575 (+41.8,-2.4) + cyc 4618 (+46.7,-3.1) BOTH PA FK | 888 | 915 | 5th WIN, 2 goals! side-switch removed 5: 2W 2D 1L mean +0.4 |
+| 046 | streak attempt 2/5 (same config) | (TBD) | | | | | streak=1 |
 
 
 ## Failed approaches (DO NOT REPEAT)
