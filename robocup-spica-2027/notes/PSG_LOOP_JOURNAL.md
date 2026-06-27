@@ -88,7 +88,8 @@ State at iter_041/047 (side-switch removed; P(W)=43% over 7):
 | 055 | iter_041 config (continue) | 1-1 D | | scored | — | — | unbeaten 1/10 ✓ |
 | 056 | iter_041 config (continue) | 0-0 D | clean | — | — | — | unbeaten 2/10 ✓ |
 | 057 | iter_041 config (continue) | 1-1 D | | scored | — | — | unbeaten 3/10 ✓ |
-| 058 | iter_041 config (continue) | (TBD) | | | | | unbeaten=3 |
+| 058 | iter_041 config (continue) | 0-2 L | | — | — | — | unbeaten BROKEN at 3 (2nd time hitting 3) |
+| 059 | iter_041 config (continue) | (TBD) | | | | | unbeaten=0 |
 
 
 ## Failed approaches (DO NOT REPEAT)
