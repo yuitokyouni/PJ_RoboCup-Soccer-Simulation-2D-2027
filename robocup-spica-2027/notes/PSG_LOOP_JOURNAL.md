@@ -85,7 +85,8 @@ State at iter_041/047 (side-switch removed; P(W)=43% over 7):
 | 052 | iter_041 config (continue) | **1-0 W** ✓ | clean | cyc 5212 (+43,-2) through=T chain: u7 LMF(+9,-26) → opp deflect → u10 RF(+45,0) 裏抜け → SHOT | — | — | 7th WIN; unbeaten 3/10 ✓ |
 | 053 | iter_041 config (continue) | 0-2 L | | — | — | — | unbeaten BROKEN at 3 |
 | 054 | iter_041 config (continue) | 0-1 L | | — | — | — | unbeaten still 0 |
-| 055 | iter_041 config (continue) | (TBD) | | | | | |
+| 055 | iter_041 config (continue) | 1-1 D | | scored | — | — | unbeaten 1/10 ✓ |
+| 056 | iter_041 config (continue) | (TBD) | | | | | unbeaten=1 |
 
 
 ## Failed approaches (DO NOT REPEAT)
