@@ -61,7 +61,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 038 | iter_035 config (continue) | 0-0 D | clean | — | — | — | 38 iter: 3W 8D 27L |
 | 039 | iter_035 config (continue) | 0-0 D | clean | — | — | — | |
 | 040 | iter_035 config (continue) | 0-2 L | | — | — | — | 40 iter: 3W 9D 28L, P(W)=7.5% |
-| 041 | remove side-switch +15 | (TBD) | | | | | Test if side-switch was hurting |
+| 041 | remove side-switch +15 | **1-0 W** ✓ | clean | cyc 2845 (+48.7,-14) FK | 613 | 1165 | 4th WIN! removing side-switch might help |
+| 042 | streak attempt 2/5 (same config) | (TBD) | | | | | streak=1 |
 
 
 ## Failed approaches (DO NOT REPEAT)
@@ -88,6 +89,7 @@ State at iter_019 (1-0 WIN, best so far):
 4. **Cross bonus +35** (iter 17) — SB wide → PA central; locked-in template +47/-5 PA goal repeatable.
 5. **Through-ball bonus +25** (iter 19) — CDM → forward at x>+25; chains compose with cross+wedge.
 6. **TRS bias bump (8,5)→(12,8)** (iter 35) — stronger post-clearance forward push; may have produced 3rd WIN.
+7. **Remove side-switch bonus +15** (iter 41) — produced 4th WIN. Side-switch may have been net-negative even at +15.
 
 ## Recurring patterns observed (open improvement targets)
 
