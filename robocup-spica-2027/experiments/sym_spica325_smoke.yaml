@@ -1,0 +1,32 @@
+schema_version: "0.1.0"
+
+experiment_id: "sym_spica325_smoke"
+description: >
+  Quick n=4 smoke to verify the Y-symmetrized F433 conf + merged kickoff
+  (for_our_kick cloned onto before-kick-off) doesn't break Spica325 and
+  gives a sensible scoreline. Spica325 on LEFT (the previously-weak side
+  per Phase 9 -0.65 self-swap finding) vs Vanilla on RIGHT.
+
+  If the change moves goal_diff toward 0 (or above) compared to the
+  Phase 9 -0.77 floor, proceed to balanced n=30. If catastrophic
+  (e.g. <= -3), revert.
+
+home_team: "SPICA325"
+away_team: "CYRUS_VANILLA"
+
+home_start_command: "scripts/team_launchers/spica325_left.sh"
+away_start_command: "scripts/team_launchers/cyrus_vanilla_right.sh"
+
+num_matches: 4
+timeout_secs: 600
+
+declared_reality_assertion: "real_rcssserver"
+
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"
+
+notes:
+  - "Tests the Y-symmetric F433 (228 +Y samples Y-mirrored from -Y) and merged kickoff (for_our_kick cloned onto before-kick-off)."
+  - "Acceptance: mean goal_diff > -2 vs previous -2.0 to -2.5 on this side."
