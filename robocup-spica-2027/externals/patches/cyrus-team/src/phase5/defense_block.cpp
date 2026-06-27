@@ -263,6 +263,27 @@ rcsc::Vector2D modulate_position(
                 // ball near midline: half retreat
                 shifted_x = std::min( shifted_x, -14.0 );
             }
+
+            // PSG-style 24-25 inverted full-back: in DEEP defensive
+            // emergencies (ball within 25m of own goal), pull the SBs
+            // off the touchline toward the half-space so they cover
+            // the inside channel and not the far post.
+            //
+            // Observed iter_000 issue (notes/2026-06-27_psg_loop.md):
+            // SPICA0-1V conceded goal at cyc 5618 had u4 stranded at
+            // y=+22.9 with the ball at y=-2.3 -- the RB was on the
+            // wrong side of the pitch entirely. Same pattern across
+            // multiple Phase 9c REV concessions.
+            //
+            // Cap to |y| <= 12 when ball is in our own PA-edge zone
+            // (x < -30). This still leaves the SB wider than the CB
+            // pair (|y| ~ 5) so the back four covers the box width,
+            // but not as wide as the touchline (|y| ~ 22) where the
+            // SB cannot help with central runners.
+            if ( ball_pos.x < -30.0 ) {
+                if ( shifted_y >  12.0 ) shifted_y =  12.0;
+                if ( shifted_y < -12.0 ) shifted_y = -12.0;
+            }
         }
     }
 
