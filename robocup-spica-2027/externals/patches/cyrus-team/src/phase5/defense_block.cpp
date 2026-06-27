@@ -296,34 +296,13 @@ rcsc::Vector2D modulate_position(
             }
         }
 
-        // PSG-loop iter 7: CB Y-mirror enforcement (u5 = LCB).
-        // Only fires when ball is deep in our half (x < -30) AND on
-        // a clear side (|y| > 5). The FAR CB stays on the opposite
-        // side to cover the back-post runner; the NEAR CB (u2)
-        // tracks the ball naturally via the existing lateral shift.
-        //
-        // This is the conservative subset of Phase 9d.1 #3 -- only
-        // u5, only deep+wide ball, only adjusting y not x.
-        if ( self_unum == 5
-             && ball_pos.x < -30.0
-             && std::fabs( ball_pos.y ) > 5.0 ) {
-            const double cover_y = ( ball_pos.y > 0.0 ) ? -5.0 : 5.0;
-            shifted_y = cover_y;
-        }
-
-        // PSG-loop iter 8: u8 (RMF) defensive Y discipline.
-        // iter_005/006/007 all conceded with u8 at y=+12..+22 and
-        // stamina depleted to <30%. The RMF over-runs along the +y
-        // wing while building up / pressing, then can't recover to
-        // help the central screen. PSG 24-25 (Vitinha role): the
-        // right MF stays central, drifting wide only briefly.
-        //
-        // Cap u8's |y| <= 10 when ball is in our half (x < 0). This
-        // saves stamina and keeps the center compact.
-        if ( self_unum == 8 && ball_pos.x < 0.0 ) {
-            if ( shifted_y >  10.0 ) shifted_y =  10.0;
-            if ( shifted_y < -10.0 ) shifted_y = -10.0;
-        }
+        // iter 7 (CB Y-mirror) + iter 8 (u8 cap) reverted: each
+        // defensive patch successively reduced opp_half possession
+        // (962 -> 894 -> 600 -> 535) without preventing conceded
+        // goals. The cap on target only steers slowly; u8 stays
+        // physically wide because chains of intermediate states.
+        // Revert to iter_004's clean combo (SB tuck + wedge x2) and
+        // pivot to attacking improvements next.
     }
 
     // step 4: territory recovery bias (push everyone up briefly after
