@@ -47,7 +47,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 024 | iter_019 config (continue) | 0-1 L | | — | — | — | 6 samples 1W 1D 4L → P(W)=17% |
 | 025 | halve lateral_shift_amount (4→2..8→4) | 0-0 D | clean | — | 750 | 1024 | 5 dangSPs withstood; defense improved |
 | 026 | iter_025 config (continue) | 0-1 L | | — | — | — | halved-shift 2 samples: 1D 1L |
-| 027 | iter_025 config (continue) | (TBD) | | | | | |
+| 027 | iter_025 config (continue) | 1-1 D | cyc 829 (-45.5,+3.3) FK | cyc 4288 (+47.9,-6.6) FK→GOAL | 484 | 1374 | 3rd score! Same +47/-7 PA central pattern as iter 17/19 |
+| 028 | iter_025 config (continue) | (TBD) | | | | | halved-shift 3 samples: 0W 2D 1L |
 
 
 ## Failed approaches (DO NOT REPEAT)
