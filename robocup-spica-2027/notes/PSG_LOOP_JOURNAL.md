@@ -64,7 +64,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 041 | remove side-switch +15 | **1-0 W** ✓ | clean | cyc 2845 (+48.7,-14) FK | 613 | 1165 | 4th WIN! removing side-switch might help |
 | 042 | streak attempt 2/5 (same config) | 0-1 L | | — | — | — | streak broken |
 | 043 | iter_041 config (continue) | 1-1 D | | scored! | — | — | 3 samples: 1W 1D 1L = mean 0 |
-| 044 | iter_041 config (continue) | (TBD) | | | | | side-switch removed seems better |
+| 044 | iter_041 config (continue) | 0-0 D | clean | — | — | — | side-switch removed 4: 1W 2D 1L (mean 0) |
+| 045 | iter_041 config (continue) | (TBD) | | | | | |
 
 
 ## Failed approaches (DO NOT REPEAT)
