@@ -310,6 +310,20 @@ rcsc::Vector2D modulate_position(
             const double cover_y = ( ball_pos.y > 0.0 ) ? -5.0 : 5.0;
             shifted_y = cover_y;
         }
+
+        // PSG-loop iter 8: u8 (RMF) defensive Y discipline.
+        // iter_005/006/007 all conceded with u8 at y=+12..+22 and
+        // stamina depleted to <30%. The RMF over-runs along the +y
+        // wing while building up / pressing, then can't recover to
+        // help the central screen. PSG 24-25 (Vitinha role): the
+        // right MF stays central, drifting wide only briefly.
+        //
+        // Cap u8's |y| <= 10 when ball is in our half (x < 0). This
+        // saves stamina and keeps the center compact.
+        if ( self_unum == 8 && ball_pos.x < 0.0 ) {
+            if ( shifted_y >  10.0 ) shifted_y =  10.0;
+            if ( shifted_y < -10.0 ) shifted_y = -10.0;
+        }
     }
 
     // step 4: territory recovery bias (push everyone up briefly after
