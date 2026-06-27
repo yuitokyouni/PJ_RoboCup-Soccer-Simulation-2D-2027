@@ -33,6 +33,9 @@ State at iter_004 (1-0 WIN):
 | 012 | revert u9, revert Y-sym (vanilla F433) | 0-1 L | cyc 2881 (-44,-4.6) | — | 639 | 1050 | Y-sym revert hurt possession too |
 | 013 | restore Y-sym, iter_004 base | 0-3 L | (3 goals) | — | (TBD) | (TBD) | catastrophic; high variance |
 | 014 | iter_004 base (resume) | 0-2 L | cyc 833 + 2555 both DEF-C +y stack | — | 559 | 1303 | u4+14.6, u8+17, u8+16; recurring +y stack |
+| 015 | CB Y-mirror \|y\|>1 | 0-2 L | cyc 2394 (-40.9,+5.0) FK cascade + cyc 5131 (-46.5,+4.8) | — | 478 | 1111 | Rule fired but target-steering lag: u5 still +6.2 at goal |
+| 016 | u5 anticipation -y when ball.x<-10 | (TBD) | | | | | Forces u5 to permanently cover -y back-post while ball deep in own half |
+
 
 ## Failed approaches (DO NOT REPEAT)
 

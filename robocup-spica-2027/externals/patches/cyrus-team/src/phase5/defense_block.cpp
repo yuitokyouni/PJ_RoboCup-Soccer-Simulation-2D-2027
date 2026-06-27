@@ -296,20 +296,24 @@ rcsc::Vector2D modulate_position(
             }
         }
 
-        // PSG-loop iter 15: CB Y-mirror at lower threshold.
-        // iter_007 used |y|>5 trigger -- didn't fire on conceded
-        // shapes where ball was near center (y in -3..+3) but CBs
-        // still stacked +y. iter_014 confirmed this pattern (cyc
-        // 833 ball y=+2.26 with u2,u5 both +y).
+        // PSG-loop iter 16: u5 anticipation-positioning at -y.
+        // iter_015 confirmed the target-steering lag: CB Y-mirror
+        // set u5's target to -5 but physical u5 was still at +6.2
+        // when the goal hit. The fix can't be just reactive at goal
+        // time -- it has to be ANTICIPATORY.
         //
-        // Lower threshold to |y|>1 so the rule fires on any clear
-        // side preference. Only u5 (LCB) gets repositioned; u2
-        // tracks ball naturally.
-        if ( self_unum == 5
-             && ball_pos.x < -30.0
-             && std::fabs( ball_pos.y ) > 1.0 ) {
-            const double cover_y = ( ball_pos.y > 0.0 ) ? -5.0 : 5.0;
-            shifted_y = cover_y;
+        // Rule: whenever the ball is in our half (x < -10), force
+        // u5 to stay at y in [-7, -3]. This means u5 is permanently
+        // covering the -y back-post region while ball is in our
+        // half, so any attack from +y has a goalside cover already
+        // in place.
+        //
+        // Trade-off: leaves u2 alone to cover +y. With u2 + u3 + u4
+        // (right CB + 2 SBs) already on +y bias under existing
+        // lateral_shift_amount, +y wing should remain covered.
+        if ( self_unum == 5 && ball_pos.x < -10.0 ) {
+            if ( shifted_y > -3.0 ) shifted_y = -3.0;
+            if ( shifted_y < -7.0 ) shifted_y = -7.0;
         }
     }
 
