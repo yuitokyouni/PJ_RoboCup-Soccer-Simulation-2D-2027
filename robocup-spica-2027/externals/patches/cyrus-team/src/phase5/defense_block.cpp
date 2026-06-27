@@ -417,14 +417,17 @@ rcsc::Vector2D modulate_position(
             }
         }
 
-        // Phase 9d.5: defensive line height cap vs ball.x. From the
-        // Phase 9c conceded-goal analysis: G4 and G5 both had the
-        // defensive line at x ~ -34 while the ball was at x ~ -43,
-        // i.e. the runner was deeper than our DL. Cap defenders
-        // (unum 2..8, the goal-side of the formation) at ball.x + 3
-        // so we cannot be played behind.
-        if ( self_unum >= 2 && self_unum <= 8 ) {
-            const double cap_x = ball_pos.x + 3.0;
+        // Phase 9d.5 (revised): DL height cap only for the back-three
+        // (u2, u5) and only when the ball is deeply in our own half.
+        // The initial Phase 9d.1 version capped all of u2..u8 at
+        // ball.x + 3 for any ball.x <= 15, which killed CDM pressing
+        // and build-up forward runs. n=8 smoke regressed to -0.75 vs
+        // the Phase 9c REV -0.625 baseline; that swing was tracked to
+        // u7/u8 being capped at midfield. Narrow scope: only when ball
+        // is at or behind midfield (x <= -10) AND only the CB pair
+        // (u2, u5) so we can't be played behind by a long ball.
+        if ( ( self_unum == 2 || self_unum == 5 ) && ball_pos.x <= -10.0 ) {
+            const double cap_x = ball_pos.x + 5.0;
             if ( shifted_x > cap_x ) {
                 shifted_x = cap_x;
             }
