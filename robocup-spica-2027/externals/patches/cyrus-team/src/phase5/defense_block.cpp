@@ -247,23 +247,19 @@ rcsc::Vector2D modulate_position(
 
     const bool attacking = in_attack_phase( wm );
 
-    // Phase 9d.set-piece: hard overrides for opponent set pieces
-    // inside our defensive third. These dominate the attack/defense
-    // branches below because the formation conf positions for set
-    // piece play do not place CBs / WBs near enough to the ball.
+    // Phase 9d.set-piece DISABLED (2026-06-27 ablation).
     //
-    // Addresses tournament conceded-goal analysis (Phase 9c):
-    //   #2: WB/SB unum 3, 4 drop into PA (saw u4 at y=+14..+20 on
-    //       Phase 9c goals G1/G3/G4/G5).
-    //   #3: CB unum 2 / 5 Y-axis split (both were +y on G1/G3 leaving
-    //       -y exposed for the runner).
-    //   #5: defenders' x clamped to <= ball.x + 3 so we can't get
-    //       caught higher than the ball (G4/G5 line was -34 with ball
-    //       at -43).
-    //   #6: keep the same compact shape for 30 cycles after the SP
-    //       ends to mitigate the foul -> FK -> play -> foul -> FK ->
-    //       goal chain that produced G3 / G5.
-    if ( is_dangerous_sp( wm ) || post_sp_active( wm ) ) {
+    // Initial Phase 9d.1 patch overrode CB / WB / CDM positions on
+    // dangerous opp set pieces.  n=8 smoke regressed -0.625 -> -0.75
+    // vs the Phase 9c REV baseline (Spica scored 1/8 vs 4/12 prior).
+    // Likely cause: the override fights Cyrus's setplay-opp-formation
+    // .conf, leaving everyone out of position right when the SP is
+    // taken.  Disabled for now; addressing the conceded-from-SP
+    // problem from the conf side is a follow-up.
+    //
+    // Back-pass guard (#1, in simple_pass_checker.cpp) and the
+    // narrowed DL cap (just below) are independent and remain on.
+    if ( false && ( is_dangerous_sp( wm ) || post_sp_active( wm ) ) ) {
         const double goal_x = our_goal_x( wm );
         // Reference depth: 6m in front of own goal during a SP, 4m
         // during the post-SP window.
