@@ -1,0 +1,28 @@
+schema_version: "0.1.0"
+
+experiment_id: "sym_spica325_right_smoke"
+description: >
+  Mirror smoke of sym_spica325_smoke: Spica325 on RIGHT, Vanilla on LEFT.
+  Pair with sym_spica325_smoke.yaml for a side-balanced n=8 read on
+  whether the Y-symmetric F433 + merged kickoff helps overall or just
+  the LEFT side.
+
+home_team: "CYRUS_VANILLA"
+away_team: "SPICA325"
+
+home_start_command: "scripts/team_launchers/cyrus_vanilla_left.sh"
+away_start_command: "scripts/team_launchers/spica325_right.sh"
+
+num_matches: 4
+timeout_secs: 600
+
+declared_reality_assertion: "real_rcssserver"
+
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"
+
+notes:
+  - "Mirror of sym_spica325_smoke (Spica RIGHT instead of LEFT)."
+  - "Pair these two for n=8 balanced read; Phase 9 floor was -0.77 over n=30."
