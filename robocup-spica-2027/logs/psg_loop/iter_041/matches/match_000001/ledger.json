@@ -1,0 +1,127 @@
+{
+  "match_dir": "logs/psg_loop/iter_041/matches/match_000001",
+  "home": "SPICA325",
+  "away": "CYRUS_VANILLA",
+  "spica_side": "l",
+  "home_score": 1,
+  "away_score": 0,
+  "good": {
+    "goals_scored": [
+      {
+        "cycle": 2845,
+        "ball": [
+          48.68,
+          -13.96
+        ],
+        "preamble": [
+          "foul_charge_r",
+          "free_kick_l",
+          "play_on",
+          "foul_charge_r",
+          "indirect_free_kick_l",
+          "play_on"
+        ],
+        "play_mode_before": "indirect_free_kick_l"
+      }
+    ],
+    "high_recoveries": [
+      {
+        "cycle": 1898,
+        "ball": [
+          24.15,
+          -21.36
+        ],
+        "spica_winner_unum": 11
+      },
+      {
+        "cycle": 2014,
+        "ball": [
+          19.05,
+          -1.65
+        ],
+        "spica_winner_unum": 8
+      },
+      {
+        "cycle": 2018,
+        "ball": [
+          16.6,
+          -8.82
+        ],
+        "spica_winner_unum": 6
+      },
+      {
+        "cycle": 2161,
+        "ball": [
+          32.83,
+          -10.55
+        ],
+        "spica_winner_unum": 11
+      },
+      {
+        "cycle": 2813,
+        "ball": [
+          38.22,
+          -26.38
+        ],
+        "spica_winner_unum": 9
+      }
+    ]
+  },
+  "bad": {
+    "dangerous_setpieces_conceded": [
+      {
+        "cycle": 322,
+        "type": "free_kick_r",
+        "ball": [
+          -25.34,
+          0.3
+        ]
+      },
+      {
+        "cycle": 1227,
+        "type": "indirect_free_kick_r",
+        "ball": [
+          -36.55,
+          2.48
+        ]
+      },
+      {
+        "cycle": 1480,
+        "type": "kick_in_r",
+        "ball": [
+          -40.83,
+          -34.0
+        ]
+      },
+      {
+        "cycle": 1587,
+        "type": "free_kick_r",
+        "ball": [
+          -45.78,
+          -27.7
+        ]
+      },
+      {
+        "cycle": 1679,
+        "type": "kick_in_r",
+        "ball": [
+          -37.41,
+          -34.0
+        ]
+      },
+      {
+        "cycle": 5670,
+        "type": "free_kick_r",
+        "ball": [
+          -28.88,
+          19.23
+        ]
+      }
+    ]
+  },
+  "possession_summary": {
+    "spica_kickable_opp_half_cycles": 613,
+    "opp_kickable_spica_half_cycles": 1165,
+    "spica_kickable_own_third_cycles": 193
+  }
+}

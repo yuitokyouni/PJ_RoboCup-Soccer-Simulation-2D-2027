@@ -1,0 +1,28 @@
+schema_version: "0.1.0"
+
+experiment_id: "spica325_vs_helios"
+description: >
+  Spica325 vs helios-base (sample_player from upstream helios-base).
+  Per the README Spica2D's competition opponents are arbitrary RoboCup
+  teams; helios-base is a reference standard team. This experiment
+  measures Spica325's goal/match against helios-base.
+
+home_team: "SPICA325"
+away_team: "HELIOS_R"
+
+home_start_command: "scripts/team_launchers/spica325_left.sh"
+away_start_command: "scripts/team_launchers/helios_right.sh"
+
+num_matches: 10
+timeout_secs: 600
+
+declared_reality_assertion: "real_rcssserver"
+
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"
+
+notes:
+  - "Spica325 on LEFT, helios-base on RIGHT."
+  - "Both binaries built from this fresh container; helios-base default tuning."

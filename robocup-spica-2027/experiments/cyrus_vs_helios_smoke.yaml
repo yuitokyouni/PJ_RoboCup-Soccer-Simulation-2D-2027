@@ -1,0 +1,30 @@
+schema_version: "0.1.0"
+
+experiment_id: "cyrus_vs_helios_smoke"
+description: >
+  Baseline strength contrast: CYRUS_L (cyrus-soccer-simulation-team
+  from Cyrus2D/cyrus-soccer-simulation-team) vs HELIOS_R (our
+  Phase-4-patched helios-base). The point of this experiment is to
+  measure the raw skill gap between the two bases before we port any
+  3-2-5 / possession-style work to Cyrus. n=3 is SMOKE_ONLY; use
+  num_matches=30 for the gated experiment.
+
+home_team: "CYRUS_L"
+away_team: "HELIOS_R"
+
+home_start_command: "scripts/team_launchers/cyrus_left.sh"
+away_start_command: "scripts/team_launchers/helios_right.sh"
+
+num_matches: 3
+timeout_secs: 600
+
+declared_reality_assertion: "real_rcssserver"
+
+server_options:
+  - "server::synch_mode=true"
+
+notes:
+  - "CYRUS_L uses the cyrus-team binaries built into externals/src/cyrus-team/build/src/."
+  - "HELIOS_R uses our Phase 4-patched helios-base sample_player."
+  - "Cyrus's default formation is F433 (4-3-3); helios's default is 4-2-3-1. Tactical contrast is intentional."
+  - "Goalie-sleep workaround applied to both launchers (goaliesleep=1 -> 3)."

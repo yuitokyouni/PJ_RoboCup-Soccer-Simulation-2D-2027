@@ -1,0 +1,69 @@
+{
+  "match_dir": "logs/psg_loop/iter_002/matches/match_000001",
+  "home": "SPICA325",
+  "away": "CYRUS_VANILLA",
+  "spica_side": "l",
+  "home_score": 0,
+  "away_score": 0,
+  "good": {
+    "high_recoveries": [
+      {
+        "cycle": 192,
+        "ball": [
+          4.41,
+          -15.82
+        ],
+        "spica_winner_unum": 11
+      },
+      {
+        "cycle": 544,
+        "ball": [
+          10.58,
+          -31.47
+        ],
+        "spica_winner_unum": 9
+      },
+      {
+        "cycle": 587,
+        "ball": [
+          22.18,
+          -27.45
+        ],
+        "spica_winner_unum": 9
+      },
+      {
+        "cycle": 1773,
+        "ball": [
+          33.2,
+          29.88
+        ],
+        "spica_winner_unum": 6
+      },
+      {
+        "cycle": 1847,
+        "ball": [
+          18.85,
+          -9.22
+        ],
+        "spica_winner_unum": 9
+      }
+    ]
+  },
+  "bad": {
+    "dangerous_setpieces_conceded": [
+      {
+        "cycle": 3993,
+        "type": "free_kick_r",
+        "ball": [
+          -32.94,
+          23.33
+        ]
+      }
+    ]
+  },
+  "possession_summary": {
+    "spica_kickable_opp_half_cycles": 814,
+    "opp_kickable_spica_half_cycles": 742,
+    "spica_kickable_own_third_cycles": 218
+  }
+}

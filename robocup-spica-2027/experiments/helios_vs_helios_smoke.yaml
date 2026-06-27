@@ -1,0 +1,44 @@
+schema_version: "0.1.0"
+
+experiment_id: "helios_vs_helios_real_smoke"
+description: >
+  Real-integration smoke. helios-base (sample_player + sample_coach)
+  against itself, using rcssserver and helios-base built by
+  `make build-externals` from the externals pinned in
+  externals/EXTERNALS.lock. Replaces the earlier cyrus_vs_cyrus_smoke
+  default while Cyrus2DBase master vs librcsc master remains a
+  documented build blocker (see notes/2026-06-24_real_integration_milestone.md).
+
+home_team: "HELIOS_L"
+away_team: "HELIOS_R"
+
+# helios-base's start.sh defaults the team name to HELIOS_base for both
+# sides; rcssserver disambiguates connections by name, so launching the
+# script twice with the same team string produces a one-sided game where
+# only one side actually connects. The launcher wrappers under
+# scripts/team_launchers/ pass distinct -t flags (HELIOS_L / HELIOS_R)
+# and locate helios-base via their own two-level dirname walk.
+home_start_command: "scripts/team_launchers/helios_left.sh"
+away_start_command: "scripts/team_launchers/helios_right.sh"
+
+num_matches: 1
+timeout_secs: 600
+
+# Claim this is a real run. The aggregator only promotes
+# summary.json::run_reality_status to "real_rcssserver" when every
+# completed match also OBSERVES real per attest_runtime.py.
+declared_reality_assertion: "real_rcssserver"
+
+# Speed: rcssserver's default synch_mode=false runs at real time
+# (~28 min wall clock per default 6000-cycle match). synch_mode=true
+# advances the simulation as fast as both clients can keep up,
+# typically <2 min wall clock per match. Without it a 30-match batch
+# would take >12 hours.
+server_options:
+  - "server::synch_mode=true"
+
+notes:
+  - "Run with PATH=externals/install/bin:$PATH so rcssserver resolves to the built binary."
+  - "helios-base/src/start.sh launches both player and coach for one side; rcssserver's auto_mode + team_l_start/team_r_start runs both sides."
+  - "First successful run leaves observed_reality_status=real_rcssserver in metadata.json."
+  - "synch_mode=true is documented as rcssserver's high-speed mode; without it default matches run real-time."

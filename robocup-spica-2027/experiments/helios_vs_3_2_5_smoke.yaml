@@ -1,0 +1,30 @@
+schema_version: "0.1.0"
+
+experiment_id: "helios_vs_3_2_5_smoke"
+description: >
+  First tactical-variant contrast on the harness. HELIOS_L (default
+  helios-base normal-formation = 4-2-3-1) vs HELIOS_3_2_5 (right
+  side) which uses the user's custom 3-2-5 wingback-fluid normal-
+  formation.conf -- 3 CBs, 2 CDMs (drop in build-up), 2 WBs (low when
+  defending, high when attacking), 3 forwards. All other phase files
+  (defense / offense / setplay / kickin) are the helios defaults so
+  the contrast is contained to "normal phase positioning".
+
+home_team: "HELIOS_L"
+away_team: "HELIOS_3_2_5"
+
+home_start_command: "scripts/team_launchers/helios_left.sh"
+away_start_command: "scripts/team_launchers/helios_3_2_5_right.sh"
+
+num_matches: 1
+timeout_secs: 600
+
+declared_reality_assertion: "real_rcssserver"
+
+server_options:
+  - "server::synch_mode=true"
+
+notes:
+  - "Sees the wingback-fluid 3-2-5 only during phase=normal. Defense/offense/setplay are still default helios."
+  - "Bigger contrast would require also rewriting defense-formation.conf and offense-formation.conf in the same 3-2-5 spirit."
+  - "Compare via: make compare BASELINE=<helios_vs_helios>/summary.json VARIANT=<this>/summary.json -- but n=1 is SMOKE_ONLY, the comparison will refuse."

@@ -1,0 +1,48 @@
+{
+  "schema_version": "0.2.0",
+  "experiment_id": "psg_loop_match",
+  "yaml_source": "experiments/psg_loop_match.yaml",
+  "yaml_content": {
+    "schema_version": "0.1.0",
+    "experiment_id": "psg_loop_match",
+    "description": "Per-iteration single match for the PSG-style improvement loop. Spica (REV current best) on LEFT vs Vanilla on RIGHT, n=1. Each iteration: run -> parse rcg/rcl -> identify one improvement -> patch -> next iteration.\n",
+    "home_team": "SPICA325",
+    "away_team": "CYRUS_VANILLA",
+    "home_start_command": "scripts/team_launchers/spica325_left.sh",
+    "away_start_command": "scripts/team_launchers/cyrus_vanilla_right.sh",
+    "num_matches": 1,
+    "timeout_secs": 600,
+    "declared_reality_assertion": "real_rcssserver",
+    "server_options": [
+      "server::synch_mode=true",
+      "server::penalty_shoot_outs=false",
+      "server::nr_extra_halfs=0"
+    ],
+    "notes": [
+      "PSG-loop iteration. After each match, scripts/psg_ledger.py reads the rcl+rcg to extract good/bad plays."
+    ]
+  },
+  "declared_reality_assertion": "real_rcssserver",
+  "declared_server_options": [
+    "server::synch_mode=true",
+    "server::penalty_shoot_outs=false",
+    "server::nr_extra_halfs=0"
+  ],
+  "applied_server_options_subset": [
+    "server::synch_mode=true",
+    "server::penalty_shoot_outs=false",
+    "server::nr_extra_halfs=0"
+  ],
+  "declared_server_options_filter_notes": [],
+  "runtime": {
+    "started_at_utc": "2026-06-27T11:02:48Z",
+    "ended_at_utc": "2026-06-27T11:03:56Z",
+    "num_matches_requested": 1,
+    "timeout_secs": 600,
+    "force": false,
+    "dry_run": false,
+    "num_matches_run": 1,
+    "num_matches_skipped": 0,
+    "num_match_dirs_seen": 1
+  }
+}

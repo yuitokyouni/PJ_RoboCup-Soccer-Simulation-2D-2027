@@ -1,0 +1,34 @@
+schema_version: "0.1.0"
+
+experiment_id: "baseline_vs_baseline_smoke"
+description: "Smoke-level batch evaluation for two baseline RCSS2D teams."
+
+home_team: "baseline_home"
+away_team: "baseline_away"
+
+# These are intentionally left UNVERIFIED so that running a fresh
+# experiment without configuring HELIOS_BASE_DIR exits cleanly with
+# match_status=dependency_missing rather than silently doing nothing.
+# Set the real paths (or point at $HELIOS_BASE_DIR/src/start.sh) once
+# helios-base is built locally.
+home_start_command: "UNVERIFIED: path/to/home/team/start.sh"
+away_start_command: "UNVERIFIED: path/to/away/team/start.sh"
+
+num_matches: 3
+timeout_secs: 120
+
+# Phase 2 records these in experiment.json but the smoke runner still
+# uses its own hardcoded SERVER_OPTIONS list (see setup/SERVER_CONTRACT.md).
+# Treat this section as the *intended* contract; reconciling it with the
+# runner is Phase 3 work.
+server_options:
+  - "server::game_logging=true"
+  - "server::text_logging=true"
+  - "UNVERIFIED: server::auto_mode=true"
+  - "UNVERIFIED: server::team_l_start"
+  - "UNVERIFIED: server::team_r_start"
+
+notes:
+  - "This experiment is a placeholder until real rcssserver and baseline teams are installed."
+  - "Do not use results for performance claims; see docs/EVALUATION_PROTOCOL.md."
+  - "completed_matches < 30 will surface as sample_regime=SMOKE_ONLY in summary.json."

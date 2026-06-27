@@ -1,0 +1,33 @@
+schema_version: "0.1.0"
+
+experiment_id: "spica325_self_swap"
+description: >
+  LEFT-side-bias smoking gun. Both binaries are the Spica325 (v3
+  improved) snapshot, so any side bias must be internal to the Spica325
+  patches (singleton state, FP order) rather than an interaction with
+  the Cyrus-style Vanilla baseline. Two distinct team names so
+  rcssserver can distinguish them; both launchers point at
+  cyrus-team-v3-snapshot. SPICA325_LL plays LEFT and SPICA325_RR plays
+  RIGHT.
+
+home_team: "SPICA325_LL"
+away_team: "SPICA325_RR"
+
+home_start_command: "scripts/team_launchers/spica325_LL_left.sh"
+away_start_command: "scripts/team_launchers/spica325_RR_left.sh"
+
+num_matches: 10
+timeout_secs: 600
+
+declared_reality_assertion: "real_rcssserver"
+
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"
+
+notes:
+  - "Decision rule: if SPICA325_LL win rate vs SPICA325_RR > 0.70 or < 0.30, the side bias is INTERNAL to the Spica325 patches; bisect Phase 5/6/7 modules by disabling one at a time."
+  - "If 0.30 <= win rate <= 0.70 (close to 50/50), the bias is from INTERACTION between Spica325 patches and Vanilla's existing asymmetric code (evaluate_state2, hard-coded unum checks in action_chain_graph.cpp)."
+  - "Reference baselines from the handoff: Vanilla self-swap LEFT 20-30% wins (no bias); helios self-swap LEFT 40% (no bias). Cross-binary cyrus showed LEFT 50% wins in decisive matches (~40pp bias)."
+  - "2026-06-25 run with Spica325 (Phase 8 OFF): 5-5-0 tie, mean_diff -0.20 ± 0.57. Confirmed bias is interaction-based."

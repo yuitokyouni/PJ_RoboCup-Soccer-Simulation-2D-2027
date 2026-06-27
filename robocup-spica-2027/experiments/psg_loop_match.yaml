@@ -1,0 +1,27 @@
+schema_version: "0.1.0"
+
+experiment_id: "psg_loop_match"
+description: >
+  Per-iteration single match for the PSG-style improvement loop.
+  Spica (REV current best) on LEFT vs Vanilla on RIGHT, n=1.
+  Each iteration: run -> parse rcg/rcl -> identify one improvement
+  -> patch -> next iteration.
+
+home_team: "SPICA325"
+away_team: "CYRUS_VANILLA"
+
+home_start_command: "scripts/team_launchers/spica325_left.sh"
+away_start_command: "scripts/team_launchers/cyrus_vanilla_right.sh"
+
+num_matches: 1
+timeout_secs: 600
+
+declared_reality_assertion: "real_rcssserver"
+
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"
+
+notes:
+  - "PSG-loop iteration. After each match, scripts/psg_ledger.py reads the rcl+rcg to extract good/bad plays."

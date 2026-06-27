@@ -1,0 +1,9 @@
+src/
+install/
+install-cyrus/
+
+# Patches under externals/patches/ deliberately mirror the upstream
+# src/ layout (e.g. patches/helios-base/src/player/foo.cpp). The
+# top-level `src/` rule would otherwise hide them.
+!patches/**/src/
+!patches/**/src/**

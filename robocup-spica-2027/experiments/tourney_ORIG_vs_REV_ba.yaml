@@ -1,0 +1,14 @@
+schema_version: "0.1.0"
+experiment_id: "tourney_ORIG_vs_REV_ba"
+description: "Round-robin tournament leg: ORIG vs REV."
+home_team: "ORIG"
+away_team: "REV"
+home_start_command: "scripts/team_launchers/spica_orig_left.sh"
+away_start_command: "scripts/team_launchers/spica_rev_right.sh"
+num_matches: 2
+timeout_secs: 600
+declared_reality_assertion: "real_rcssserver"
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"

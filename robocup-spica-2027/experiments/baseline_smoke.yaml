@@ -1,0 +1,29 @@
+id: baseline_smoke
+description: >
+  Single-match sanity check. helios-base vs helios-base. The point is to
+  confirm the harness boots a server, starts both teams, writes a .rcg /
+  .rcl, and produces metrics.json. Not a performance measurement.
+
+matches: 1
+
+home:
+  name: helios-base
+  start: ${HELIOS_BASE_DIR}/src/start.sh
+
+away:
+  name: helios-base
+  start: ${HELIOS_BASE_DIR}/src/start.sh
+
+server:
+  port: 6000
+  game_log_compression: 0
+  auto_mode: true
+
+outputs:
+  run_dir_template: logs/runs/{utc_timestamp}
+  metrics_file: metrics.json
+
+notes: |
+  Phase 1 does not consume this YAML programmatically; scripts/run_smoke_match.sh
+  uses environment variables for the equivalent settings. The file exists so
+  that Phase 2 (batch evaluation) has a canonical experiment to extend.

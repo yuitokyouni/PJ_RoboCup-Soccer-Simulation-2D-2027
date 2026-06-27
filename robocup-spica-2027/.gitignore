@@ -1,0 +1,17 @@
+logs/runs/*
+!logs/runs/.gitkeep
+logs/experiments/
+logs/highlights/
+
+*.rcg
+*.rcl
+*.log
+*.o
+build/
+dist/
+__pycache__/
+.venv/
+
+# rcssserver-19 creates default configs at literal '~/.rcssserver/' when run from a dir without a real HOME context
+~/
+logs/psg_loop/*/match_video.mp4

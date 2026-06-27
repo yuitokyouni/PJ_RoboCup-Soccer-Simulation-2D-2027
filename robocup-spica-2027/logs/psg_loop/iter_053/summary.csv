@@ -1,0 +1,2 @@
+match_id,match_status,home_team,away_team,home_score,away_score,result,goal_diff
+match_000001,match_completed,SPICA325,CYRUS_VANILLA,0,2,away_win,-2

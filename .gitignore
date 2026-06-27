@@ -1,0 +1,11 @@
+# rcssserver からのスクラッチ出力（cwd 問題で repo root に落ちる事がある）
+*.rcg
+*.rcl
+*.log
+~/
+
+# Legacy compat symlink so the snapshot start.sh (with cmake's old
+# absolute LIBPATH baked in) still resolves after the project rename
+# robocup-ss2d-2027 -> robocup-spica-2027. Delete the symlink and
+# regenerate snapshots when convenient.
+/robocup-ss2d-2027

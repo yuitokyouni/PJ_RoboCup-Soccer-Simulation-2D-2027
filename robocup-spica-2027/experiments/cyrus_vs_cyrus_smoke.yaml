@@ -1,0 +1,44 @@
+schema_version: "0.1.0"
+
+experiment_id: "cyrus_vs_cyrus_real_smoke"
+description: >
+  Phase 2.5 real-integration smoke. Runs 1-3 matches of Cyrus2DBase
+  against itself, using the rcssserver and Cyrus2DBase binaries built
+  by `make build-externals` and exposed on PATH via
+  externals/install/bin/. The point is verification, not evaluation:
+  declared conditions must match actual runtime conditions before any
+  RESEARCH_GRADE run.
+
+home_team: "cyrus2dbase"
+away_team: "cyrus2dbase"
+
+# The start scripts ship with Cyrus2DBase. Exact paths after a build
+# have not been verified against the latest revision; we keep the
+# UNVERIFIED prefix so smoke fails fast with dependency_missing rather
+# than pretending it ran. Remove the prefix in the SAME commit that
+# records the first successful real-smoke (per docs/REAL_INTEGRATION.md
+# section "What 'verified' looks like").
+home_start_command: "UNVERIFIED: externals/src/cyrus2dbase/start.sh"
+away_start_command: "UNVERIFIED: externals/src/cyrus2dbase/start.sh"
+
+num_matches: 1
+timeout_secs: 300
+
+# Claim that this experiment is real. The aggregator promotes
+# summary.json::run_reality_status to "real_rcssserver" only when this
+# CLAIM matches every match's OBSERVED attestation (see
+# docs/REALITY_ATTESTATION.md). The claim alone is never enough;
+# self-tests with a stub rcssserver will be downgraded automatically.
+declared_reality_assertion: "real_rcssserver"
+
+# No experiment-specific overrides yet. The smoke runner's hardcoded
+# required options (game_log_dir, text_log_dir, game_log_compression,
+# auto_mode, port, team_l_start, team_r_start) cover what we need for a
+# single-match smoke. Phase 3 may add stamina / pressing / scenario
+# settings here once they have been tested against the real server.
+server_options: []
+
+notes:
+  - "Run on a machine where externals/install/bin is on PATH."
+  - "Operator must clear the UNVERIFIED prefixes on home/away_start_command before this experiment can ever reach match_completed."
+  - "Do not raise num_matches above ~3 until Phase 2.5 acceptance passes; see docs/REAL_INTEGRATION.md."
