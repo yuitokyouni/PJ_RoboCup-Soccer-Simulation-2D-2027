@@ -268,10 +268,16 @@ rcsc::Vector2D modulate_position(
                 shifted_x = std::min( shifted_x, -14.0 );
             }
 
-            // PSG-style 24-25 inverted full-back: in DEEP defensive
-            // emergencies (ball within 25m of own goal), pull the SBs
-            // off the touchline toward the half-space so they cover
-            // the inside channel and not the far post.
+            // PSG-loop iter 7: CB Y-mirror enforcement.
+            // iter_005 and iter_006 both conceded with CB pair (u2,
+            // u5) BOTH on the +y side, leaving -y uncovered. The
+            // Y-symmetrized formation often leaves both CBs near
+            // their "center" formation slot when ball is at +y,
+            // because each CB independently tracks the ball without
+            // splitting. PSG-style: the FAR CB stays goalside on
+            // the opposite Y to cover late runners.
+            // (Currently inside the is_wing_back block; logically
+            // separate -- moved below.)
             //
             // Observed iter_000 issue (notes/2026-06-27_psg_loop.md):
             // SPICA0-1V conceded goal at cyc 5618 had u4 stranded at
@@ -288,6 +294,21 @@ rcsc::Vector2D modulate_position(
                 if ( shifted_y >  12.0 ) shifted_y =  12.0;
                 if ( shifted_y < -12.0 ) shifted_y = -12.0;
             }
+        }
+
+        // PSG-loop iter 7: CB Y-mirror enforcement (u5 = LCB).
+        // Only fires when ball is deep in our half (x < -30) AND on
+        // a clear side (|y| > 5). The FAR CB stays on the opposite
+        // side to cover the back-post runner; the NEAR CB (u2)
+        // tracks the ball naturally via the existing lateral shift.
+        //
+        // This is the conservative subset of Phase 9d.1 #3 -- only
+        // u5, only deep+wide ball, only adjusting y not x.
+        if ( self_unum == 5
+             && ball_pos.x < -30.0
+             && std::fabs( ball_pos.y ) > 5.0 ) {
+            const double cover_y = ( ball_pos.y > 0.0 ) ? -5.0 : 5.0;
+            shifted_y = cover_y;
         }
     }
 
