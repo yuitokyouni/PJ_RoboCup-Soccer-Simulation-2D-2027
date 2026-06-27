@@ -34,7 +34,8 @@ State at iter_004 (1-0 WIN):
 | 013 | restore Y-sym, iter_004 base | 0-3 L | (3 goals) | — | (TBD) | (TBD) | catastrophic; high variance |
 | 014 | iter_004 base (resume) | 0-2 L | cyc 833 + 2555 both DEF-C +y stack | — | 559 | 1303 | u4+14.6, u8+17, u8+16; recurring +y stack |
 | 015 | CB Y-mirror \|y\|>1 | 0-2 L | cyc 2394 (-40.9,+5.0) FK cascade + cyc 5131 (-46.5,+4.8) | — | 478 | 1111 | Rule fired but target-steering lag: u5 still +6.2 at goal |
-| 016 | u5 anticipation -y when ball.x<-10 | (TBD) | | | | | Forces u5 to permanently cover -y back-post while ball deep in own half |
+| 016 | u5 anticipation -y when ball.x<-10 | 0-2 L | cyc 992 ball=(-50.7,+15.9), cyc 4151 ball=(-46.0,+2.3) | — | 787 | 955 | u5 at +14.9 and +5.3 -- rule did NOT apply. mark/intercept overrides modulate_position |
+| 017 | revert u5; +cross bonus +35 (SB wide x>=20 |y|>=18 to PA central) | (TBD) | | | | | ChainAction-side approach; defense_block patches don't reach mark/intercept |
 
 
 ## Failed approaches (DO NOT REPEAT)
@@ -49,6 +50,8 @@ State at iter_004 (1-0 WIN):
 8. **Phase 9d.1 SP override (CB-split + WB-drop + DL cap)** (pre-loop, n=8 smoke) → defensive patches conflict with existing setplay-opp-formation.conf.
 9. **Phase 9d.1 GK back-pass guard** (pre-loop) → eliminated panic-clear outlet, caused 0-5 disasters.
 10. **Phase 9c kickoff merge** (for_our_kick → before-kick-off) → defense too high at kickoff, leaked goals.
+11. **CB Y-mirror with |y|>1 threshold** (iter 15) → rule fires but target-steering lag means u5 still at +y when goal hit. Defense_block modulate_position is too late in the action pipeline.
+12. **u5 anticipation always at -y when ball.x<-10** (iter 16) → rule fires but mark/intercept behaviors override formation target. defense_block patches can't reliably move CBs in critical moments.
 
 ## Working approaches (KEEP)
 
@@ -63,6 +66,7 @@ State at iter_004 (1-0 WIN):
 3. **CB pair stacked on +y** — both u2 and u5 at +y when ball is near center. Y-mirror trigger needs lower threshold (e.g. \|y\|>2 instead of >5).
 4. **Zero goals scored** — even with possession dominance (1000+ cycles opp_half), chains don't produce shots. ChainAction conservative.
 5. **Conceded goals come from set-piece cascades** (FK → play → FK → play → goal patterns dominate).
+6. **defense_block modulate_position is bypassed in critical defense** — players switch to mark / intercept behaviors which have their OWN target logic. So patches to modulate_position only affect formation positioning, not when defenders are actively marking opp runners. Source of iter_7/8/15/16 ineffectiveness.
 
 ## Untried high-leverage ideas
 
