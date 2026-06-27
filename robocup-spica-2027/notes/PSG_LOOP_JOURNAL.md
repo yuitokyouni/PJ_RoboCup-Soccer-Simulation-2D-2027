@@ -44,7 +44,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 021 | iter_019 config (continue) | 0-1 L | — | — | — | — | 2nd consecutive L; iter 19 win may be lucky |
 | 022 | iter_019 config (continue) | 0-0 D | clean | — | 407 | 1202 | Defense holds; offense dead. opp dominates possession. |
 | 023 | iter_019 config (continue) | 0-1 L | | — | — | — | 5 samples 1W 1D 3L → P(W)=20% |
-| 024 | iter_019 config (continue) | (TBD) | | | | | |
+| 024 | iter_019 config (continue) | 0-1 L | | — | — | — | 6 samples 1W 1D 4L → P(W)=17% |
+| 025 | halve lateral_shift_amount (4→2..8→4) | (TBD) | | | | | Reduce over-shift +y, keep back-four split |
 
 
 ## Failed approaches (DO NOT REPEAT)

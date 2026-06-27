@@ -124,11 +124,13 @@ static bool is_forward_unum( int self_unum ) {
 double lateral_shift_amount( const rcsc::WorldModel & wm ) {
     const rcsc::Vector2D ball_pos = wm.ball().pos();
 
-    // Base shift: more compression deeper in our half, less near the
-    // midline. ball.x interpolated linearly between -45..+10.
+    // PSG-loop iter 25: HALVE the lateral shift base.
+    // Old: 4 -> 8m. Defenders over-shifted toward ball-side, leaving
+    // the opposite side exposed (recurring +y CB-stack pattern).
+    // New: 2 -> 4m. Defenders stay closer to their conf Y positions
+    // and keep the back-four split.
     const double bx = clamp_d( ball_pos.x, -45.0, 10.0 );
-    const double base = 4.0 + ( -bx + 10.0 ) * (8.0 - 4.0) / (10.0 - (-45.0));
-    //                                            ^ base goes 4 -> 8 as ball moves from +10 to -45
+    const double base = 2.0 + ( -bx + 10.0 ) * (4.0 - 2.0) / (10.0 - (-45.0));
 
     // Density modifier: more bodies near the ball, larger compression.
     const int num_opp_near_ball = count_opp_near_ball( wm, 10.0 );
