@@ -59,7 +59,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 036 | streak attempt 1/5 (same config) | 1-2 L | | scored 1 | — | — | streak broken; TRS bumped 2 samples 1W 1L |
 | 037 | iter_035 config (continue) | 0-2 L | | — | — | — | streak still 0/5 |
 | 038 | iter_035 config (continue) | 0-0 D | clean | — | — | — | 38 iter: 3W 8D 27L |
-| 039 | iter_035 config (continue) | (TBD) | | | | | |
+| 039 | iter_035 config (continue) | 0-0 D | clean | — | — | — | |
+| 040 | iter_035 config (continue) | (TBD) | | | | | 39 iter: 3W 9D 27L |
 
 
 ## Failed approaches (DO NOT REPEAT)
