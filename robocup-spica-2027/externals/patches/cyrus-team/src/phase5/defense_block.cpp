@@ -124,13 +124,12 @@ static bool is_forward_unum( int self_unum ) {
 double lateral_shift_amount( const rcsc::WorldModel & wm ) {
     const rcsc::Vector2D ball_pos = wm.ball().pos();
 
-    // PSG-loop iter 25: HALVE the lateral shift base.
-    // Old: 4 -> 8m. Defenders over-shifted toward ball-side, leaving
-    // the opposite side exposed (recurring +y CB-stack pattern).
-    // New: 2 -> 4m. Defenders stay closer to their conf Y positions
-    // and keep the back-four split.
+    // iter 25 halve reverted in iter 31. halved-shift 6 samples
+    // showed 0W 3D 3L (P(W)=0%) vs iter_019 full-shift 4 samples
+    // 1W 1D 2L (P(W)=25%). The halved compression let too many opp
+    // attackers reach the ball without pressure.
     const double bx = clamp_d( ball_pos.x, -45.0, 10.0 );
-    const double base = 2.0 + ( -bx + 10.0 ) * (4.0 - 2.0) / (10.0 - (-45.0));
+    const double base = 4.0 + ( -bx + 10.0 ) * (8.0 - 4.0) / (10.0 - (-45.0));
 
     // Density modifier: more bodies near the ball, larger compression.
     const int num_opp_near_ball = count_opp_near_ball( wm, 10.0 );

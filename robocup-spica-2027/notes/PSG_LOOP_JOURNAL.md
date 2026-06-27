@@ -50,7 +50,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 027 | iter_025 config (continue) | 1-1 D | cyc 829 (-45.5,+3.3) FK | cyc 4288 (+47.9,-6.6) FK→GOAL | 484 | 1374 | 3rd score! Same +47/-7 PA central pattern as iter 17/19 |
 | 028 | iter_025 config (continue) | 1-2 L | cyc 2197+3445 SP cascades | cyc 4415 (+46.8,-5.3) PA central FK | 727 | 919 | 4th score same +47/-5 pattern (repeatable). 2 SP conceded |
 | 029 | iter_025 config (continue) | 0-1 L | | — | — | — | halved-shift 5: 0W 2D 3L |
-| 030 | iter_025 config (continue) | (TBD) | | | | | |
+| 030 | iter_025 config (continue) | 0-0 D | clean | — | — | — | halved-shift 6 samples: 0W 3D 3L (P(W)=0%) — worse than full shift |
+| 031 | revert halved shift → iter_019 config | (TBD) | | | | | back to best stack |
 
 
 ## Failed approaches (DO NOT REPEAT)
@@ -67,6 +68,7 @@ State at iter_019 (1-0 WIN, best so far):
 10. **Phase 9c kickoff merge** (for_our_kick → before-kick-off) → defense too high at kickoff, leaked goals.
 11. **CB Y-mirror with |y|>1 threshold** (iter 15) → rule fires but target-steering lag means u5 still at +y when goal hit. Defense_block modulate_position is too late in the action pipeline.
 12. **u5 anticipation always at -y when ball.x<-10** (iter 16) → rule fires but mark/intercept behaviors override formation target. defense_block patches can't reliably move CBs in critical moments.
+13. **Halve lateral_shift_amount** (iter 25-30) → 6 samples 0W 3D 3L, win rate dropped to 0%. Compression actually helps; less compression = opp gets uncontested space.
 
 ## Working approaches (KEEP)
 
