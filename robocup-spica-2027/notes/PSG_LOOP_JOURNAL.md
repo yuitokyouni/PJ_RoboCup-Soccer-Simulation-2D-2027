@@ -40,7 +40,7 @@ State at iter_019 (1-0 WIN, best so far):
 | 017 | revert u5; +cross bonus +35 (SB wide x>=20 |y|>=18 to PA central) | **1-1 D** | cyc 3240 (-43.6,+7.3) FK cascade | cyc 5434 (+47.9,-7.9) goal_kick→FK→GOAL | 609 | 809 | **First SCORE in 7 iter**. Cross pattern visible (PA central -y goal). |
 | 018 | iter_017 reverify (cross bonus) | 0-1 L | cyc 3356 (-43.0,+3.0) corner→FK→GOAL | — | 787 | 754 | No score; cross bonus alone insufficient. HRs reach +46/+50 |
 | 019 | +through-ball bonus (CDM sp.x>-5 → forward tp.x>+25, +25) | **1-0 W** ✓ | clean sheet | cyc 4049 (+45.6,-0.2) FK cascade→GOAL PA central | **1073** | 567 | 2nd WIN. cross+through+wedge stack. Best possession ever |
-| 020 | iter_019 reverify (streak attempt 1) | (TBD) | | | | | Streak so far: 1/5 |
+| 020 | iter_019 reverify (streak attempt 1) | 0-1 L | cyc 5947 (-41.4,-0.5) FK→GOAL late | — | 526 | 1146 | Streak broken (0/5). Variance dominant. |
 
 
 ## Failed approaches (DO NOT REPEAT)
