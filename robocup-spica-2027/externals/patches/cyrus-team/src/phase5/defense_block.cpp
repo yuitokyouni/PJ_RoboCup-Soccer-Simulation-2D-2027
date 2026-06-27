@@ -296,13 +296,21 @@ rcsc::Vector2D modulate_position(
             }
         }
 
-        // iter 7 (CB Y-mirror) + iter 8 (u8 cap) reverted: each
-        // defensive patch successively reduced opp_half possession
-        // (962 -> 894 -> 600 -> 535) without preventing conceded
-        // goals. The cap on target only steers slowly; u8 stays
-        // physically wide because chains of intermediate states.
-        // Revert to iter_004's clean combo (SB tuck + wedge x2) and
-        // pivot to attacking improvements next.
+        // PSG-loop iter 15: CB Y-mirror at lower threshold.
+        // iter_007 used |y|>5 trigger -- didn't fire on conceded
+        // shapes where ball was near center (y in -3..+3) but CBs
+        // still stacked +y. iter_014 confirmed this pattern (cyc
+        // 833 ball y=+2.26 with u2,u5 both +y).
+        //
+        // Lower threshold to |y|>1 so the rule fires on any clear
+        // side preference. Only u5 (LCB) gets repositioned; u2
+        // tracks ball naturally.
+        if ( self_unum == 5
+             && ball_pos.x < -30.0
+             && std::fabs( ball_pos.y ) > 1.0 ) {
+            const double cover_y = ( ball_pos.y > 0.0 ) ? -5.0 : 5.0;
+            shifted_y = cover_y;
+        }
     }
 
     // step 4: territory recovery bias (push everyone up briefly after
