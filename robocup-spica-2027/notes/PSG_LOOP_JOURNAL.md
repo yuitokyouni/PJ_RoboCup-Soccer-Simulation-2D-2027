@@ -46,7 +46,8 @@ State at iter_019 (1-0 WIN, best so far):
 | 023 | iter_019 config (continue) | 0-1 L | | — | — | — | 5 samples 1W 1D 3L → P(W)=20% |
 | 024 | iter_019 config (continue) | 0-1 L | | — | — | — | 6 samples 1W 1D 4L → P(W)=17% |
 | 025 | halve lateral_shift_amount (4→2..8→4) | 0-0 D | clean | — | 750 | 1024 | 5 dangSPs withstood; defense improved |
-| 026 | iter_025 config (continue) | (TBD) | | | | | |
+| 026 | iter_025 config (continue) | 0-1 L | | — | — | — | halved-shift 2 samples: 1D 1L |
+| 027 | iter_025 config (continue) | (TBD) | | | | | |
 
 
 ## Failed approaches (DO NOT REPEAT)
