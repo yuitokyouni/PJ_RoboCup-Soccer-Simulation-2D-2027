@@ -1,0 +1,28 @@
+schema_version: "0.1.0"
+
+experiment_id: "iter62_baseline_left"
+description: >
+  Baseline contrast for iter-62: Spica325 WITHOUT the iter-62 third-man-
+  run path bonus (Phase 5/6/7/8 patches only; no PHASE5_FEVAL_PATH block)
+  on LEFT vs Vanilla on RIGHT. Pair with iter62_tmr_left to isolate the
+  iter-62 effect via make compare.
+
+home_team: "SPICA325_BASE"
+away_team: "CYRUS_VANILLA"
+
+home_start_command: "scripts/team_launchers/spica325_noTMR_left.sh"
+away_start_command: "scripts/team_launchers/cyrus_vanilla_right.sh"
+
+num_matches: 30
+timeout_secs: 600
+
+declared_reality_assertion: "real_rcssserver"
+
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"
+
+notes:
+  - "Spica325 baseline binary built from cyrus-team-v3-noTMR-snapshot — same Phase 5/6/7/8 as v3 except the iter-62 PHASE5_FEVAL_PATH block was reverted before rebuild."
+  - "Vanilla = cyrus-team master + rapidjson vendor patch only."

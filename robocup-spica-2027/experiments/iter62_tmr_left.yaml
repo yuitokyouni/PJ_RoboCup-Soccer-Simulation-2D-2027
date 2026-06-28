@@ -1,0 +1,37 @@
+schema_version: "0.1.0"
+
+experiment_id: "iter62_tmr_left"
+description: >
+  iter-62 candidate A' (third-man run path bonus in operator()) on LEFT
+  vs Vanilla (Cyrus-style baseline, F433, no Phase 5) on RIGHT.
+
+  The Spica325 binary launched here is the FULL Phase 5/6/7/8 patch set
+  PLUS the iter-62 Step 7b that adds a +40 path bonus to the chain
+  evaluator when a third-man-run shape is detected (forward feed →
+  short lay-off → through-ball, with receiver(path[0]) != receiver(path[2]),
+  final state ball.x >= 25).
+
+  N=10 same-side leg. If a balanced eval is needed, pair with an
+  iter62_tmr_right yaml (Vanilla LEFT, iter-62 RIGHT) and combine via
+  scripts/combine_balanced_legs.py.
+
+home_team: "SPICA325_ITER62"
+away_team: "CYRUS_VANILLA"
+
+home_start_command: "scripts/team_launchers/spica325_left.sh"
+away_start_command: "scripts/team_launchers/cyrus_vanilla_right.sh"
+
+num_matches: 10
+timeout_secs: 600
+
+declared_reality_assertion: "real_rcssserver"
+
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"
+
+notes:
+  - "iter-62 Spica325 binary built from claude/iter62-third-man-run-eval branch (apply_phase5.sh includes Step 7b PHASE5_FEVAL_PATH)."
+  - "Vanilla binary built from cyrus-team master + rapidjson vendor patch only (no Phase 5)."
+  - "UNVERIFIED contrast; do not claim performance improvement until make compare prints a positive delta CI that does not cross zero."
