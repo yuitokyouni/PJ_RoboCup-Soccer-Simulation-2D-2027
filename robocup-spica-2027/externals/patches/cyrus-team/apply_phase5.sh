@@ -518,6 +518,104 @@ print('  action_chain_graph.cpp patched')
 PYEOF
 
 # -------------------------------------------------------------------
+# Step 7b: patch sample_field_evaluator.cpp::operator()
+#
+# PSG-loop iter-62 candidate A' (UNVERIFIED): third-man run pattern
+# bonus. The baseline operator() takes a `path` argument (sequence of
+# (Action,State) pairs leading to `state`) and IGNORES it — chain
+# score is just the final state value. All multi-step attacking
+# patterns spica has tried so far live as per-candidate bonuses in
+# action_chain_graph.cpp and only see the FIRST step.
+#
+# Detect on the path the canonical false-9 third-man combo:
+#
+#   path[0] = forward pass    (Δx > +5)        feed to lay-off target
+#   path[1] = lay-off          (Δx < -1, len < 12 m)
+#   path[2] = forward pass    (Δx > +15)       through-ball
+#   AND  receiver(path[0]) != receiver(path[2])    ("third man")
+#   AND  final state ball.x >= 25                  (attack broke through)
+#
+# Add +40 when matched. The chain search will actively prefer chains
+# that exhibit this shape over chains that compose the same total
+# Δx via three plain forward passes.
+#
+# Applied only on the non-penalty branch (penalty mode is left alone).
+# -------------------------------------------------------------------
+echo "[phase5] patching sample_field_evaluator.cpp::operator()"
+python3 - "$SRC/sample_field_evaluator.cpp" <<'PYEOF'
+import sys, pathlib
+p = pathlib.Path(sys.argv[1])
+src = p.read_text()
+if 'PHASE5_FEVAL_PATH' in src:
+    print('  sample_field_evaluator.cpp::operator() already patched; skipping')
+    sys.exit(0)
+
+# The tail of operator() — the penalty short-circuit + return — is
+# unique to this function. Restructure: wrap the single-statement
+# penalty branch in {}, add an else branch with the path detector.
+ANCHOR = '''    if(wm.gameMode().type() == GameMode::PenaltyTaken_  && wm.ball().pos().x < 0)
+            result = evaluate_state_penalty( state,wm.ball().pos() );
+    return result;
+}'''
+
+REPLACE = '''    if(wm.gameMode().type() == GameMode::PenaltyTaken_  && wm.ball().pos().x < 0) {
+            result = evaluate_state_penalty( state,wm.ball().pos() );
+    }
+    else {
+        // PHASE5_FEVAL_PATH (iter-62 candidate A', UNVERIFIED): third-man
+        // run pattern bonus. See
+        // notes/2026-06-28_psg_iter62_candidate_third_man_run.md for
+        // hypothesis, rollback, and constant-tuning notes. Constants are
+        // local statics here so the same patch script doubles as the
+        // A/B handle.
+        if ( path.size() >= 3
+             && state.ball().pos().x >= 25.0
+             && path[0].action().category() == CooperativeAction::Pass
+             && path[1].action().category() == CooperativeAction::Pass
+             && path[2].action().category() == CooperativeAction::Pass )
+        {
+            static const double FEED_FORWARD_MIN    =  5.0;
+            static const double LAYOFF_BACK_MAX     = -1.0;
+            static const double LAYOFF_LEN_MAX      = 12.0;
+            static const double THROUGH_FORWARD_MIN = 15.0;
+            static const double TMR_BONUS           = 40.0;
+
+            const rcsc::Vector2D p0_from = wm.ball().pos();
+            const rcsc::Vector2D p0_to   = path[0].action().targetPoint();
+            const rcsc::Vector2D p1_to   = path[1].action().targetPoint();
+            const rcsc::Vector2D p2_to   = path[2].action().targetPoint();
+
+            const bool step0_forward = ( p0_to.x - p0_from.x ) > FEED_FORWARD_MIN;
+            const bool step1_layoff  = ( ( p1_to.x - p0_to.x ) < LAYOFF_BACK_MAX
+                                         && ( p1_to - p0_to ).r() < LAYOFF_LEN_MAX );
+            const bool step2_through = ( p2_to.x - p1_to.x ) > THROUGH_FORWARD_MIN;
+
+            const int rcv0 = path[0].action().targetPlayerUnum();
+            const int rcv2 = path[2].action().targetPlayerUnum();
+            const bool third_man = ( rcv0 > 0 && rcv2 > 0 && rcv0 != rcv2 );
+
+            if ( step0_forward && step1_layoff && step2_through && third_man ) {
+                result += TMR_BONUS;
+#ifdef DEBUG_PRINT
+                dlog.addText( Logger::ACTION_CHAIN,
+                              "(eval) [PHASE5_FEVAL_PATH] third-man run "
+                              "rcv0=%d rcv2=%d t2=(%.1f,%.1f) +%.1f",
+                              rcv0, rcv2, p2_to.x, p2_to.y, TMR_BONUS );
+#endif
+            }
+        }
+    }
+    return result;
+}'''
+
+if ANCHOR not in src:
+    sys.exit('  ERROR: operator() penalty-tail anchor not found')
+src = src.replace(ANCHOR, REPLACE, 1)
+p.write_text(src)
+print('  sample_field_evaluator.cpp::operator() patched')
+PYEOF
+
+# -------------------------------------------------------------------
 # Step 8: patch CMakeLists.txt to compile phase5/*.cpp
 # -------------------------------------------------------------------
 echo "[phase5] patching src/CMakeLists.txt"
