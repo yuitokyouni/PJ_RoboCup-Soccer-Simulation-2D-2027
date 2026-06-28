@@ -125,6 +125,43 @@ Bhv_SmartClearance::execute( rcsc::PlayerAgent * agent )
         return true;
     }
 
+    // PSG-loop iter-49 candidate (UNVERIFIED): safe touchline fallback.
+    //
+    // Evidence: iter 49 logged a u2 (CB) clearance that went BACKWARD,
+    // gifting an opponent shot. When all three priority targets fail
+    // the path check (e.g. opp pressers near the ball), control returns
+    // to Body_AdvanceBall, whose direction in tight situations is not
+    // guaranteed to be forward of the kicker.
+    //
+    // The safe touchline target is constructed so that:
+    //   * x is strictly forward of the ball (>= ball.x + 8)
+    //   * x lands past the forbidden midfield band (>= 26)
+    //   * x is capped (<= 40) so a soft kick still reaches it
+    //   * y hugs the same-side touchline (|y| = 32)
+    // That is, "punt to the throw-in" rather than risk a backward kick.
+    //
+    // The path-block check is intentionally NOT applied here: at this
+    // point both forward channels have failed and a touchline angle
+    // typically lobs past midfield pressers. Worst case is an opp
+    // throw-in at our touchline, which is dominated by the failure
+    // mode this guards against. Rollback: delete the block; behavior
+    // reverts to the original return-false fallthrough.
+    {
+        const double safe_x = std::min( 40.0,
+                                        std::max( 26.0, ball.x + 8.0 ) );
+        const rcsc::Vector2D safe_target( safe_x, sy * 32.0 );
+
+        if ( safe_target.x > ball.x + 3.0 ) { // hard guard: forward only
+            Body_KickOneStep( safe_target,
+                              CLEARANCE_KICK_SPEED,
+                              false ).execute( agent );
+            TerritoryRecoveryState::instance().trigger( wm.time().cycle() );
+            agent->debugClient().addMessage( "SmartClearSafe%.0f", safe_x );
+            agent->debugClient().setTarget( safe_target );
+            return true;
+        }
+    }
+
     // No acceptable target -> caller falls through to Body_AdvanceBall.
     return false;
 }
