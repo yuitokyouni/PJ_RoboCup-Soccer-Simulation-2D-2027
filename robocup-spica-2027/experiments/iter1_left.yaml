@@ -1,0 +1,14 @@
+schema_version: "0.1.0"
+experiment_id: "iter1_left"
+description: "Historic Spica325 @ iter_1 (SB tuck-in only) vs Vanilla, LEFT side, N=30."
+home_team: "SPICA325_ITER1"
+away_team: "CYRUS_VANILLA"
+home_start_command: "scripts/team_launchers/spica325_left.sh"
+away_start_command: "scripts/team_launchers/cyrus_vanilla_right.sh"
+num_matches: 30
+timeout_secs: 600
+declared_reality_assertion: "real_rcssserver"
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"
