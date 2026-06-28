@@ -518,6 +518,120 @@ print('  action_chain_graph.cpp patched')
 PYEOF
 
 # -------------------------------------------------------------------
+# Step 7b: patch sample_field_evaluator.cpp (holder pressure / space)
+#
+# PSG-loop iter-61 candidate A (UNVERIFIED): the baseline evaluator
+# scores chain-final states by ball.x and goal-distance only, so a
+# high-x receiver in space and a high-x receiver surrounded by 2-3
+# markers get the SAME score. Add a continuous signal so chain search
+# prefers ending in space:
+#   - linear penalty per opponent within PRESS_RADIUS of the holder
+#   - linear bonus for nearest-opp distance, capped at SPACE_CAP
+# Net swing is bounded; the can_shoot_from spike (+1e6) still
+# dominates when shooting is available.
+#
+# Applied to evaluate_state and evaluate_state2 only. The penalty-mode
+# evaluator (evaluate_state_penalty) is unchanged: penalty-kick state
+# space already accounts for the GK on its own goal-mouth axis.
+# -------------------------------------------------------------------
+echo "[phase5] patching sample_field_evaluator.cpp"
+python3 - "$SRC/sample_field_evaluator.cpp" <<'PYEOF'
+import sys, pathlib
+p = pathlib.Path(sys.argv[1])
+src = p.read_text()
+if 'PHASE5_FEVAL' in src:
+    print('  sample_field_evaluator.cpp already patched; skipping')
+    sys.exit(0)
+
+# Block inserted into evaluate_state and evaluate_state2 just BEFORE
+# the can_shoot_from spike. holder is already non-null at this point
+# (checked at function entry). Constants live inside the block so they
+# are easy to A/B-tune from this script.
+INSERT = '''
+    //
+    // PHASE5_FEVAL (iter-61 candidate A, UNVERIFIED): holder pressure
+    // and space. See notes/2026-06-27_psg_iter61_candidate_pressure_eval.md
+    // for hypothesis and rollback. Magnitudes are bounded so the goal
+    // / shoot signals below still dominate.
+    //
+    {
+        static const double PRESS_RADIUS  = 3.0;
+        static const double PRESS_PENALTY = 8.0;
+        static const double SPACE_CAP     = 8.0;
+
+        const rcsc::AbstractPlayerObject::Cont opps =
+            state.getPlayers( new OpponentOrUnknownPlayerPredicate( state.ourSide() ) );
+        const rcsc::Vector2D hp = holder->pos();
+        int n_press = 0;
+        double min_dist = 1.0e+6;
+        for ( rcsc::AbstractPlayerObject::Cont::const_iterator it = opps.begin();
+              it != opps.end();
+              ++it )
+        {
+            const rcsc::AbstractPlayerObject * opp = *it;
+            if ( ! opp ) continue;
+            const double d = opp->pos().dist( hp );
+            if ( d < PRESS_RADIUS ) ++n_press;
+            if ( d < min_dist ) min_dist = d;
+        }
+        const double press_pen   = - PRESS_PENALTY * static_cast<double>( n_press );
+        const double space_bonus = std::min( min_dist, SPACE_CAP );
+        point += press_pen + space_bonus;
+#ifdef DEBUG_PRINT
+        dlog.addText( Logger::ACTION_CHAIN,
+                      "(eval) [PHASE5_FEVAL] press=%d (%.1f) space=%.1f (%.1f) point=%.1f",
+                      n_press, press_pen, min_dist, space_bonus, point );
+#endif
+    }
+
+'''
+
+# Anchor 1: evaluate_state. The "double point = state.ball().pos().x;"
+# initialization plus the goal-distance bonus is unique to this
+# function (penalty / state2 use point_x and a sum at the end).
+ANCHOR_STATE = '''    double point = state.ball().pos().x;
+
+    point += std::max( 0.0,
+                       40.0 - ServerParam::i().theirTeamGoalPos().dist( state.ball().pos() ) );
+'''
+if ANCHOR_STATE not in src:
+    sys.exit('  ERROR: evaluate_state basic-evaluation anchor not found')
+src = src.replace(ANCHOR_STATE, ANCHOR_STATE + INSERT, 1)
+
+# Anchor 2: evaluate_state2 only. The aggregated "point += point_*"
+# block ALSO exists in evaluate_state_penalty, so we anchor on the
+# dlog line that immediately follows in evaluate_state2 (penalty mode
+# does not log this). Insert BEFORE the dlog line so the inserted
+# block sits between the aggregation and the log, keeping the log
+# output (which references the same locals) valid.
+ANCHOR_STATE2_LOG = '''    double point = 0;
+    point += point_x;
+    point += point_goal;
+    point += point_out;
+    point += point_line;
+
+    dlog.addText(Logger::ACTION_CHAIN, "eval: %.1f, x: %.1f, g: %.1f, o: %.1f, l:%.1f", point, point_x, point_goal, point_out, point_line);
+'''
+if ANCHOR_STATE2_LOG not in src:
+    sys.exit('  ERROR: evaluate_state2 aggregated-point+dlog anchor not found')
+# Insert the pressure block AFTER the aggregation but BEFORE the dlog
+# line. Easiest: replace the whole anchor with (agg + INSERT + dlog).
+AGG_HEAD = '''    double point = 0;
+    point += point_x;
+    point += point_goal;
+    point += point_out;
+    point += point_line;
+'''
+DLOG_TAIL = '''
+    dlog.addText(Logger::ACTION_CHAIN, "eval: %.1f, x: %.1f, g: %.1f, o: %.1f, l:%.1f", point, point_x, point_goal, point_out, point_line);
+'''
+src = src.replace(ANCHOR_STATE2_LOG, AGG_HEAD + INSERT + DLOG_TAIL, 1)
+
+p.write_text(src)
+print('  sample_field_evaluator.cpp patched (evaluate_state, evaluate_state2)')
+PYEOF
+
+# -------------------------------------------------------------------
 # Step 8: patch CMakeLists.txt to compile phase5/*.cpp
 # -------------------------------------------------------------------
 echo "[phase5] patching src/CMakeLists.txt"
