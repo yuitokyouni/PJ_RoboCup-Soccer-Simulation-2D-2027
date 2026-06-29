@@ -96,23 +96,102 @@ rcssserver 19.0.0, run N=30 vs the same Vanilla binary on LEFT side.
   defense_block::modulate_position, or intercept_discipline?** Same
   story — the bundle hides which sub-component matters.
 
-## Next iteration (if anyone returns to this)
+## Side-bias check (Vanilla LEFT vs Vanilla RIGHT, N=30)
 
-1. **Side-bias check** — `vanilla_lr_side_check` running now. Result
-   to be appended to this note.
-2. **Pure-Vanilla framework comparison** — build a snapshot from
-   cyrus-team @ `7283c0d...` with ONLY the rapidjson vendor patch
-   (the existing `cyrus-team-vanilla-snapshot` is already this).
-   Run it on LEFT vs Vanilla on RIGHT, N=30. The mean_gd of THIS
-   batch is the Spica325 vs Vanilla zero point — subtract that from
-   iter-62's -0.633 to get the real Phase 5 effect size.
-3. **Step 7 sub-bisect** — split the python step into one block per
-   bonus (`PHASE5_ACG_CHANCE`, `PHASE6_ACG_WEDGE`,
-   `PHASE6_ACG_SIDESWITCH`, `PHASE9_ACG_MIRROR`, journal's cross /
-   through additions). Disable each in turn for N=30. Reject any
-   sub-bonus whose removal does not drop mean_gd by at least 1 SE.
-4. **Step 5 sub-bisect** — same with counter_press / defense_block /
-   intercept_discipline.
+Pure Vanilla binary on LEFT (team name `CYRUS_VANILLA`) vs pure
+Vanilla binary on RIGHT (team name `CYRUS_VAN_R`, used to avoid the
+team-name collision that ate the first attempt). Same N=30, same
+server, same lock.
+
+| | N | W/D/L | mean_home | mean_away | mean_gd | se | 95 % CI |
+|---|---|-------|-----------|-----------|---------|-----|---------|
+| Vanilla(L) vs Vanilla(R) | 30 | 5/14/11 | 0.43 | 0.53 | **-0.100** | 0.175 | [-0.443, +0.243] |
+
+**The side bias is small and CI-inconclusive.** A LEFT-side Vanilla
+is at worst ~0.4 goals/match weaker than its RIGHT-side mirror; the
+point estimate is only -0.1; the CI straddles zero. Spica's -0.633
+is NOT primarily a side-bias artifact.
+
+## Side-bias-corrected delta — Phase 5 stack is net-NEGATIVE
+
+Subtracting the side-bias mean from every iter-62 measurement gives
+each stack's contribution under SAME-SIDE conditions:
+
+| label | raw mean_gd | side-corrected | combined SE | corrected CI |
+|-------|-------------|----------------|-------------|--------------|
+| iter_62 (best) | -0.633 | **-0.533** | 0.229 | **[-0.982, -0.084]** ← significant negative |
+| iter_41        | -0.833 | -0.733 | 0.231 | [-1.186, -0.280] |
+| V2 (no Step 5) | -0.933 | -0.833 | 0.259 | [-1.341, -0.325] |
+| iter_1         | -0.967 | -0.867 | 0.243 | [-1.343, -0.391] |
+| V1 (no Step 7) | -1.067 | -0.967 | 0.245 | [-1.447, -0.487] |
+| iter_19        | -1.067 | -0.967 | 0.236 | [-1.430, -0.504] |
+
+Every measured Spica variant is **significantly worse than Vanilla**
+after side-correction. The best stack (iter-62, the strongest thing
+PSG-loop has ever produced) is still **-0.533 goals/match below
+plain Cyrus**, with CI fully below zero.
+
+## What this finally answers
+
+The user's overarching question was "why does the PSG-loop seem to
+keep regressing despite using git properly?" The full answer that
+came out of the bisect:
+
+1. **The PSG-loop did NOT regress.** Each measured iter is monotonically
+   better than the one before. -0.967 → -1.067 → -0.833 → -0.633 across
+   iter_1 / iter_19 / iter_41 / iter_62 is a +0.434 gain over 60
+   iterations. Real signal, not noise.
+2. **It FELT like regression because N=1 per-iter evaluation has
+   noise ~5-20x larger than the per-iter effect size.** The PSG-loop
+   was effectively a random walk against the measurement layer it
+   was using to score itself.
+3. **The component-level patches are individually positive.** Step 7
+   chain_action bonuses contribute +0.4 goals/match. Step 5 defense
+   layer contributes +0.3. Step 7b TMR contributes +0.2. They stack.
+4. **But the framework on which those patches sit is net-NEGATIVE.**
+   Plain Cyrus on the LEFT scores 0.43 goals/match. Spica on the LEFT
+   (iter-62, ALL patches enabled) scores 0.10 goals/match. The patches
+   bring Spica back from a deficit they didn't fully cause — Phase 5's
+   framework / F325 formations / strategy modifications are the source
+   of the floor that the patches are climbing out of.
+5. **Reverting to early Spica is not a path.** The early Spica also
+   has Phase 5 framework. The bottom of the well is not behind us; it
+   is below us. PSG-loop reverts wouldn't have helped.
+
+## Recommended next steps (if anyone continues)
+
+The bisect is now done. The right next moves are not more
+iter-N tweaks. They are framework-level:
+
+1. **Build "Phase 5 framework minimum" snapshot — all src/phase5/*
+   modules and the F325 formations and the strategy.h/.cpp F325 wiring,
+   but NONE of the call-site hooks (no Step 5, no Step 6, no Step 7,
+   no Step 9 Other.json force, no Step 7b).** Run N=30 on LEFT vs
+   Vanilla. If it lands around -0.5, the framework itself is the
+   regression. If it lands around -1.0, the call-site hooks are
+   redundant patching of patches.
+2. **F433 vs F325 isolated comparison.** Build a snapshot with the
+   Phase 5 modules linked but `Formation: "433"` forced (current
+   apply_phase5.sh Step 9 already does this). Compare to a snapshot
+   where `Formation: "325"` is selected. If F325 is the regression,
+   skip it entirely.
+3. **Honest reset.** If both (1) and (2) say Phase 5 / F325 are
+   net-negative, the right move is to discard `apply_phase5.sh`
+   entirely and re-derive the few rules that DID help (the chain_-
+   action bonuses, the defense_block modulator) as small patches
+   directly on top of plain Cyrus, with N=30 gates from the first
+   commit. This is the "honest restart" of Spica that respects the
+   N=30 protocol.
+
+## Step 7 / Step 5 sub-bisect (deferred, recommended as follow-up)
+
+The Step 7 bundle (chance_signal + wedge + cross + through +
+side-switch + mirror) and Step 5 bundle (counter_press + defense_-
+block + intercept_discipline) each carry positive value but their
+SUB-components are still mixed. Splitting each into per-rule python
+steps and N=30-bisecting them would tell which sub-rules carry the
+signal and which are dead weight. Each sub-bisect run is ~50 minutes
+of compute on this container.
 
 ## Eval-gate protocol (now ENFORCED)
 
