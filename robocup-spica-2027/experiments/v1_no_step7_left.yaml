@@ -1,0 +1,14 @@
+schema_version: "0.1.0"
+experiment_id: "v1_no_step7_left"
+description: "Phase 5 bisect V1: iter-62 stack MINUS Step 7 (chance_signal/wedge/cross/through/side-switch/mirror in action_chain_graph). Defense_block, smart_clearance, formation Y-sym, Step 7b TMR still ON."
+home_team: "SPICA_V1"
+away_team: "CYRUS_VANILLA"
+home_start_command: "scripts/team_launchers/spica325_left.sh"
+away_start_command: "scripts/team_launchers/cyrus_vanilla_right.sh"
+num_matches: 30
+timeout_secs: 600
+declared_reality_assertion: "real_rcssserver"
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"
