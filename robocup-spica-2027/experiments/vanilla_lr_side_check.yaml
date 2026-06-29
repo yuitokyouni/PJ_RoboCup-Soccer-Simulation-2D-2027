@@ -1,10 +1,10 @@
 schema_version: "0.1.0"
 experiment_id: "vanilla_lr_side_check"
-description: "Side-bias check: pure Vanilla on LEFT vs pure Vanilla on RIGHT, N=30. Determines whether Spica's -0.633 vs Vanilla on LEFT comes from real component disadvantage or from Cyrus's documented right-side bias."
-home_team: "CYRUS_VANILLA_L"
-away_team: "CYRUS_VANILLA_R"
+description: "Side-bias check (FIXED): pure Vanilla on LEFT (team CYRUS_VANILLA) vs pure Vanilla on RIGHT (team CYRUS_VAN_R), N=30. Tests Cyrus's documented right-side bias to recalibrate Spica's -0.633 measurement."
+home_team: "CYRUS_VANILLA"
+away_team: "CYRUS_VAN_R"
 home_start_command: "scripts/team_launchers/cyrus_vanilla_left.sh"
-away_start_command: "scripts/team_launchers/cyrus_vanilla_right.sh"
+away_start_command: "scripts/team_launchers/cyrus_vanilla_right_distinct.sh"
 num_matches: 30
 timeout_secs: 600
 declared_reality_assertion: "real_rcssserver"
