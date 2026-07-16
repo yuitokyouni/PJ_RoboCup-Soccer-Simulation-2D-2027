@@ -41,6 +41,12 @@ while [[ $# -gt 0 ]]; do
     --force-vanilla) FORCE_VANILLA=true; shift ;;
     --jobs) shift; JOBS="${1:-}"; shift ;;
     --jobs=*) JOBS="${1#*=}"; shift ;;
+    # AUDIT S4d fix: named variant snapshots must be scripted, never
+    # hand-copied. --dest changes only the output snapshot directory;
+    # the patch set applied is whatever the working tree's
+    # apply_phase5.sh does.
+    --dest) shift; V3_SNAP="$SRC/${1:-}"; shift ;;
+    --dest=*) V3_SNAP="$SRC/${1#*=}"; shift ;;
     -h|--help) sed -n '2,30p' "$0"; exit 0 ;;
     *) echo "unknown arg: $1" >&2; exit 2 ;;
   esac

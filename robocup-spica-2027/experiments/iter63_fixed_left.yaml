@@ -1,0 +1,21 @@
+schema_version: "0.1.0"
+experiment_id: "iter63_fixed_left"
+description: >
+  AUDIT Phase B batch 2: Spica325 with coach restored AND the audit's
+  Phase C C++ fixes (SmartClearance defensive-context guard +
+  resting-point forbidden-band check + execute() result check, CDM
+  build-up drop uses real CDMs 5/6, counter_press namespace link fix
+  enabling the W_PRESS chance term, TRS macro defined so territory
+  recovery actually compiles in) vs Vanilla on RIGHT, N=30.
+  Contrast partner: iter62_coach_left (same coach, pre-fix C++).
+home_team: "SPICA325F"
+away_team: "CYRUS_VANILLA"
+home_start_command: "scripts/team_launchers/spica325_fixed_left.sh"
+away_start_command: "scripts/team_launchers/cyrus_vanilla_right.sh"
+num_matches: 30
+timeout_secs: 600
+declared_reality_assertion: "real_rcssserver"
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"
