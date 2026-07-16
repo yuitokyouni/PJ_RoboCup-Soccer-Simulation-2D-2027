@@ -1,3 +1,15 @@
+> **⚠ CONFOUND WARNING (2026-07 audit)**: every measurement in this
+> note was taken while Spica played WITHOUT its online coach (no
+> sample_coach binary in the snapshot; Vanilla's coach assigned hetero
+> player types to all 11 of its players — audit S1,
+> docs/REPO_AUDIT_2026-07.md). Absolute levels vs Vanilla and the
+> "Phase 5 framework is net-NEGATIVE" conclusion are NOT attributable
+> to the patches until re-measured with the coach restored. Deltas
+> BETWEEN Spica variants (all equally coach-less) remain informative,
+> subject to this note's own multiple-comparison caveats (audit also
+> flags the iter_19 "negative-significant" call and the additive
+> side-correction as overreach).
+
 # Phase 5 component bisect — which patch group is helping?
 
 Date: 2026-06-28

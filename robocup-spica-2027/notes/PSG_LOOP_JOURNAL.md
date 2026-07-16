@@ -1,3 +1,17 @@
+> **⚠ DEPRECATION / CONFOUND WARNING (2026-07 audit)**
+> Two findings invalidate this journal's quantitative claims
+> (docs/REPO_AUDIT_2026-07.md):
+> 1. **Every Spica match was played WITHOUT its online coach** while
+>    Vanilla had one assigning heterogeneous player types (audit S1,
+>    fixed in setup_cyrus_snapshots.sh on 2026-07-02). All W/L rows,
+>    P(W) estimates, and "best known config" claims below measured
+>    (config effect + no-coach handicap), not config effect.
+> 2. **All accept/revert decisions below were made at N=1** with
+>    per-match noise 5-20x the effect sizes involved (audit S2). At
+>    RESEARCH_GRADE N=30 the claimed best (iter_19 stack) measured
+>    WORST of four sampled points.
+> Keep for history; do NOT cite these numbers as evidence.
+
 # PSG-loop decision journal
 
 Target (updated 2026-06-27): **10 consecutive unbeaten** (W or D) vs Vanilla.

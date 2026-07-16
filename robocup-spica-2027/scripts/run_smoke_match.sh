@@ -303,12 +303,59 @@ if [[ "$MATCH_STATUS" != "match_completed" ]]; then
   exit 1
 fi
 
+# AUDIT S4c fix: capture the server's self-reported RNG seed and the
+# sha256 of each side's player binary into metadata.json so the match
+# is at least forensically identifiable (rcssserver seeds from time(0);
+# it cannot yet be SET, but it can be RECORDED).
+SERVER_SEED="$(grep -oE 'Simulator Random Seed:[[:space:]]*[0-9]+' "$RUN_DIR/server.out" 2>/dev/null | grep -oE '[0-9]+' | head -n1 || true)"
+hash_team_binary() {
+  # Launchers define CYRUS_SRC=".../build/src"; hash its sample_player.
+  local launcher="$1" src
+  src="$(grep -oE 'CYRUS_SRC="[^"]+"' "$launcher" 2>/dev/null | head -n1 | cut -d'"' -f2 || true)"
+  src="${src//\$REPO_ROOT/$ROOT}"
+  if [[ -n "$src" && -f "$src/sample_player" ]]; then
+    sha256sum "$src/sample_player" | cut -d' ' -f1
+  else
+    echo "unknown"
+  fi
+}
+HOME_BIN_SHA="$(hash_team_binary "$HOME_TEAM_START")"
+AWAY_BIN_SHA="$(hash_team_binary "$AWAY_TEAM_START")"
+python3 - "$RUN_DIR/metadata.json" "$SERVER_SEED" "$HOME_BIN_SHA" "$AWAY_BIN_SHA" <<'PYEOF'
+import json, sys
+path, seed, hsha, asha = sys.argv[1:5]
+try:
+    md = json.loads(open(path).read())
+except Exception:
+    md = {}
+md["server_random_seed"] = int(seed) if seed else None
+md["home_binary_sha256"] = hsha
+md["away_binary_sha256"] = asha
+open(path, "w").write(json.dumps(md, indent=2) + "\n")
+PYEOF
+
 python3 "$ROOT/evaluation/parse_match_result.py" \
   --run-dir "$RUN_DIR" \
   --rcg "$RCG" \
   ${RCL:+--rcl "$RCL"} \
   --output "$RUN_DIR/metrics.json" \
   --notes "smoke test"
+
+# AUDIT S5b fix: reject pseudo-matches (one side never connected /
+# identical team names). The parser records match_valid; a completed-
+# looking match that is invalid flips to invalid_teams and this script
+# exits non-zero so the batch runner counts it as failed.
+MATCH_VALID="$(python3 -c "
+import json,sys
+try: print(json.load(open('$RUN_DIR/metrics.json')).get('match_valid'))
+except Exception: print('None')
+")"
+if [[ "$MATCH_VALID" == "False" ]]; then
+  MATCH_STATUS="invalid_teams"
+  write_metadata
+  echo "[smoke] match_status: $MATCH_STATUS (see metrics.json invalid_reason)" >&2
+  exit 1
+fi
 
 # Best-effort tactical report. Failure here must not abort the smoke
 # (the harness's other deliverables -- rcg, rcl, metrics.json -- are

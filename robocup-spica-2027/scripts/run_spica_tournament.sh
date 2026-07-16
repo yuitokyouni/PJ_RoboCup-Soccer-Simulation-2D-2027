@@ -93,18 +93,36 @@ python3 - <<'PYEOF'
 import csv, glob, json, pathlib, collections
 ROOT = pathlib.Path("logs/experiments")
 LABELS = ["REV", "MERGE", "ORIG", "V"]
+# AUDIT S5a fix (docs/REPO_AUDIT_2026-07.md): summary.csv carries the
+# IN-GAME team names (the launchers' -t values), never the edition
+# labels — the old `h in LABELS` matched nothing and every edition
+# reported games=0. Map names -> labels explicitly and fail loudly on
+# an unmapped name instead of skipping it.
+NAME2LABEL = {
+    "SPICA_REV": "REV",
+    "SPICA_MERGE": "MERGE",
+    "SPICA_ORIG": "ORIG",
+    "CYRUS_VANILLA": "V",
+}
 gd = collections.Counter()
 games = collections.Counter()
+unmapped = collections.Counter()
 for s in sorted(ROOT.glob("tourney_*/summary.csv")):
     with open(s) as f:
         for row in csv.DictReader(f):
-            h, a = row["home_team"], row["away_team"]
+            h = NAME2LABEL.get(row["home_team"])
+            a = NAME2LABEL.get(row["away_team"])
+            if h is None: unmapped[row["home_team"]] += 1
+            if a is None: unmapped[row["away_team"]] += 1
             try:
                 d = int(row["goal_diff"])
             except (TypeError, ValueError):
                 continue
             if h in LABELS: gd[h] += d; games[h] += 1
             if a in LABELS: gd[a] -= d; games[a] += 1
+if unmapped:
+    import sys
+    print(f"WARNING: unmapped team names in summary rows: {dict(unmapped)}", file=sys.stderr)
 out = {
     lbl: {
         "games": games[lbl],

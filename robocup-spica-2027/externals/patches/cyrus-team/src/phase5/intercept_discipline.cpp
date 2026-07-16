@@ -21,7 +21,10 @@ constexpr double TEAMMATE_POSCOUNT = 10;
 constexpr int    SELF_FAST_REACH   = 1;
 
 inline bool is_cdm_unum( int u ) {
-    return ( u == 6 || u == 7 );
+    // AUDIT S3e fix: F433's holding CDMs are 5 and 6 (pp_ch), not 6/7
+    // (7 is pp_lh, an attacking half). Inert while the kill-switch in
+    // execute() stands, but correct for any future re-enable.
+    return ( u == 5 || u == 6 );
 }
 
 // A teammate counts as "cover" if it sits within TEAMMATE_COVER_R of

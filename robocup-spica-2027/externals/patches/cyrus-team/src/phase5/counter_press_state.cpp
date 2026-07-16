@@ -138,19 +138,23 @@ CounterPressState::just_won_in_opp_half( int cycle_now ) const
     return elapsed < JUST_WON_WINDOW;
 }
 
-} // namespace cyrus_phase5
-
-// Strong overrides for the weak extern hooks declared in chance_signal.cpp.
-// chance_signal.cpp declares these at global scope with __attribute__((weak));
-// when this TU is also linked into the binary, the strong definitions below
-// win and chance_signal can read the real CounterPressState getters.
+// Strong overrides for the weak hooks defined in chance_signal.cpp.
+//
+// AUDIT S3b fix (docs/REPO_AUDIT_2026-07.md): chance_signal.cpp
+// declares AND weakly defines these INSIDE namespace cyrus_phase5.
+// The old strong definitions here sat at global scope — a different
+// mangled symbol — so they never overrode anything and the chance
+// signal's W_PRESS term was permanently zero (the weak stub's -1).
+// The strong definitions must live in the same namespace to link.
 long counter_press_last_recovery_cycle()
 {
     return static_cast<long>(
-        cyrus_phase5::CounterPressState::instance().last_win_cycle());
+        CounterPressState::instance().last_win_cycle());
 }
 
 bool counter_press_last_recovery_in_opp_half()
 {
-    return cyrus_phase5::CounterPressState::instance().last_win_in_opp_half();
+    return CounterPressState::instance().last_win_in_opp_half();
 }
+
+} // namespace cyrus_phase5

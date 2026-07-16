@@ -636,6 +636,11 @@ if 'PHASE5_CMAKE' in src:
 inject = '''
 # PHASE5_CMAKE: compile phase5 modules into sample_player.
 file(GLOB PHASE5_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/phase5/*.cpp")
+# AUDIT S3a fix (docs/REPO_AUDIT_2026-07.md): the TerritoryRecoveryState
+# consumer in defense_block.cpp is guarded by this macro, which no build
+# ever defined — the "push up after clearance" feature never existed in
+# any evaluated binary. Define it so the feature actually compiles in.
+add_compile_definitions(CYRUS_PHASE5_TERRITORY_RECOVERY=1)
 '''
 
 # Insert near the top, just after cmake_minimum_required or project()

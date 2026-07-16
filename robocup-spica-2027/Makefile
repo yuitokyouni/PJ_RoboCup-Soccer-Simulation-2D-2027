@@ -91,6 +91,7 @@ clean:
 
 test:
 	@bash $(ROOT)/tests/test_attestation.sh
+	@python3 $(ROOT)/tests/test_parse_and_gate.py
 
 highlights:
 	@if [[ -z "$(RUN_DIR)" || -z "$(OUTPUT)" ]]; then \

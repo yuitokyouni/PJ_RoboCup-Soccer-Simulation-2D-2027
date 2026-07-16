@@ -91,8 +91,15 @@ pushd "$V3_SNAP/build" >/dev/null
 cmake -DCMAKE_INSTALL_PREFIX="$CYRUS_PREFIX" \
       -DCMAKE_PREFIX_PATH="$CYRUS_PREFIX" \
       -DCMAKE_BUILD_TYPE=Release ..
-make -j"$JOBS" sample_player
+# AUDIT S1 fix (docs/REPO_AUDIT_2026-07.md): building only sample_player
+# left the snapshot without its online coach, so every Spica-vs-Vanilla
+# match was a coach-vs-no-coach handicap. Build BOTH and assert below.
+make -j"$JOBS" sample_player sample_coach
 popd >/dev/null
+
+for required in "$V3_SNAP/build/src/sample_player" "$V3_SNAP/build/src/sample_coach"; do
+  [[ -x "$required" ]] || die "snapshot incomplete: $required missing or not executable"
+done
 
 # Note: vanilla snapshot's build dir also has absolute paths back to
 # the original cyrus-team (cp -a artifact). We do NOT regenerate the

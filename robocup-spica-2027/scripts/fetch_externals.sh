@@ -160,11 +160,21 @@ fetch_one() {
     fi
   fi
 
-  echo "[fetch] resolve $name @ $ref"
-  sha=$(resolve_commit "$repo" "$ref") || {
-    echo "[fetch] ERROR  $name: could not resolve $ref via GitHub API" >&2
-    return 1
-  }
+  # AUDIT S4a fix (docs/REPO_AUDIT_2026-07.md): the lock is the pin.
+  # When a lock entry exists, download THAT sha directly — no API
+  # re-resolution of branch tips, even under --force and even on a
+  # fresh clone where externals/src/ is empty. Re-pinning to a new
+  # upstream tip is an explicit act: REPIN=1 make fetch-externals.
+  sha=$(read_lock_commit "$name" || true)
+  if [[ -n "$sha" && "${REPIN:-}" != "1" ]]; then
+    echo "[fetch] pinned  $name @ $sha (from EXTERNALS.lock; REPIN=1 to re-resolve $ref)"
+  else
+    echo "[fetch] resolve $name @ $ref"
+    sha=$(resolve_commit "$repo" "$ref") || {
+      echo "[fetch] ERROR  $name: could not resolve $ref via GitHub API" >&2
+      return 1
+    }
+  fi
 
   echo "[fetch] tarball $name $sha"
   download_and_extract "$repo" "$sha" "$dir" || {

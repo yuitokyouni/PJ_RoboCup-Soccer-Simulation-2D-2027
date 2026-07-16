@@ -1,0 +1,19 @@
+schema_version: "0.1.0"
+experiment_id: "iter62_coach_left"
+description: >
+  AUDIT Phase B batch 1: iter-62 Spica325 WITH ITS ONLINE COACH restored
+  (audit S1 fix — previous batches ran Spica coach-less while Vanilla's
+  coach assigned hetero player types) vs Vanilla on RIGHT, N=30.
+  Identical Phase 5 patch set to the (coach-less) iter62_tmr_left batch,
+  so the delta between the two batches isolates the coach effect.
+home_team: "SPICA325"
+away_team: "CYRUS_VANILLA"
+home_start_command: "scripts/team_launchers/spica325_left.sh"
+away_start_command: "scripts/team_launchers/cyrus_vanilla_right.sh"
+num_matches: 30
+timeout_secs: 600
+declared_reality_assertion: "real_rcssserver"
+server_options:
+  - "server::synch_mode=true"
+  - "server::penalty_shoot_outs=false"
+  - "server::nr_extra_halfs=0"

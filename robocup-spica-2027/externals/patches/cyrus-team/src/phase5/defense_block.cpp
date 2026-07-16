@@ -77,15 +77,19 @@ bool is_wing_back( int self_unum ) {
 // back line.
 //
 // Phase 6 (2026-06-25): symmetric CDM drop based on attack side.
-//   left attack  (ball.y < -3) -> unum 6 drops (mirrors LB push)
-//   right attack (ball.y > +3) -> unum 7 drops (mirrors RB push)
-//   center        -> unum 6 drops (same default as the SB picker)
-// This guarantees the dropping CDM is on the SAME side as the
-// pushing SB, so the back-3 forms as: stay-side SB + remaining CBs
-// + dropping CDM, all on the side away from the attack.
+//
+// AUDIT S3e fix (docs/REPO_AUDIT_2026-07.md): the old code dropped
+// unum 7 on right-side attacks — but in Cyrus F433 unum 7 is pp_lh,
+// an ATTACKING left-half (strategy.cpp updateFormation433 assigns
+// M_tm_post[5]=pp_ch, M_tm_post[6]=pp_ch, M_tm_post[7]=pp_lh). Every
+// right-side build-up therefore deleted an attacker from the front
+// line while the real second CDM (unum 5) never dropped. The holding
+// CDMs are 5 and 6, exactly as this file's own header comment says.
+//   right attack (ball.y > +3) -> unum 5 drops
+//   left / center              -> unum 6 drops
 static bool is_build_up_drop_cdm( int self_unum, const rcsc::WorldModel & wm ) {
     const double by = wm.ball().pos().y;
-    if ( by > 3.0 ) return ( self_unum == 7 );  // right attack
+    if ( by > 3.0 ) return ( self_unum == 5 );  // right attack
     // ball.y <= 3.0 (left or center) -> unum 6 drops
     return ( self_unum == 6 );
 }

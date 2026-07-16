@@ -13,6 +13,7 @@
 #include <rcsc/geom/line_2d.h>
 #include <rcsc/math_util.h>
 
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
@@ -45,8 +46,12 @@ inline bool in_forbidden_midfield( const rcsc::Vector2D & t )
     return ( t.x > FORBIDDEN_X_MIN && t.x < FORBIDDEN_X_MAX );
 }
 
-// Is any opponent in our own half (x < 0) closer than OPP_BLOCK_RADIUS
-// to the segment from ball -> target ?
+// Is any opponent closer than OPP_BLOCK_RADIUS to the segment from
+// ball -> predicted resting point?
+//
+// AUDIT S3c fix (docs/REPO_AUDIT_2026-07.md): the old check skipped
+// every opponent at x >= 0, so when the ball was near midfield no
+// opponent could ever reject a candidate.
 bool path_blocked_by_opponent( const rcsc::WorldModel & wm,
                                const rcsc::Vector2D & ball,
                                const rcsc::Vector2D & target )
@@ -59,14 +64,30 @@ bool path_blocked_by_opponent( const rcsc::WorldModel & wm,
     {
         const rcsc::AbstractPlayerObject * opp = *it;
         if ( ! opp ) continue;
-        const rcsc::Vector2D & op = opp->pos();
-        if ( op.x >= 0.0 ) continue; // only block opponents in OUR half
-        const double d = path.dist( op );
+        const double d = path.dist( opp->pos() );
         if ( d < OPP_BLOCK_RADIUS ) {
             return true;
         }
     }
     return false;
+}
+
+// AUDIT S3d fix: predicted resting point of a one-step kick. A ball
+// kicked at speed v with decay d rolls a total of v / (1 - d) meters.
+// The old code compared the forbidden midfield band against TARGET
+// coordinates (x=45 / x=28 — provably never inside 10<x<25) while the
+// real ball routinely died inside the band.
+rcsc::Vector2D predicted_resting_point( const rcsc::Vector2D & ball,
+                                        const rcsc::Vector2D & target,
+                                        double kick_speed )
+{
+    const double decay = rcsc::ServerParam::i().ballDecay();
+    const double travel = kick_speed / std::max( 1.0e-6, 1.0 - decay );
+    rcsc::Vector2D dir = target - ball;
+    const double dist_to_target = dir.r();
+    if ( dist_to_target < 1.0e-6 ) return ball;
+    dir /= dist_to_target;
+    return ball + dir * std::min( travel, dist_to_target + 100.0 );
 }
 
 } // anonymous namespace
@@ -83,6 +104,16 @@ Bhv_SmartClearance::execute( rcsc::PlayerAgent * agent )
     }
 
     const rcsc::Vector2D ball = wm.ball().pos();
+
+    // AUDIT S3c fix: clearance is a DEFENSIVE action. This behavior is
+    // injected at the top of hold_ball, which chain_action also reaches
+    // as the fallback for failed shots/passes in the ATTACKING third —
+    // where poking the ball toward the corner is a voluntary turnover.
+    // Only clear when the ball is genuinely in our defensive zone.
+    if ( ball.x > -10.0 ) {
+        return false;
+    }
+
     const double sy = signof_y( ball.y );
 
     // Candidate targets in priority order:
@@ -98,29 +129,38 @@ Bhv_SmartClearance::execute( rcsc::PlayerAgent * agent )
     for ( std::size_t i = 0; i < candidates.size(); ++i ) {
         const rcsc::Vector2D & target = candidates[ i ];
 
-        // Reject if target lands in forbidden opponent-midfield band.
-        if ( in_forbidden_midfield( target ) ) {
+        // AUDIT S3d fix: judge the forbidden band against where the
+        // ball will actually STOP, not the (unreachable) target. A
+        // 2.7 m/s one-step kick from our half dies around x ≈ +16 —
+        // inside the band — when aimed at the far corner.
+        const rcsc::Vector2D rest =
+            predicted_resting_point( ball, target, CLEARANCE_KICK_SPEED );
+        if ( in_forbidden_midfield( rest ) ) {
             continue;
         }
 
-        // Reject if a closer opponent in our half blocks the kick path.
+        // Reject if an opponent blocks the kick path.
         if ( path_blocked_by_opponent( wm, ball, target ) ) {
             continue;
         }
 
         // Accept this candidate: kick toward it.
-        const rcsc::AngleDeg dir = ( target - ball ).th();
-
-        Body_KickOneStep( target,
-                          CLEARANCE_KICK_SPEED,
-                          false ).execute( agent );
+        // AUDIT S3 fix: check the kick actually executed. With
+        // force_mode=false Body_KickOneStep silently degrades to
+        // HoldBall/StopBall when the kick is infeasible — in that case
+        // the clearance did NOT happen: report failure so the caller's
+        // fallback runs, and do NOT trigger the push-up bias.
+        if ( ! Body_KickOneStep( target,
+                                 CLEARANCE_KICK_SPEED,
+                                 false ).execute( agent ) ) {
+            continue;
+        }
 
         // Trigger team push-up bias for bhv_basic_move.
         TerritoryRecoveryState::instance().trigger( wm.time().cycle() );
 
         agent->debugClient().addMessage( "SmartClear%.0f", target.x );
         agent->debugClient().setTarget( target );
-        (void)dir; // angle currently informational; reserved for future use
 
         return true;
     }

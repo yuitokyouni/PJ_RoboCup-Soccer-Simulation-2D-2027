@@ -37,8 +37,40 @@ KNOWN_STATUSES = (
     "dependency_missing",
     "server_failed_to_start",
     "teams_failed_to_start",
+    "invalid_teams",
     "unknown_failure",
 )
+
+# AUDIT S2/A3 fix: two-sided 95% Student-t critical values by df.
+# 1.96 (normal) understated CI width by ~4% at N=30. Exact values for
+# df 1-30 (the regime the harness actually runs in), conservative
+# nearest-lower-df above that.
+_T_TABLE = (
+    (1, 12.706), (2, 4.303), (3, 3.182), (4, 2.776), (5, 2.571),
+    (6, 2.447), (7, 2.365), (8, 2.306), (9, 2.262), (10, 2.228),
+    (11, 2.201), (12, 2.179), (13, 2.160), (14, 2.145), (15, 2.131),
+    (16, 2.120), (17, 2.110), (18, 2.101), (19, 2.093), (20, 2.086),
+    (21, 2.080), (22, 2.074), (23, 2.069), (24, 2.064), (25, 2.060),
+    (26, 2.056), (27, 2.052), (28, 2.048), (29, 2.045), (30, 2.042),
+    (40, 2.021), (50, 2.009), (60, 2.000), (80, 1.990), (100, 1.984),
+    (120, 1.980), (200, 1.972), (500, 1.965), (1000, 1.962),
+)
+
+
+def t_crit_95(df: int) -> float:
+    """Two-sided 95% t critical value; exact for df<=30, conservative
+    nearest-lower-df between table rows, 1.960 beyond df=1000."""
+    if df < 1:
+        return _T_TABLE[0][1]
+    if df > 1000:
+        return 1.960
+    best = _T_TABLE[0][1]
+    for d, t in _T_TABLE:
+        if df >= d:
+            best = t
+        else:
+            break
+    return best
 
 
 def _read_json(path: Path) -> dict | None:
@@ -136,8 +168,21 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
             })
             continue
 
+        # AUDIT S5c fix: statistics pool ONLY completed, valid matches.
+        # match_valid is absent from pre-audit metrics (schema 1.3 before
+        # the validity patch); treat absent as valid for back-compat but
+        # never pool a non-completed match's partial score.
+        poolable = (status == "match_completed"
+                    and metrics.get("match_valid") is not False)
+        if not poolable and status == "match_completed":
+            notes.append(
+                f"{match_id}: completed but invalid ({metrics.get('invalid_reason')}); excluded from statistics"
+            )
+
         result = metrics.get("result", "unknown")
-        if result == "home_win":
+        if not poolable:
+            unknown_results += 1
+        elif result == "home_win":
             home_wins += 1
         elif result == "away_win":
             away_wins += 1
@@ -150,10 +195,11 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
         as_ = metrics.get("away_score")
         gd = ""
         if isinstance(hs, int) and isinstance(as_, int):
-            home_scores.append(hs)
-            away_scores.append(as_)
-            goal_diffs.append(hs - as_)
             gd = hs - as_
+            if poolable:
+                home_scores.append(hs)
+                away_scores.append(as_)
+                goal_diffs.append(hs - as_)
         else:
             notes.append(f"{match_id}: score missing or non-integer (home={hs!r} away={as_!r})")
 
@@ -212,10 +258,11 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
     mean_gd = _mean(goal_diffs)
     std_gd = _sample_std(goal_diffs)
     n = len(goal_diffs)
-    if std_gd is not None and n >= 1:
+    if std_gd is not None and n >= 2:
         se_gd = std_gd / math.sqrt(n)
-        ci_low = mean_gd - 1.96 * se_gd
-        ci_high = mean_gd + 1.96 * se_gd
+        tc = t_crit_95(n - 1)
+        ci_low = mean_gd - tc * se_gd
+        ci_high = mean_gd + tc * se_gd
     else:
         se_gd = ci_low = ci_high = None
 
@@ -232,6 +279,10 @@ def aggregate(experiment_dir: Path) -> tuple[dict, list[dict]]:
         and completed_observed_real
         and not unapplied_server_options
         and unknown_results == 0
+        # AUDIT S5c fix: every completed match must have contributed a
+        # pooled goal_diff — a completed match whose score failed to
+        # parse (or was invalid) must block claims, not slip past.
+        and len(goal_diffs) == completed_matches
     )
     sample_regime = "RESEARCH_GRADE" if research_grade else "SMOKE_ONLY"
 

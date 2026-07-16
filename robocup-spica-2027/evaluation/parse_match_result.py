@@ -55,6 +55,16 @@ SCORE_LINE = re.compile(
     re.IGNORECASE,
 )
 
+# AUDIT S5d fix (docs/REPO_AUDIT_2026-07.md): the format rcssserver-19
+# ACTUALLY writes is a multi-line block — SCORE_LINE above matched 0 of
+# the first 211 archived matches. Real server.out ending:
+#     Game Results:
+#         'SPICA325' vs 'CYRUS_VANILLA'
+#         Score: 0 - 1
+# An unconnected side appears as the literal team name "null".
+TEAMS_VS_LINE = re.compile(r"'([^']*)'\s+vs\s+'([^']*)'")
+SCORE_ONLY_LINE = re.compile(r"Score:\s*([0-9]+)\s*-\s*([0-9]+)")
+
 # Default rcg filename emitted by rcssserver, e.g.
 #   202606241530-helios_2-helios_1.rcg          (rcssserver-18 and earlier)
 #   20260624153012-HELIOS_L_2-vs-HELIOS_R_1.rcg (rcssserver-19)
@@ -87,11 +97,43 @@ DICT_KEYS = ("reality_evidence",)
 
 def parse_score_from_text(text: str) -> dict | None:
     m = SCORE_LINE.search(text)
-    if not m:
-        return None
-    home, hs, as_, away = m.groups()
-    return {"home_team": home, "away_team": away,
-            "home_score": int(hs), "away_score": int(as_)}
+    if m:
+        home, hs, as_, away = m.groups()
+        return {"home_team": home, "away_team": away,
+                "home_score": int(hs), "away_score": int(as_)}
+    # rcssserver-19 multi-line "Game Results:" block. Take the LAST
+    # occurrence of each line so a restarted server does not feed us a
+    # stale first attempt.
+    teams = TEAMS_VS_LINE.findall(text)
+    scores = SCORE_ONLY_LINE.findall(text)
+    if teams and scores:
+        home, away = teams[-1]
+        hs, as_ = scores[-1]
+        if away in ("null", ""):
+            return {"home_team": home, "away_team": "null",
+                    "home_score": int(hs), "away_score": None}
+        return {"home_team": home, "away_team": away,
+                "home_score": int(hs), "away_score": int(as_)}
+    return None
+
+
+def validate_match(score: dict | None) -> tuple[bool, str | None]:
+    """AUDIT S5b fix: reject pseudo-matches before they enter statistics.
+
+    Invalid when one side never connected (away 'null'), both sides
+    carry the same team name (a launcher misconfiguration: the server
+    rejects the second team and the first plays against nobody), or a
+    score is missing.
+    """
+    if score is None:
+        return False, "no score parsed"
+    if score.get("away_team") in ("null", "", None):
+        return False, "away side never connected (team 'null')"
+    if score.get("home_team") == score.get("away_team"):
+        return False, f"identical team names ({score.get('home_team')!r}) — teams collided"
+    if score.get("home_score") is None or score.get("away_score") is None:
+        return False, "missing score"
+    return True, None
 
 
 def parse_score_from_rcg_name(path: Path) -> dict | None:
@@ -212,6 +254,10 @@ def main(argv: list[str] | None = None) -> int:
     else:
         result = "unknown"
 
+    match_valid, invalid_reason = validate_match(score)
+    if not match_valid:
+        parser_notes.append(f"INVALID MATCH: {invalid_reason}")
+
     metrics = {
         "schema_version": SCHEMA_VERSION,
         **metadata_fields,
@@ -220,6 +266,8 @@ def main(argv: list[str] | None = None) -> int:
         "home_score":  (score or {}).get("home_score"),
         "away_score":  (score or {}).get("away_score"),
         "result":      result,
+        "match_valid": match_valid,
+        "invalid_reason": invalid_reason,
         "rcg_files":   [str(p) for p in rcg_files],
         "rcl_files":   [str(p) for p in rcl_files],
         "parser_notes": parser_notes,

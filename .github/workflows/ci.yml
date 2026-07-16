@@ -1,0 +1,32 @@
+# CI added by the 2026-07 audit (robocup-spica-2027/docs/REPO_AUDIT_2026-07.md).
+# Runs the evaluation-stack unit tests and the attestation self-tests on
+# every push/PR. Deliberately does NOT build rcssserver/librcsc/cyrus —
+# those need ~20 min and system deps; the tests here guard the harness
+# logic that decides scientific validity, which is where the audit found
+# the silent failures.
+name: harness-tests
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install jq (attestation self-test dependency)
+        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Harness unit tests
+        working-directory: robocup-spica-2027
+        run: make test
+      - name: Batch runner dry-run smoke
+        working-directory: robocup-spica-2027
+        run: |
+          bash scripts/run_batch_matches.sh \
+            --experiment experiments/baseline_vs_baseline.yaml \
+            --dry-run

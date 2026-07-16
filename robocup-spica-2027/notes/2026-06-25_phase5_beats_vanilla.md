@@ -1,3 +1,10 @@
+> **⚠ RETRACTED (2026-07 audit)**: this note claimed "Cyrus 越え達成"
+> from an n=3 SMOKE_ONLY run, violating docs/CHANGE_EVALUATION_PROTOCOL.md.
+> Subsequent N=30 RESEARCH_GRADE measurement put the same configuration
+> at mean_goal_diff ≈ -0.8 to -1.1 vs Vanilla — and even that number
+> is confounded by the no-coach handicap (audit S1,
+> docs/REPO_AUDIT_2026-07.md). Do not cite.
+
 # Phase 5 v4: Cyrus 越え達成
 
 Date: 2026-06-25
